@@ -6,8 +6,22 @@
     <description>Recent content in Meta on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Feb 2016 17:45:16 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 09 Feb 2016 18:03:36 +0800</lastBuildDate>
     <atom:link href="http://huangjacky.github.io/tags/meta/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>hello world</title>
+      <link>http://huangjacky.github.io/post/hello/</link>
+      <pubDate>Tue, 09 Feb 2016 18:03:36 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/post/hello/</guid>
+      <description>
+
+&lt;h1 id=&#34;this-is-my-post:8a07c3dae13f18d0c06cf5f9e482b173&#34;&gt;This is my post.&lt;/h1&gt;
+
+&lt;h2 id=&#34;测试:8a07c3dae13f18d0c06cf5f9e482b173&#34;&gt;测试&lt;/h2&gt;
+</description>
+    </item>
     
     <item>
       <title>about</title>
