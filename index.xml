@@ -6,8 +6,66 @@
     <description>Recent content on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Feb 2016 18:03:36 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 13 Feb 2016 14:01:35 +0800</lastBuildDate>
     <atom:link href="http://huangjacky.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>如何在Python中正确的使用BloomFilter</title>
+      <link>http://huangjacky.github.io/post/python-bloom-filter/</link>
+      <pubDate>Sat, 13 Feb 2016 14:01:35 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/post/python-bloom-filter/</guid>
+      <description>
+
+&lt;h2 id=&#34;0x1-什么是布隆过滤器-bloomfilter:09e618735b296f7c44dd000a774e255f&#34;&gt;0x1 什么是布隆过滤器(BloomFilter)&lt;/h2&gt;
+
+&lt;p&gt;1970年，由布隆提出来的一个用于判断元素是否在集合中的高效的算法，集合中的元素可以增加，但是要删除一个元素比较困难，同时还有少量的误报率。&lt;br /&gt;
+在数据量比较小的时候，我们可以使用Hash来判断元素是否命中，但是当元素增加起来后，Hash算法需要的空间就会急速增长，查找时间也会增加。布隆过滤器主要用在样本集合量大但是很少有删除元素，不要求100%正确率的场景下。   主要有：
+1. 缓存
+2. 计数
+3. 分散聚合
+4. 数据同步&lt;/p&gt;
+
+&lt;p&gt;算法细节可以查看相关的文档，或者英文的维基中也有详细的介绍。&lt;/p&gt;
+
+&lt;h2 id=&#34;0x2-python中的布隆过滤器:09e618735b296f7c44dd000a774e255f&#34;&gt;0x2 Python中的布隆过滤器&lt;/h2&gt;
+
+&lt;p&gt;Python中有多个实现BloomFilter的包详情可以自己搜索Pypi，本文中主要介绍PyBloom，可以通过pip进行安装。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pip install pybloom
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;读者也可以去作者的github上直接下载&lt;a href=&#34;https://github.com/jaybaird/python-bloomfilter/&#34;&gt;源码&lt;/a&gt;进行编译安装&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;python setup.py install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;0x3-使用pybloom:09e618735b296f7c44dd000a774e255f&#34;&gt;0x3 使用PyBloom&lt;/h2&gt;
+
+&lt;p&gt;python-bloomfilter中主要有两个类&lt;strong&gt;BloomFilter&lt;/strong&gt;和&lt;strong&gt;ScalableBloomFilter&lt;/strong&gt;
+主要的用法：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from pybloom import BloomFilter, ScalableBloomFilter
+bf = BloomFilter(capacity=10000, error_rate=0.001)
+bf.add(&#39;test&#39;)
+print &#39;test&#39; in bf
+sbf = ScalableBloomFilter(mode=ScalableBloomFilter.SMALL_SET_GROWTH)
+sbf.add(&#39;dddd&#39;)
+print &#39;ddd&#39; in sbf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;BloomFilter是一个定容的过滤器，&lt;strong&gt;error_rate&lt;/strong&gt;是指最大的误报率是0.1%，而ScalableBloomFilter是一个不定容量的布隆过滤器，它可以不断添加元素。&lt;strong&gt;add&lt;/strong&gt;方法是添加元素，如果元素已经在布隆过滤器中，就返回true，如果不在返回fasle并将该元素添加到过滤器中。判断一个元素是否在过滤器中，只需要使用&lt;strong&gt;in&lt;/strong&gt;运算符即可了。&lt;br /&gt;
+简单易用的一个Python库，希望对大家有帮助。&lt;/p&gt;
+
+&lt;h2 id=&#34;0x4-参考:09e618735b296f7c44dd000a774e255f&#34;&gt;0x4 参考&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;[1] &lt;a href=&#34;https://en.wikipedia.org/wiki/Bloom_filter&#34;&gt;Bloom_Filter Wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[2] &lt;a href=&#34;https://zh.wikipedia.org/wiki/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8&#34;&gt;布隆过滤器 维基&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[3] &lt;a href=&#34;https://github.com/jaybaird/python-bloomfilter/&#34;&gt;python-bloomfilter&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>hello world</title>
