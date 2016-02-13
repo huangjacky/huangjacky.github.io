@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>安全开发规范概要 &middot; HuangJacky</title>
+
+  
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/highlight/monokai.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://huangjacky.github.io/touch-icon-144-precomposed.png">
+  <link href="http://huangjacky.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="安全开发规范概要，开发时候需要注意的安全事项">
+  <meta name="keywords" content="安全开发,规范">
+  
+</head>
+<body class="theme-base-08">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/89ab24ca01c3f8d0c4cbce0e45c3121a?s=200"
+             alt="gravatar" title="HuangJacky">
+      
+      <h1>HuangJacky</h1>
+      <p class="lead">略懂<strong>安全</strong>的程序狗，汪汪</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://huangjacky.github.io/"><i class="fa fa-home"></i>首页</a></li>
+      
+      <li class="sidebar-nav-item"><i class='fa fa-list-alt'></i><a href="http://huangjacky.github.io/docs/">规范</a></li>
+      
+      <li class="sidebar-nav-item"><i class='fa fa-archive'></i><a href="http://huangjacky.github.io/resume/">简历</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/huangjacky"><i class="fa fa-github-square fa-2x"></i></a>
+      <a href="http://weixin.qq.com/r/peHF3cnE-ZSCrY2_97S3"><i class="fa fa-wechat fa-2x"></i></a>
+      <a href="http://qm.qq.com/cgi-bin/qm/qr?k=61Z4zEVBnzQlGqLQqc2zDvkD8XmNhPBN"><i class="fa fa-qq fa-2x"></i></a>
+      <a href="http://www.linkedin.com/in/jacky-huang-3613044a"><i class="fa fa-linkedin-square fa-2x"></i></a>
+      
+      
+      <a href="https://twitter.com/fiend0513"><i class="fa fa-twitter-square fa-2x"></i></a>
+      
+      <a href="http://huangjacky.github.io/index.xml" type="application/rss+xml"><i class="fa fa-rss-square fa-2x"></i></a>
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://huangjacky.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>安全开发规范概要</h1>
+    
+
+<h2 id="0x1-编写目的:af64df5535833d56354a810c9b55c190">0x1 编写目的</h2>
+
+<p>本文主要阐述开发过程中需要注意的安全原则，和编程语言没有关系，本文并不会对相关原则展开进行详讲解。后续将会在具体的编程语言安全开发规范中做进一步，更详细的描述。</p>
+
+<h2 id="0x2-十大安全编程原则:af64df5535833d56354a810c9b55c190">0x2 十大安全编程原则</h2>
+
+<h3 id="1-输入验证:af64df5535833d56354a810c9b55c190">1. 输入验证</h3>
+
+<p>所有从不可控输入源传递的数据都需要进行安全验证，有效的安全验证可以避免绝大多数的安全漏洞。</p>
+
+<h3 id="2-警示编译器警告:af64df5535833d56354a810c9b55c190">2. 警示编译器警告</h3>
+
+<p>警告可能不会影响程序的编译，但是却会留下安全隐患和不确定的因素。一些非编译语言也需要相关linter来检测编码是否符合开发规范。因此在开发的过程中，需要使用静态源码分析工具来不断提高代码的质量。</p>
+
+<h3 id="3-针对安全策略的架构和设计:af64df5535833d56354a810c9b55c190">3. 针对安全策略的架构和设计</h3>
+
+<p>安全越早接入到开发过程中，会使得防御工作更轻松，系统更可靠，更不容易被攻击。</p>
+
+<h3 id="4-保持简单性:af64df5535833d56354a810c9b55c190">4. 保持简单性</h3>
+
+<p>功能设计的时候，模块越小，逻辑越清晰，能够有效减少犯错的可能性。</p>
+
+<h3 id="5-默认拒绝:af64df5535833d56354a810c9b55c190">5. 默认拒绝</h3>
+
+<p>所有的访问策略默认都是拒绝的，除非有相应的权限名单。这就表明必须使用白名单的形式。</p>
+
+<h3 id="6-最小权限原则:af64df5535833d56354a810c9b55c190">6. 最小权限原则</h3>
+
+<p>每个角色只能拥有完成任务的最小权限，而且任务完成后要在最短的时间内回收权限。</p>
+
+<h3 id="7-清理输出的数据:af64df5535833d56354a810c9b55c190">7. 清理输出的数据</h3>
+
+<p>所有从自己系统或者模块发送出去要经过安全过滤保证对其他系统无害。</p>
+
+<h3 id="8-纵深防御原则:af64df5535833d56354a810c9b55c190">8. 纵深防御原则</h3>
+
+<p>从多个维度或者多个策略同时进行防御，防止攻击源绕过单一的安全策略。</p>
+
+<h3 id="9-使用有效的质量保证技术:af64df5535833d56354a810c9b55c190">9. 使用有效的质量保证技术</h3>
+
+<p>在开发和测试的各个阶段都需要进行源码审计，fuzz，渗透测试等测试方法来保证代码的质量和功能</p>
+
+<h3 id="10-统一安全编码规范:af64df5535833d56354a810c9b55c190">10. 统一安全编码规范</h3>
+
+<p>为开发语言和平台制订安全编码规范，并实施，这样可以减少开发和维护成本，同时能够快速定位缺陷代码。</p>
+
+<h2 id="0x3:af64df5535833d56354a810c9b55c190">0x3</h2>
+
+<p>编程语言安全开发规范列表<br />
+暂无</p>
+
+<h2 id="0x4-参考索引:af64df5535833d56354a810c9b55c190">0x4 参考索引</h2>
+
+<ul>
+<li>[1] <a href="https://securecoding.cert.org/confluence/display/seccode/Top+10+Secure+Coding+Practices">cert安全编码规范英文</a></li>
+<li>[2] <a href="http://staff.ustc.edu.cn/~sycheng/sst/lectures/ch08_Secure_Programming.pdf">中科大安全编程ppt</a></li>
+<li>[3] <a href="https://www.owasp.org/images/7/73/OWASP_SCP_Quick_Reference_Guide_(Chinese).pdf" title="OWASP_SCP_Quick_Reference_Guide">OWASP安全编码规范快速参考指南</a></li>
+</ul>
+
+  </div>
+</div>
+<script src="http://huangjacky.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

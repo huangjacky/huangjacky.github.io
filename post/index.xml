@@ -20,11 +20,14 @@
 &lt;h2 id=&#34;0x1-什么是布隆过滤器-bloomfilter:09e618735b296f7c44dd000a774e255f&#34;&gt;0x1 什么是布隆过滤器(BloomFilter)&lt;/h2&gt;
 
 &lt;p&gt;1970年，由布隆提出来的一个用于判断元素是否在集合中的高效的算法，集合中的元素可以增加，但是要删除一个元素比较困难，同时还有少量的误报率。&lt;br /&gt;
-在数据量比较小的时候，我们可以使用Hash来判断元素是否命中，但是当元素增加起来后，Hash算法需要的空间就会急速增长，查找时间也会增加。布隆过滤器主要用在样本集合量大但是很少有删除元素，不要求100%正确率的场景下。   主要有：
-1. 缓存
-2. 计数
-3. 分散聚合
-4. 数据同步&lt;/p&gt;
+在数据量比较小的时候，我们可以使用Hash来判断元素是否命中，但是当元素增加起来后，Hash算法需要的空间就会急速增长，查找时间也会增加。布隆过滤器主要用在样本集合量大但是很少有删除元素，不要求100%正确率的场景下。主要有：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;缓存&lt;/li&gt;
+&lt;li&gt;计数&lt;/li&gt;
+&lt;li&gt;分散聚合&lt;/li&gt;
+&lt;li&gt;数据同步&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
 
 &lt;p&gt;算法细节可以查看相关的文档，或者英文的维基中也有详细的介绍。&lt;/p&gt;
 
@@ -42,7 +45,7 @@
 
 &lt;h2 id=&#34;0x3-使用pybloom:09e618735b296f7c44dd000a774e255f&#34;&gt;0x3 使用PyBloom&lt;/h2&gt;
 
-&lt;p&gt;python-bloomfilter中主要有两个类&lt;strong&gt;BloomFilter&lt;/strong&gt;和&lt;strong&gt;ScalableBloomFilter&lt;/strong&gt;
+&lt;p&gt;python-bloomfilter中有两个类&lt;strong&gt;BloomFilter&lt;/strong&gt;和&lt;strong&gt;ScalableBloomFilter&lt;/strong&gt;&lt;br /&gt;
 主要的用法：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from pybloom import BloomFilter, ScalableBloomFilter

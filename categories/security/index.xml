@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Security on HuangJacky技术分享</title>
+    <link>http://huangjacky.github.io/categories/security/</link>
+    <description>Recent content in Security on HuangJacky技术分享</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Feb 2016 18:14:49 +0800</lastBuildDate>
+    <atom:link href="http://huangjacky.github.io/categories/security/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>安全开发规范概要</title>
+      <link>http://huangjacky.github.io/docs/general/</link>
+      <pubDate>Sat, 13 Feb 2016 18:14:49 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/docs/general/</guid>
+      <description>
+
+&lt;h2 id=&#34;0x1-编写目的:af64df5535833d56354a810c9b55c190&#34;&gt;0x1 编写目的&lt;/h2&gt;
+
+&lt;p&gt;本文主要阐述开发过程中需要注意的安全原则，和编程语言没有关系，本文并不会对相关原则展开进行详讲解。后续将会在具体的编程语言安全开发规范中做进一步，更详细的描述。&lt;/p&gt;
+
+&lt;h2 id=&#34;0x2-十大安全编程原则:af64df5535833d56354a810c9b55c190&#34;&gt;0x2 十大安全编程原则&lt;/h2&gt;
+
+&lt;h3 id=&#34;1-输入验证:af64df5535833d56354a810c9b55c190&#34;&gt;1. 输入验证&lt;/h3&gt;
+
+&lt;p&gt;所有从不可控输入源传递的数据都需要进行安全验证，有效的安全验证可以避免绝大多数的安全漏洞。&lt;/p&gt;
+
+&lt;h3 id=&#34;2-警示编译器警告:af64df5535833d56354a810c9b55c190&#34;&gt;2. 警示编译器警告&lt;/h3&gt;
+
+&lt;p&gt;警告可能不会影响程序的编译，但是却会留下安全隐患和不确定的因素。一些非编译语言也需要相关linter来检测编码是否符合开发规范。因此在开发的过程中，需要使用静态源码分析工具来不断提高代码的质量。&lt;/p&gt;
+
+&lt;h3 id=&#34;3-针对安全策略的架构和设计:af64df5535833d56354a810c9b55c190&#34;&gt;3. 针对安全策略的架构和设计&lt;/h3&gt;
+
+&lt;p&gt;安全越早接入到开发过程中，会使得防御工作更轻松，系统更可靠，更不容易被攻击。&lt;/p&gt;
+
+&lt;h3 id=&#34;4-保持简单性:af64df5535833d56354a810c9b55c190&#34;&gt;4. 保持简单性&lt;/h3&gt;
+
+&lt;p&gt;功能设计的时候，模块越小，逻辑越清晰，能够有效减少犯错的可能性。&lt;/p&gt;
+
+&lt;h3 id=&#34;5-默认拒绝:af64df5535833d56354a810c9b55c190&#34;&gt;5. 默认拒绝&lt;/h3&gt;
+
+&lt;p&gt;所有的访问策略默认都是拒绝的，除非有相应的权限名单。这就表明必须使用白名单的形式。&lt;/p&gt;
+
+&lt;h3 id=&#34;6-最小权限原则:af64df5535833d56354a810c9b55c190&#34;&gt;6. 最小权限原则&lt;/h3&gt;
+
+&lt;p&gt;每个角色只能拥有完成任务的最小权限，而且任务完成后要在最短的时间内回收权限。&lt;/p&gt;
+
+&lt;h3 id=&#34;7-清理输出的数据:af64df5535833d56354a810c9b55c190&#34;&gt;7. 清理输出的数据&lt;/h3&gt;
+
+&lt;p&gt;所有从自己系统或者模块发送出去要经过安全过滤保证对其他系统无害。&lt;/p&gt;
+
+&lt;h3 id=&#34;8-纵深防御原则:af64df5535833d56354a810c9b55c190&#34;&gt;8. 纵深防御原则&lt;/h3&gt;
+
+&lt;p&gt;从多个维度或者多个策略同时进行防御，防止攻击源绕过单一的安全策略。&lt;/p&gt;
+
+&lt;h3 id=&#34;9-使用有效的质量保证技术:af64df5535833d56354a810c9b55c190&#34;&gt;9. 使用有效的质量保证技术&lt;/h3&gt;
+
+&lt;p&gt;在开发和测试的各个阶段都需要进行源码审计，fuzz，渗透测试等测试方法来保证代码的质量和功能&lt;/p&gt;
+
+&lt;h3 id=&#34;10-统一安全编码规范:af64df5535833d56354a810c9b55c190&#34;&gt;10. 统一安全编码规范&lt;/h3&gt;
+
+&lt;p&gt;为开发语言和平台制订安全编码规范，并实施，这样可以减少开发和维护成本，同时能够快速定位缺陷代码。&lt;/p&gt;
+
+&lt;h2 id=&#34;0x3:af64df5535833d56354a810c9b55c190&#34;&gt;0x3&lt;/h2&gt;
+
+&lt;p&gt;编程语言安全开发规范列表&lt;br /&gt;
+暂无&lt;/p&gt;
+
+&lt;h2 id=&#34;0x4-参考索引:af64df5535833d56354a810c9b55c190&#34;&gt;0x4 参考索引&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;[1] &lt;a href=&#34;https://securecoding.cert.org/confluence/display/seccode/Top+10+Secure+Coding+Practices&#34;&gt;cert安全编码规范英文&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[2] &lt;a href=&#34;http://staff.ustc.edu.cn/~sycheng/sst/lectures/ch08_Secure_Programming.pdf&#34;&gt;中科大安全编程ppt&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[3] &lt;a href=&#34;https://www.owasp.org/images/7/73/OWASP_SCP_Quick_Reference_Guide_(Chinese).pdf&#34; title=&#34;OWASP_SCP_Quick_Reference_Guide&#34;&gt;OWASP安全编码规范快速参考指南&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
