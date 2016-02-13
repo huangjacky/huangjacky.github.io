@@ -6,15 +6,34 @@
     <description>Recent content in Docs on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 13 Feb 2016 18:14:49 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 13 Feb 2016 20:36:09 +0800</lastBuildDate>
     <atom:link href="http://huangjacky.github.io/categories/docs/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>PHP安全开发规范</title>
+      <link>http://huangjacky.github.io/post/docs-php-secure-coding/</link>
+      <pubDate>Sat, 13 Feb 2016 20:36:09 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/post/docs-php-secure-coding/</guid>
+      <description>
+
+&lt;h2 id=&#34;0x1-编写目的:bde8b6622ae197dc427e7081335654b0&#34;&gt;0x1 编写目的&lt;/h2&gt;
+
+&lt;p&gt;本文主要针对PHP开发者，结合PHP语言的一些特性，在开发过程可能出现安全问题的地方和一些常见修复建议或者安全策略。&lt;/p&gt;
+
+&lt;h2 id=&#34;0x2-php语言特性:bde8b6622ae197dc427e7081335654b0&#34;&gt;0x2 PHP语言特性&lt;/h2&gt;
+
+&lt;p&gt;PHP是目前市面上最流行的服务端编程语言，被用于各种网站后台开发。作为一款开源软件，它拥有庞大的开源社区，丰富的优秀三方库和框架，为开发者提供极大的便利。因此讲述PHP安全开发规范的时候，我们需要考虑以上三个方面：编程语言本身，框架，库。&lt;br /&gt;
+PHP的变量是&lt;strong&gt;弱类型&lt;/strong&gt;，变量的类型会根据数据自动变化。这个特性会导致一些开发者不易察觉的错误或者插入一些无法预期的数据。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>安全开发规范概要</title>
-      <link>http://huangjacky.github.io/docs/general/</link>
+      <link>http://huangjacky.github.io/post/general/</link>
       <pubDate>Sat, 13 Feb 2016 18:14:49 +0800</pubDate>
       
-      <guid>http://huangjacky.github.io/docs/general/</guid>
+      <guid>http://huangjacky.github.io/post/general/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-编写目的:af64df5535833d56354a810c9b55c190&#34;&gt;0x1 编写目的&lt;/h2&gt;
@@ -33,7 +52,8 @@
 
 &lt;h3 id=&#34;3-针对安全策略的架构和设计:af64df5535833d56354a810c9b55c190&#34;&gt;3. 针对安全策略的架构和设计&lt;/h3&gt;
 
-&lt;p&gt;安全越早接入到开发过程中，会使得防御工作更轻松，系统更可靠，更不容易被攻击。&lt;/p&gt;
+&lt;p&gt;安全越早接入到开发过程中，会使得防御工作更轻松，系统更可靠，更不容易被攻击。&lt;br /&gt;
+在开发周期的早期就确定并文档记录系统安全需求，确保后续的开发都符合安全需求并能通过安全评估。&lt;/p&gt;
 
 &lt;h3 id=&#34;4-保持简单性:af64df5535833d56354a810c9b55c190&#34;&gt;4. 保持简单性&lt;/h3&gt;
 
@@ -57,7 +77,8 @@
 
 &lt;h3 id=&#34;9-使用有效的质量保证技术:af64df5535833d56354a810c9b55c190&#34;&gt;9. 使用有效的质量保证技术&lt;/h3&gt;
 
-&lt;p&gt;在开发和测试的各个阶段都需要进行源码审计，fuzz，渗透测试等测试方法来保证代码的质量和功能&lt;/p&gt;
+&lt;p&gt;在开发和测试的各个阶段都需要进行源码审计，fuzz，渗透测试等测试方法来保证代码的质量和功能。&lt;br /&gt;
+使用威胁模型来预测软件是否收到威胁。威胁模型包括：识别关键资产，分解应用，识别和分类每项资产或者组件受到的威胁，并基于风险评级排名，然后制定设计方案和代码实现时的防御策略以及实现后的测试用例。&lt;/p&gt;
 
 &lt;h3 id=&#34;10-统一安全编码规范:af64df5535833d56354a810c9b55c190&#34;&gt;10. 统一安全编码规范&lt;/h3&gt;
 

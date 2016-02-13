@@ -108,9 +108,9 @@ a.sidebar-nav-item:focus {
 @media (min-width: 48em) {
   .sidebar-sticky {
     position: absolute;
-    right:  1rem;
+    /*right:  1rem;*/
     bottom: 1rem;
-    left:   1rem;
+    /*left:   1rem;*/
   }
 }
 
@@ -128,7 +128,7 @@ a.sidebar-nav-item:focus {
 
 @media (min-width: 48em) {
   .content {
-    max-width: 38rem;
+    max-width: 48rem;
     margin-left: 20rem;
     margin-right: 2rem;
   }
@@ -136,6 +136,7 @@ a.sidebar-nav-item:focus {
 
 @media (min-width: 64em) {
   .content {
+    max-width: 64em;
     margin-left: 22rem;
     margin-right: 4rem;
   }

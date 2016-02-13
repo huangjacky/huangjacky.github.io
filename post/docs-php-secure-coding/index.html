@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>404 Page not found &middot; HuangJacky</title>
+  <title>PHP安全开发规范 &middot; HuangJacky</title>
 
   
   <link rel="stylesheet" href="http://huangjacky.github.io/css/poole.css">
@@ -26,10 +26,10 @@
   
   
   
-  <link href="http://huangjacky.github.io/index.xml" rel="alternate" type="application/rss+xml" title="HuangJacky技术分享 &middot; HuangJacky" />
+  
 
-  <meta name="description" content="HuangJacky个人的博客网站，介绍一些学习经验和大家分享">
-  <meta name="keywords" content="HuangJacky,program,python,hack,security,javascript">
+  <meta name="description" content="PHP编程的语言的安全开发规范，本文主要针对PHP的语言动态的特性，向PHP开发人员阐述在开发过程中需要注意的安全事项">
+  <meta name="keywords" content="php,安全,开发规范">
   
 </head>
 <body class="theme-base-08">
@@ -77,11 +77,51 @@
 
 <div class="content container">
   <div class="post">
-    <h1>404 Not Found</h1>
-    <p>你找不到我！！！</p>
-    <p><a href="http://huangjacky.github.io/">返回首页</a></p>
+    <h1>PHP安全开发规范</h1>
+    <span class="post-date">Feb 13, 2016 &middot; 1 minute read &middot; <a href="http://huangjacky.github.io/post/docs-php-secure-coding/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://huangjacky.github.io/categories/docs">docs</a><a class="label" href="http://huangjacky.github.io/categories/php">php</a><a class="label" href="http://huangjacky.github.io/categories/security">security</a>
+    </span>
+    
+
+<h2 id="0x1-编写目的:bde8b6622ae197dc427e7081335654b0">0x1 编写目的</h2>
+
+<p>本文主要针对PHP开发者，结合PHP语言的一些特性，在开发过程可能出现安全问题的地方和一些常见修复建议或者安全策略。</p>
+
+<h2 id="0x2-php语言特性:bde8b6622ae197dc427e7081335654b0">0x2 PHP语言特性</h2>
+
+<p>PHP是目前市面上最流行的服务端编程语言，被用于各种网站后台开发。作为一款开源软件，它拥有庞大的开源社区，丰富的优秀三方库和框架，为开发者提供极大的便利。因此讲述PHP安全开发规范的时候，我们需要考虑以上三个方面：编程语言本身，框架，库。<br />
+PHP的变量是<strong>弱类型</strong>，变量的类型会根据数据自动变化。这个特性会导致一些开发者不易察觉的错误或者插入一些无法预期的数据。</p>
+
   </div>
+  <div id="disqus_thread"></div>
 </div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "huangjacky";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "huangjacky";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
 <script src="http://huangjacky.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
