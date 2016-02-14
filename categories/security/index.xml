@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Security on HuangJacky技术分享</title>
-    <link>%27http:/huangjacky.github.io%27/categories/security/</link>
+    <link>http://huangjacky.github.io/categories/security/</link>
     <description>Recent content in Security on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 13 Feb 2016 20:36:09 +0800</lastBuildDate>
-    <atom:link href="#ZgotmplZ" rel="self" type="application/rss+xml" />
+    <atom:link href="http://huangjacky.github.io/categories/security/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>PHP安全开发规范</title>
-      <link>/%27http:/huangjacky.github.io%27/post/docs-php-secure-coding/</link>
+      <link>http://huangjacky.github.io/post/docs-php-secure-coding/</link>
       <pubDate>Sat, 13 Feb 2016 20:36:09 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/docs-php-secure-coding/</guid>
+      <guid>http://huangjacky.github.io/post/docs-php-secure-coding/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-编写目的:bde8b6622ae197dc427e7081335654b0&#34;&gt;0x1 编写目的&lt;/h2&gt;
@@ -92,10 +92,10 @@ $name &#39;/^[a-z0-9]+$/i&#39;
     
     <item>
       <title>安全开发规范概要</title>
-      <link>/%27http:/huangjacky.github.io%27/post/general/</link>
+      <link>http://huangjacky.github.io/post/general/</link>
       <pubDate>Sat, 13 Feb 2016 18:14:49 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/general/</guid>
+      <guid>http://huangjacky.github.io/post/general/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-编写目的:af64df5535833d56354a810c9b55c190&#34;&gt;0x1 编写目的&lt;/h2&gt;

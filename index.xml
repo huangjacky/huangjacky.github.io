@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>HuangJacky技术分享</title>
-    <link>%27http:/huangjacky.github.io%27/</link>
+    <link>http://huangjacky.github.io/</link>
     <description>Recent content on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 14 Feb 2016 13:31:43 +0800</lastBuildDate>
-    <atom:link href="#ZgotmplZ" rel="self" type="application/rss+xml" />
+    <atom:link href="http://huangjacky.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>expect脚本入门</title>
-      <link>/%27http:/huangjacky.github.io%27/post/expect-usage/</link>
+      <link>http://huangjacky.github.io/post/expect-usage/</link>
       <pubDate>Sun, 14 Feb 2016 13:31:43 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/expect-usage/</guid>
+      <guid>http://huangjacky.github.io/post/expect-usage/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-什么是expect:1f8f1ad3647c9c17632c3f1db7ef7962&#34;&gt;0x1 什么是expect&lt;/h2&gt;
@@ -106,10 +106,10 @@ set cdir [exec pwd]
     
     <item>
       <title>PHP安全开发规范</title>
-      <link>/%27http:/huangjacky.github.io%27/post/docs-php-secure-coding/</link>
+      <link>http://huangjacky.github.io/post/docs-php-secure-coding/</link>
       <pubDate>Sat, 13 Feb 2016 20:36:09 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/docs-php-secure-coding/</guid>
+      <guid>http://huangjacky.github.io/post/docs-php-secure-coding/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-编写目的:bde8b6622ae197dc427e7081335654b0&#34;&gt;0x1 编写目的&lt;/h2&gt;
@@ -187,10 +187,10 @@ $name &#39;/^[a-z0-9]+$/i&#39;
     
     <item>
       <title>安全开发规范概要</title>
-      <link>/%27http:/huangjacky.github.io%27/post/general/</link>
+      <link>http://huangjacky.github.io/post/general/</link>
       <pubDate>Sat, 13 Feb 2016 18:14:49 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/general/</guid>
+      <guid>http://huangjacky.github.io/post/general/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-编写目的:af64df5535833d56354a810c9b55c190&#34;&gt;0x1 编写目的&lt;/h2&gt;
@@ -258,10 +258,10 @@ $name &#39;/^[a-z0-9]+$/i&#39;
     
     <item>
       <title>如何在Python中正确的使用BloomFilter</title>
-      <link>/%27http:/huangjacky.github.io%27/post/python-bloom-filter/</link>
+      <link>http://huangjacky.github.io/post/python-bloom-filter/</link>
       <pubDate>Sat, 13 Feb 2016 14:01:35 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/python-bloom-filter/</guid>
+      <guid>http://huangjacky.github.io/post/python-bloom-filter/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-什么是布隆过滤器-bloomfilter:09e618735b296f7c44dd000a774e255f&#34;&gt;0x1 什么是布隆过滤器(BloomFilter)&lt;/h2&gt;
@@ -319,10 +319,10 @@ print &#39;ddd&#39; in sbf
     
     <item>
       <title>Hello World</title>
-      <link>/%27http:/huangjacky.github.io%27/post/hello/</link>
+      <link>http://huangjacky.github.io/post/hello/</link>
       <pubDate>Wed, 10 Feb 2016 18:14:49 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/hello/</guid>
+      <guid>http://huangjacky.github.io/post/hello/</guid>
       <description>
 
 &lt;h1 id=&#34;this-is-my-post:8a07c3dae13f18d0c06cf5f9e482b173&#34;&gt;This is my post.&lt;/h1&gt;
