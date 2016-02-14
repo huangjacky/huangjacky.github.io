@@ -162,15 +162,6 @@ $name &#39;/^[a-z0-9]+$/i&#39;
     </item>
     
     <item>
-      <title>HuangJacky的个人求职简历</title>
-      <link>http://huangjacky.github.io/resume/</link>
-      <pubDate>Sat, 13 Feb 2016 17:42:37 +0800</pubDate>
-      
-      <guid>http://huangjacky.github.io/resume/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>如何在Python中正确的使用BloomFilter</title>
       <link>http://huangjacky.github.io/post/python-bloom-filter/</link>
       <pubDate>Sat, 13 Feb 2016 14:01:35 +0800</pubDate>
