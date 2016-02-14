@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>测试 on HuangJacky技术分享</title>
-    <link>%27http:/huangjacky.github.io%27/categories/%E6%B5%8B%E8%AF%95/</link>
+    <link>http://huangjacky.github.io/categories/%E6%B5%8B%E8%AF%95/</link>
     <description>Recent content in 测试 on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 10 Feb 2016 18:14:49 +0800</lastBuildDate>
-    <atom:link href="#ZgotmplZ" rel="self" type="application/rss+xml" />
+    <atom:link href="http://huangjacky.github.io/categories/%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Hello World</title>
-      <link>/%27http:/huangjacky.github.io%27/post/hello/</link>
+      <link>http://huangjacky.github.io/post/hello/</link>
       <pubDate>Wed, 10 Feb 2016 18:14:49 +0800</pubDate>
       
-      <guid>/%27http:/huangjacky.github.io%27/post/hello/</guid>
+      <guid>http://huangjacky.github.io/post/hello/</guid>
       <description>
 
 &lt;h1 id=&#34;this-is-my-post:8a07c3dae13f18d0c06cf5f9e482b173&#34;&gt;This is my post.&lt;/h1&gt;
