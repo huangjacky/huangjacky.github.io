@@ -88,6 +88,86 @@
 <p>有时候我们需要自动完成一系列的名单，但是这些命令需要交互，比如SSH，需要人工输入密码，这个时候我们可以写一个expect脚本来完成这些任务。<br />
 expect被运用在大多数的运维脚本上，当然很多编程语言里面也提供相应的封装库，比如Python中的<a href="https://pypi.python.org/pypi/pexpect/4.0.1" title="Python pexpect">pexpect</a>，PHP中的expect://伪协议以及<a href="http://php.net/manual/zh/function.expect-expectl.php" title="PHP expect-expectl">expect_expectl函数</a></p>
 
+<h2 id="0x2-expect脚本入门讲解:1f8f1ad3647c9c17632c3f1db7ef7962">0x2 expect脚本入门讲解</h2>
+
+<p>一个expect脚本可以有两种形式，第一种直接使用expect解析。</p>
+
+<pre><code class="language-sh">#!/usr/bin/expect
+# code here
+</code></pre>
+
+<p>另一种是使用expect -c 来直接执行expect的字符串命令</p>
+
+<pre><code class="language-sh">#!/bin/bash
+/usr/bin/expect -c &quot;code here&quot;
+</code></pre>
+
+<p>这两种形式，各位看官老爷自己选择吧。</p>
+
+<h2 id="0x3-expect重要的命令讲解:1f8f1ad3647c9c17632c3f1db7ef7962">0x3 expect重要的命令讲解</h2>
+
+<h3 id="输出回显:1f8f1ad3647c9c17632c3f1db7ef7962">输出回显</h3>
+
+<pre><code class="language-sh">send &quot;abc\n&quot;
+send_user &quot;dddd\n&quot;
+puts stdout|stderr &quot;ererer\n&quot;
+</code></pre>
+
+<p>目前主要使用如上三个命令。</p>
+
+<h3 id="执行命令:1f8f1ad3647c9c17632c3f1db7ef7962">执行命令</h3>
+
+<p>一些常见的命令比如cd(切换工作目录)，可以直接执行，其他的命令需要使用exec来运行</p>
+
+<pre><code class="language-sh">cd public
+exec /usr/local/bin/git add -A```
+这里需要注意的地方就是最好带上命令的完整路径。
+### 执行需要交互的命令
+
+```sh
+spawn /usr/local/bin/git push
+expect {
+  &quot;Username&quot; {send &quot;huangjacky\n&quot;; exp_continue;}
+  &quot;*assword&quot; {send &quot;test\n&quot;}
+}
+expect &quot;in \d+ ms&quot;
+send &quot;ok\n&quot;
+expect eof
+</code></pre>
+
+<p>上面例子中使用<strong>spawn</strong>来执行需要交互的命名。使用<strong>expect</strong>来匹配命令执行后的回显，参数可以是一个字符串，也可以在里面使用通配符，还可以是一个正则。输入数据和命令使用<strong>send</strong>，其中使用\n来表示回车键。<br />
+当需要判断多个输出的时候使用{}括起来，expect和{}中间有个空格一定不能少，正常情况来说{}里面所有匹配条件只有一个能够被执行，如果需要循环执行，使用<strong>exp_continue</strong>来再次进入本次匹配。<br />
+使用<strong>expect eof</strong>来判断进程是否执行完毕。</p>
+
+<h3 id="变量赋值和参数获取:1f8f1ad3647c9c17632c3f1db7ef7962">变量赋值和参数获取</h3>
+
+<p>expect中一些内置变量<strong>$argv</strong>是参数数组，0是第一个参数，文件本身不在这个数组中，而单独的变量<strong>$argv0</strong>才是是文件本身的路径，<strong>$argc</strong>是参数的数量，<strong>timeout</strong>是spawn执行命令超时设置，单位秒，0是不超时，一致等待到expect匹配成功。</p>
+
+<pre><code class="language-sh">set timeout 30
+set name [lindex $argv 0]
+set cdir [exec pwd]
+</code></pre>
+
+<h3 id="判断条件:1f8f1ad3647c9c17632c3f1db7ef7962">判断条件</h3>
+
+<p>expect中的判断条件使用{}括起来，执行语句也使用{}括起来。</p>
+
+<pre><code class="language-sh">if {$argc!=0} {
+  puts stderr &quot;Usage: $argv0 msg\n&quot;
+  exit
+}
+</code></pre>
+
+<p>条件的{}和执行语句{}之间必须有一个空间，判断条件的左值和右值以及逻辑运算符之间不能有空格。<br />
+大致语法和shell脚本差不多。</p>
+
+<h2 id="0x4-参考:1f8f1ad3647c9c17632c3f1db7ef7962">0x4 参考</h2>
+
+<ul>
+<li>[1] <a href="http://linux.die.net/man/1/expect" title="expect手册">expect手册</a></li>
+<li>[2] <a href="http://dongweiming.github.io/blog/archives/%E5%85%B3%E4%BA%8Eexpect%E7%A0%94%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89/" title="expect研究">expect研究二</a></li>
+</ul>
+
   </div>
   <div id="disqus_thread"></div>
 </div>
