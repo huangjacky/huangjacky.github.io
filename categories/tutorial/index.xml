@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tutorial on HuangJacky技术分享</title>
+    <link>%27http:/huangjacky.github.io%27/categories/tutorial/</link>
+    <description>Recent content in Tutorial on HuangJacky技术分享</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 14 Feb 2016 13:31:43 +0800</lastBuildDate>
+    <atom:link href="#ZgotmplZ" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>expect脚本入门</title>
+      <link>/%27http:/huangjacky.github.io%27/post/expect-usage/</link>
+      <pubDate>Sun, 14 Feb 2016 13:31:43 +0800</pubDate>
+      
+      <guid>/%27http:/huangjacky.github.io%27/post/expect-usage/</guid>
+      <description>
+
+&lt;h2 id=&#34;0x1-什么是expect:1f8f1ad3647c9c17632c3f1db7ef7962&#34;&gt;0x1 什么是expect&lt;/h2&gt;
+
+&lt;p&gt;有时候我们需要自动完成一系列的名单，但是这些命令需要交互，比如SSH，需要人工输入密码，这个时候我们可以写一个expect脚本来完成这些任务。&lt;br /&gt;
+expect被运用在大多数的运维脚本上，当然很多编程语言里面也提供相应的封装库，比如Python中的&lt;a href=&#34;https://pypi.python.org/pypi/pexpect/4.0.1&#34; title=&#34;Python pexpect&#34;&gt;pexpect&lt;/a&gt;，PHP中的expect://伪协议以及&lt;a href=&#34;http://php.net/manual/zh/function.expect-expectl.php&#34; title=&#34;PHP expect-expectl&#34;&gt;expect_expectl函数&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

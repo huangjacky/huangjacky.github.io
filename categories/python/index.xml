@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Python on HuangJacky技术分享</title>
-    <link>http://huangjacky.github.io/categories/python/</link>
+    <link>%27http:/huangjacky.github.io%27/categories/python/</link>
     <description>Recent content in Python on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 13 Feb 2016 14:01:35 +0800</lastBuildDate>
-    <atom:link href="http://huangjacky.github.io/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="#ZgotmplZ" rel="self" type="application/rss+xml" />
     
     <item>
       <title>如何在Python中正确的使用BloomFilter</title>
-      <link>http://huangjacky.github.io/post/python-bloom-filter/</link>
+      <link>/%27http:/huangjacky.github.io%27/post/python-bloom-filter/</link>
       <pubDate>Sat, 13 Feb 2016 14:01:35 +0800</pubDate>
       
-      <guid>http://huangjacky.github.io/post/python-bloom-filter/</guid>
+      <guid>/%27http:/huangjacky.github.io%27/post/python-bloom-filter/</guid>
       <description>
 
 &lt;h2 id=&#34;0x1-什么是布隆过滤器-bloomfilter:09e618735b296f7c44dd000a774e255f&#34;&gt;0x1 什么是布隆过滤器(BloomFilter)&lt;/h2&gt;

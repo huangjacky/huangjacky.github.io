@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <title>如何在Python中正确的使用BloomFilter &middot; HuangJacky</title>
+  <title>expect脚本入门 &middot; HuangJacky</title>
 
   
   <link rel="stylesheet" href="#ZgotmplZ">
@@ -28,8 +28,8 @@
   
   
 
-  <meta name="description" content="介绍如何在python中使用布隆过滤器来快速筛选关键字">
-  <meta name="keywords" content="python,bloom,filter">
+  <meta name="description" content="本文简单讲解expect脚本的编写方法和在使用过程中常见的一些问题">
+  <meta name="keywords" content="expect,tutorial">
   
 </head>
 <body class="theme-base-08">
@@ -75,64 +75,18 @@
 
 <div class="content container">
   <div class="post">
-    <h1>如何在Python中正确的使用BloomFilter</h1>
-    <span class="post-date">Feb 13, 2016 &middot; 1 minute read &middot; <a href="/%27http:/huangjacky.github.io%27/post/python-bloom-filter/#disqus_thread">Comments</a>
+    <h1>expect脚本入门</h1>
+    <span class="post-date">Feb 14, 2016 &middot; 1 minute read &middot; <a href="/%27http:/huangjacky.github.io%27/post/expect-usage/#disqus_thread">Comments</a>
     
     <br/>
-    <a class="label" href="#ZgotmplZpython">python</a>
+    <a class="label" href="#ZgotmplZtutorial">tutorial</a>
     </span>
     
 
-<h2 id="0x1-什么是布隆过滤器-bloomfilter:09e618735b296f7c44dd000a774e255f">0x1 什么是布隆过滤器(BloomFilter)</h2>
+<h2 id="0x1-什么是expect:1f8f1ad3647c9c17632c3f1db7ef7962">0x1 什么是expect</h2>
 
-<p>1970年，由布隆提出来的一个用于判断元素是否在集合中的高效的算法，集合中的元素可以增加，但是要删除一个元素比较困难，同时还有少量的误报率。<br />
-在数据量比较小的时候，我们可以使用Hash来判断元素是否命中，但是当元素增加起来后，Hash算法需要的空间就会急速增长，查找时间也会增加。布隆过滤器主要用在样本集合量大但是很少有删除元素，不要求100%正确率的场景下。主要有：</p>
-
-<ol>
-<li>缓存</li>
-<li>计数</li>
-<li>分散聚合</li>
-<li>数据同步<br /></li>
-</ol>
-
-<p>算法细节可以查看相关的文档，或者英文的维基中也有详细的介绍。</p>
-
-<h2 id="0x2-python中的布隆过滤器:09e618735b296f7c44dd000a774e255f">0x2 Python中的布隆过滤器</h2>
-
-<p>Python中有多个实现BloomFilter的包详情可以自己搜索Pypi，本文中主要介绍PyBloom，可以通过pip进行安装。</p>
-
-<pre><code class="language-bash">pip install pybloom
-</code></pre>
-
-<p>读者也可以去作者的github上直接下载<a href="https://github.com/jaybaird/python-bloomfilter/">源码</a>进行编译安装</p>
-
-<pre><code class="language-bash">python setup.py install
-</code></pre>
-
-<h2 id="0x3-使用pybloom:09e618735b296f7c44dd000a774e255f">0x3 使用PyBloom</h2>
-
-<p>python-bloomfilter中有两个类<strong>BloomFilter</strong>和<strong>ScalableBloomFilter</strong><br />
-主要的用法：</p>
-
-<pre><code class="language-python">from pybloom import BloomFilter, ScalableBloomFilter
-bf = BloomFilter(capacity=10000, error_rate=0.001)
-bf.add('test')
-print 'test' in bf
-sbf = ScalableBloomFilter(mode=ScalableBloomFilter.SMALL_SET_GROWTH)
-sbf.add('dddd')
-print 'ddd' in sbf
-</code></pre>
-
-<p>BloomFilter是一个定容的过滤器，<strong>error_rate</strong>是指最大的误报率是0.1%，而ScalableBloomFilter是一个不定容量的布隆过滤器，它可以不断添加元素。<strong>add</strong>方法是添加元素，如果元素已经在布隆过滤器中，就返回true，如果不在返回fasle并将该元素添加到过滤器中。判断一个元素是否在过滤器中，只需要使用<strong>in</strong>运算符即可了。<br />
-简单易用的一个Python库，希望对大家有帮助。</p>
-
-<h2 id="0x4-参考:09e618735b296f7c44dd000a774e255f">0x4 参考</h2>
-
-<ul>
-<li>[1] <a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom_Filter Wiki</a></li>
-<li>[2] <a href="https://zh.wikipedia.org/wiki/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8">布隆过滤器 维基</a></li>
-<li>[3] <a href="https://github.com/jaybaird/python-bloomfilter/">python-bloomfilter</a></li>
-</ul>
+<p>有时候我们需要自动完成一系列的名单，但是这些命令需要交互，比如SSH，需要人工输入密码，这个时候我们可以写一个expect脚本来完成这些任务。<br />
+expect被运用在大多数的运维脚本上，当然很多编程语言里面也提供相应的封装库，比如Python中的<a href="https://pypi.python.org/pypi/pexpect/4.0.1" title="Python pexpect">pexpect</a>，PHP中的expect://伪协议以及<a href="http://php.net/manual/zh/function.expect-expectl.php" title="PHP expect-expectl">expect_expectl函数</a></p>
 
   </div>
   <div id="disqus_thread"></div>
