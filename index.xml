@@ -6,8 +6,201 @@
     <description>Recent content on HuangJacky技术分享</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Feb 2016 13:31:43 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 20 Feb 2016 12:14:11 +0800</lastBuildDate>
     <atom:link href="http://huangjacky.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>《Python高级编程》翻译 第四章 魔法方法</title>
+      <link>http://huangjacky.github.io/translate/professional-python-4/</link>
+      <pubDate>Sat, 20 Feb 2016 12:14:11 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/translate/professional-python-4/</guid>
+      <description>
+
+&lt;h2 id=&#34;第四章-魔法方法:e7705e0053df13570ed598ac1c588691&#34;&gt;第四章 魔法方法&lt;/h2&gt;
+
+&lt;p&gt;Python类中有许多可选自定义方法，定义后，它们将会在类实例对应的情况下被触发。例如，一个类需要它的实例可以执行等价操作，那么就可以考虑定义&lt;strong&gt;__eq__&lt;/strong&gt;方法。而当定义了&lt;strong&gt;__eq__&lt;/strong&gt;方法后，实例通过相等运算符&lt;strong&gt;==&lt;/strong&gt;进行比较时就会触发。&lt;br /&gt;
+这些“魔法方法”的目的是重载Python的运算符和内置函数。为了避免程序员不小心定义同名的函数，魔法方法定义都使用&lt;strong&gt;__&lt;/strong&gt;开头的语法。魔法方法可以提供给内置类（包括简单类型：整数和字符串），也支持自定义类。在Python中测试等价操作，不管测试对象是两个整数，或者你应用中一个类的两个实例，或者两个不同类的实例对象，你都应该使用==操作符。&lt;br /&gt;
+本章将会探索魔法方法是怎么工作的以及它们适用的情况。&lt;/p&gt;
+
+&lt;h3 id=&#34;魔法方法语法:e7705e0053df13570ed598ac1c588691&#34;&gt;魔法方法语法&lt;/h3&gt;
+
+&lt;p&gt;在Python中魔法方法遵守固定的模式：它们的名字两边总是被__包裹起来。例如当一个对象初始化的时候，&lt;strong&gt;__init__&lt;/strong&gt;(并不是init方法)将会执行。&lt;br /&gt;
+这个约定在一定程度上保证了未来发展，只要你在命名方法时候不在开始和结束都是用双下划线(&lt;strong&gt;__&lt;/strong&gt;)的情况下，你可以随意命名你的方法，而不用担心这个方法在后续Python中会被系统占用。&lt;br /&gt;
+为了方便在口头上谈论这些方法，人们发明一个术语“dunder”。因此__init__就被叫做dunder-init。&lt;br /&gt;
+每一个魔法方法都有特殊的目的，它们就像钩子一样只在特殊的场景下被触发。例如，__init__只会在创建一个类对象的时候才会运行。考虑如下的简单类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MyClass(object):
+  def __init__(self):
+    print(&#39;The __init__ method is running!!!&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当然这个类除了在初始化时候向标准输出打印文本外不会干任何事。但是这个例子用来表明__init__被触发的条件已经足够了，调用代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;mc = MyClass()
+### 此时命令行输出如下内容：
+The __init__ method is running!!!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上面代码中最重要的一点是：我们并没有直接调用__init__方法，但是Python解析器知道在对象初始化的时候调用__init__方法。&lt;br /&gt;
+每一个魔法方法都是这样工作的，它们使用特定拼写和方法签名(有时方法是一个对象)，然后再特定的情况下方法被执行。&lt;br /&gt;
+前面提到的__eq__方法，它的参数一个是“self”，表示对象自身，第二个参数表示被用来比较的对象。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MyClass(object):
+  def __eq__(self, other):
+    # 所有MyClass类的实例对象都是等价的，而和其他类的实例对象都不相等，返回False
+    return type(self) == type(other)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;注意到__eq__方法的第二个参数,&amp;ldquo;other&amp;rdquo;,因为Python使用==运算符进行等价判断的时候就会执行__eq__方法，other参数会被设置在==运算符的另一侧。&lt;br /&gt;
+上面__eq__的例子只是简单判断另外一个对象是不是MyClass的实例。因此执行以下代码可以得到如下结果：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;MyClass() == MyClass()
+### 此时命令行输出如下内容：
+True
+MyClass() == 42
+### 此时命令行输出如下内容：
+False
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;两个不同的MyClass对象是相等的，因为isinstance(other,type(self))返回True，另一面，42的类型是int，而不是MyClass，那么__eq__方法或者==运算符就会返回False。&lt;/p&gt;
+
+&lt;h3 id=&#34;有效的魔法方法:e7705e0053df13570ed598ac1c588691&#34;&gt;有效的魔法方法&lt;/h3&gt;
+
+&lt;h4 id=&#34;构造和析构:e7705e0053df13570ed598ac1c588691&#34;&gt;构造和析构&lt;/h4&gt;
+
+&lt;h5 id=&#34;init:e7705e0053df13570ed598ac1c588691&#34;&gt;__init__&lt;/h5&gt;
+
+&lt;h5 id=&#34;new:e7705e0053df13570ed598ac1c588691&#34;&gt;__new__&lt;/h5&gt;
+
+&lt;h5 id=&#34;del:e7705e0053df13570ed598ac1c588691&#34;&gt;__del__&lt;/h5&gt;
+
+&lt;h4 id=&#34;类型转换:e7705e0053df13570ed598ac1c588691&#34;&gt;类型转换&lt;/h4&gt;
+
+&lt;h5 id=&#34;str-unicode-以及-bytes:e7705e0053df13570ed598ac1c588691&#34;&gt;__str__,__unicode__以及__bytes__&lt;/h5&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>NFC安全的探讨</title>
+      <link>http://huangjacky.github.io/post/nfc-security-1/</link>
+      <pubDate>Thu, 18 Feb 2016 19:12:06 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/post/nfc-security-1/</guid>
+      <description>
+
+&lt;h2 id=&#34;0x1-nfc介绍:b46d1cdc865ed3206ad6adb582745f39&#34;&gt;0x1 NFC介绍&lt;/h2&gt;
+
+&lt;p&gt;NFC的全称是Near Field Communication，中文名称叫做近场通讯，它是基于RFID技术的一种短距高频的无线技术，工作频率主要集中在13.56MHz&lt;/p&gt;
+
+&lt;h2 id=&#34;0x5-参考:b46d1cdc865ed3206ad6adb582745f39&#34;&gt;0x5 参考&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;1&#34;&gt;near field communication&lt;/a&gt;
+2.
+[1] &lt;a href=&#34;http://www.nearfieldcommunication.org/nfc-security.html&#34;&gt;http://www.nearfieldcommunication.org/nfc-security.html&lt;/a&gt; &amp;ldquo;NFC Security&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>scikit-learn的学习笔记 1</title>
+      <link>http://huangjacky.github.io/post/scikitlearn-1/</link>
+      <pubDate>Thu, 18 Feb 2016 18:27:15 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/post/scikitlearn-1/</guid>
+      <description>
+
+&lt;h2 id=&#34;如何使用scikit-learn进行机器学习:6aea5f4659458d5da76002eca2a05fb1&#34;&gt;如何使用scikit-learn进行机器学习&lt;/h2&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>我的Python机器学习笔记.1</title>
+      <link>http://huangjacky.github.io/post/python-machinelearn1/</link>
+      <pubDate>Sun, 14 Feb 2016 20:15:16 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/post/python-machinelearn1/</guid>
+      <description>
+
+&lt;h2 id=&#34;0x1-机器学习的分类:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;0x1 机器学习的分类&lt;/h2&gt;
+
+&lt;p&gt;机器学习主要分成：
+1. 监督学习 supervised learning
+2. 无监督学习 unsupervised learning
+3. 强化学习 enforcement learning&lt;/p&gt;
+
+&lt;h3 id=&#34;机器学习的算法和用途:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;机器学习的算法和用途&lt;/h3&gt;
+
+&lt;h4 id=&#34;监督学习:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;监督学习：&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;k-邻近算法  线性回归&lt;/li&gt;
+&lt;li&gt;朴素贝叶斯算法  局部加权线性回归&lt;/li&gt;
+&lt;li&gt;支持向量机  ridge回归&lt;/li&gt;
+&lt;li&gt;决策树  lasso最小回归系数估计&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;无监督学习:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;无监督学习：&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;k-均值  最大期望算法&lt;/li&gt;
+&lt;li&gt;DBSCAN  parzen窗设计&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;如何选择合适的算法:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;如何选择合适的算法&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;考虑机器学习算法的目的&lt;/li&gt;
+&lt;li&gt;确定目标变量的类型，离散型选择分类，连续值选择线性回归&lt;/li&gt;
+&lt;li&gt;考虑数据问题，已知样本是否充足等&lt;/li&gt;
+&lt;li&gt;没有最好的算法，因此在运行过程中，要运行不同算法来评估学习模型&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;机器学习应用程序的步骤:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;机器学习应用程序的步骤&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;收集数据&lt;br /&gt;
+必要时为了节约时间可以直接使用公开的已有数据。&lt;/li&gt;
+&lt;li&gt;输入数据&lt;br /&gt;
+数据的格式要满足算法的需要，因此有时候需要转换格式。&lt;/li&gt;
+&lt;li&gt;分析数据&lt;br /&gt;
+人工分析数据有无异常，同时可以采用一维，二维和三维的图形来直观观察。&lt;/li&gt;
+&lt;li&gt;训练算法&lt;br /&gt;
+将格式化的数据通过学习算法来提取知识或信息，并存储，以便后续步骤使用。无监督学习不需要这一步。&lt;/li&gt;
+&lt;li&gt;测试算法&lt;br /&gt;
+使用测试数据样本来评估算法实际能力，如果不满意，分析原因要么重新选择算法，要么重新收集数据。&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;使用算法&lt;br /&gt;
+将机器学习算法转换成应用程序，投入到实际任务中，如果实际中还有问题数据，需要重复以上步骤。&lt;/p&gt;
+
+&lt;h2 id=&#34;0x2-python机器学习相关库:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;0x2 Python机器学习相关库&lt;/h2&gt;
+
+&lt;h3 id=&#34;安装:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;安装&lt;/h3&gt;
+
+&lt;p&gt;有网络的情况下，安装这些库都是非常简单的事。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;pip install numpy scipy matplotlib pandas scikit-learn
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;numpy&lt;/strong&gt;中又数组array和矩阵matrix两种数据类型，数据相似，但是是不同的类型，同样的运算符可能得到不同的结果。&lt;strong&gt;mat()&lt;/strong&gt;函数可以将数组转换成矩阵类型。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from numpy import *
+m = mat(random.rand(4,4))
+c = m.I * m
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;矩阵的运算，numpy内部数据采用c语言数据结构，更紧凑高效。&lt;/p&gt;
+
+&lt;h2 id=&#34;0x3-k-邻近算法:439a07facb543f750f6ac56cbaeeb58f&#34;&gt;0x3 k-邻近算法&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;优点：&lt;/strong&gt;精度高，对异常数据不敏感，无数据输入假定&lt;br /&gt;
+&lt;strong&gt;缺点：&lt;/strong&gt;计算复杂度和空间复杂度高&lt;br /&gt;
+&lt;strong&gt;适用数据范围：&lt;/strong&gt;数值型和标称型&lt;br /&gt;
+&lt;strong&gt;工作原理：&lt;/strong&gt;训练样本中的数据都已经分类且知道特征和分类之间的对应关系，当未知分类数据时，算法提取样本集中选择K个最相似数据的分类标签，然后从K个标签中选择出现次数最多的哪个标签作为预测值，一般K不超过20。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
     
     <item>
       <title>expect脚本入门</title>
@@ -252,7 +445,7 @@ $name &#39;/^[a-z0-9]+$/i&#39;
 &lt;h2 id=&#34;0x3:af64df5535833d56354a810c9b55c190&#34;&gt;0x3&lt;/h2&gt;
 
 &lt;p&gt;编程语言安全开发规范列表&lt;br /&gt;
-暂无&lt;/p&gt;
+1. &lt;a href=&#34;http://huangjacky.github.io/post/docs-php-secure-coding/&#34;&gt;PHP安全开发规范&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;0x4-参考索引:af64df5535833d56354a810c9b55c190&#34;&gt;0x4 参考索引&lt;/h2&gt;
 

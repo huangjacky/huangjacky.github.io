@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>《Python高级编程》翻译 第四章 魔法方法 &middot; HuangJacky</title>
+
+  
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://huangjacky.github.io/css/highlight/monokai.css">
+  <link rel="stylesheet" href="http://fonts.useso.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://huangjacky.github.io/touch-icon-144-precomposed.png">
+  <link href="http://huangjacky.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="《professional python》是一本好书，书中阐述很多Python的高级编程技巧，因此个人对它进行了简单翻译，可能不专业，请大家不要见笑">
+  <meta name="keywords" content="python,高级编程">
+  
+</head>
+<body class="theme-base-08">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/img/head.jpg"
+             alt="gravatar" title="HuangJacky">
+      <h1>HuangJacky</h1>
+      <p class="lead">略懂<strong>安全</strong>的程序狗，汪汪</p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://huangjacky.github.io/"><i class="fa fa-home"></i>首页</a></li>
+      
+      <li class="sidebar-nav-item"><i class='fa fa-list-alt'></i><a href="http://huangjacky.github.io/categories/docs/">规范</a></li>
+      
+      <li class="sidebar-nav-item"><i class='fa fa-archive'></i><a href="http://huangjacky.github.io/resume/">简历</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/huangjacky"><i class="fa fa-github-square fa-2x"></i></a>
+      <a href="http://weixin.qq.com/r/peHF3cnE-ZSCrY2_97S3"><i class="fa fa-wechat fa-2x"></i></a>
+      <a href="http://qm.qq.com/cgi-bin/qm/qr?k=61Z4zEVBnzQlGqLQqc2zDvkD8XmNhPBN"><i class="fa fa-qq fa-2x"></i></a>
+      <a href="http://www.linkedin.com/in/jacky-huang-3613044a"><i class="fa fa-linkedin-square fa-2x"></i></a>
+      
+      
+      <a href="https://twitter.com/fiend0513"><i class="fa fa-twitter-square fa-2x"></i></a>
+      <a href="http://www.weibo.com/huangjacky"><i class="fa fa-weibo fa-2x"></i></a>
+      <a href="http://huangjacky.github.io/index.xml" type="application/rss+xml"><i class="fa fa-rss-square fa-2x"></i></a>
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://huangjacky.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>《Python高级编程》翻译 第四章 魔法方法</h1>
+    
+
+<h2 id="第四章-魔法方法:e7705e0053df13570ed598ac1c588691">第四章 魔法方法</h2>
+
+<p>Python类中有许多可选自定义方法，定义后，它们将会在类实例对应的情况下被触发。例如，一个类需要它的实例可以执行等价操作，那么就可以考虑定义<strong>__eq__</strong>方法。而当定义了<strong>__eq__</strong>方法后，实例通过相等运算符<strong>==</strong>进行比较时就会触发。<br />
+这些“魔法方法”的目的是重载Python的运算符和内置函数。为了避免程序员不小心定义同名的函数，魔法方法定义都使用<strong>__</strong>开头的语法。魔法方法可以提供给内置类（包括简单类型：整数和字符串），也支持自定义类。在Python中测试等价操作，不管测试对象是两个整数，或者你应用中一个类的两个实例，或者两个不同类的实例对象，你都应该使用==操作符。<br />
+本章将会探索魔法方法是怎么工作的以及它们适用的情况。</p>
+
+<h3 id="魔法方法语法:e7705e0053df13570ed598ac1c588691">魔法方法语法</h3>
+
+<p>在Python中魔法方法遵守固定的模式：它们的名字两边总是被__包裹起来。例如当一个对象初始化的时候，<strong>__init__</strong>(并不是init方法)将会执行。<br />
+这个约定在一定程度上保证了未来发展，只要你在命名方法时候不在开始和结束都是用双下划线(<strong>__</strong>)的情况下，你可以随意命名你的方法，而不用担心这个方法在后续Python中会被系统占用。<br />
+为了方便在口头上谈论这些方法，人们发明一个术语“dunder”。因此__init__就被叫做dunder-init。<br />
+每一个魔法方法都有特殊的目的，它们就像钩子一样只在特殊的场景下被触发。例如，__init__只会在创建一个类对象的时候才会运行。考虑如下的简单类：</p>
+
+<pre><code class="language-python">class MyClass(object):
+  def __init__(self):
+    print('The __init__ method is running!!!')
+</code></pre>
+
+<p>当然这个类除了在初始化时候向标准输出打印文本外不会干任何事。但是这个例子用来表明__init__被触发的条件已经足够了，调用代码如下：</p>
+
+<pre><code class="language-python">mc = MyClass()
+### 此时命令行输出如下内容：
+The __init__ method is running!!!
+</code></pre>
+
+<p>上面代码中最重要的一点是：我们并没有直接调用__init__方法，但是Python解析器知道在对象初始化的时候调用__init__方法。<br />
+每一个魔法方法都是这样工作的，它们使用特定拼写和方法签名(有时方法是一个对象)，然后再特定的情况下方法被执行。<br />
+前面提到的__eq__方法，它的参数一个是“self”，表示对象自身，第二个参数表示被用来比较的对象。</p>
+
+<pre><code class="language-python">class MyClass(object):
+  def __eq__(self, other):
+    # 所有MyClass类的实例对象都是等价的，而和其他类的实例对象都不相等，返回False
+    return type(self) == type(other)
+</code></pre>
+
+<p>注意到__eq__方法的第二个参数,&ldquo;other&rdquo;,因为Python使用==运算符进行等价判断的时候就会执行__eq__方法，other参数会被设置在==运算符的另一侧。<br />
+上面__eq__的例子只是简单判断另外一个对象是不是MyClass的实例。因此执行以下代码可以得到如下结果：</p>
+
+<pre><code class="language-python">MyClass() == MyClass()
+### 此时命令行输出如下内容：
+True
+MyClass() == 42
+### 此时命令行输出如下内容：
+False
+</code></pre>
+
+<p>两个不同的MyClass对象是相等的，因为isinstance(other,type(self))返回True，另一面，42的类型是int，而不是MyClass，那么__eq__方法或者==运算符就会返回False。</p>
+
+<h3 id="有效的魔法方法:e7705e0053df13570ed598ac1c588691">有效的魔法方法</h3>
+
+<h4 id="构造和析构:e7705e0053df13570ed598ac1c588691">构造和析构</h4>
+
+<h5 id="init:e7705e0053df13570ed598ac1c588691">__init__</h5>
+
+<h5 id="new:e7705e0053df13570ed598ac1c588691">__new__</h5>
+
+<h5 id="del:e7705e0053df13570ed598ac1c588691">__del__</h5>
+
+<h4 id="类型转换:e7705e0053df13570ed598ac1c588691">类型转换</h4>
+
+<h5 id="str-unicode-以及-bytes:e7705e0053df13570ed598ac1c588691">__str__,__unicode__以及__bytes__</h5>
+
+  </div>
+</div>
+<script src="http://huangjacky.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=54457625" charset="UTF-8"></script>
+</body>
+</html>

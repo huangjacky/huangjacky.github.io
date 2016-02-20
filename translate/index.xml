@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Translates on HuangJacky技术分享</title>
+    <link>http://huangjacky.github.io/translate/</link>
+    <description>Recent content in Translates on HuangJacky技术分享</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 20 Feb 2016 12:14:11 +0800</lastBuildDate>
+    <atom:link href="http://huangjacky.github.io/translate/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>《Python高级编程》翻译 第四章 魔法方法</title>
+      <link>http://huangjacky.github.io/translate/professional-python-4/</link>
+      <pubDate>Sat, 20 Feb 2016 12:14:11 +0800</pubDate>
+      
+      <guid>http://huangjacky.github.io/translate/professional-python-4/</guid>
+      <description>
+
+&lt;h2 id=&#34;第四章-魔法方法:e7705e0053df13570ed598ac1c588691&#34;&gt;第四章 魔法方法&lt;/h2&gt;
+
+&lt;p&gt;Python类中有许多可选自定义方法，定义后，它们将会在类实例对应的情况下被触发。例如，一个类需要它的实例可以执行等价操作，那么就可以考虑定义&lt;strong&gt;__eq__&lt;/strong&gt;方法。而当定义了&lt;strong&gt;__eq__&lt;/strong&gt;方法后，实例通过相等运算符&lt;strong&gt;==&lt;/strong&gt;进行比较时就会触发。&lt;br /&gt;
+这些“魔法方法”的目的是重载Python的运算符和内置函数。为了避免程序员不小心定义同名的函数，魔法方法定义都使用&lt;strong&gt;__&lt;/strong&gt;开头的语法。魔法方法可以提供给内置类（包括简单类型：整数和字符串），也支持自定义类。在Python中测试等价操作，不管测试对象是两个整数，或者你应用中一个类的两个实例，或者两个不同类的实例对象，你都应该使用==操作符。&lt;br /&gt;
+本章将会探索魔法方法是怎么工作的以及它们适用的情况。&lt;/p&gt;
+
+&lt;h3 id=&#34;魔法方法语法:e7705e0053df13570ed598ac1c588691&#34;&gt;魔法方法语法&lt;/h3&gt;
+
+&lt;p&gt;在Python中魔法方法遵守固定的模式：它们的名字两边总是被__包裹起来。例如当一个对象初始化的时候，&lt;strong&gt;__init__&lt;/strong&gt;(并不是init方法)将会执行。&lt;br /&gt;
+这个约定在一定程度上保证了未来发展，只要你在命名方法时候不在开始和结束都是用双下划线(&lt;strong&gt;__&lt;/strong&gt;)的情况下，你可以随意命名你的方法，而不用担心这个方法在后续Python中会被系统占用。&lt;br /&gt;
+为了方便在口头上谈论这些方法，人们发明一个术语“dunder”。因此__init__就被叫做dunder-init。&lt;br /&gt;
+每一个魔法方法都有特殊的目的，它们就像钩子一样只在特殊的场景下被触发。例如，__init__只会在创建一个类对象的时候才会运行。考虑如下的简单类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MyClass(object):
+  def __init__(self):
+    print(&#39;The __init__ method is running!!!&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当然这个类除了在初始化时候向标准输出打印文本外不会干任何事。但是这个例子用来表明__init__被触发的条件已经足够了，调用代码如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;mc = MyClass()
+### 此时命令行输出如下内容：
+The __init__ method is running!!!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上面代码中最重要的一点是：我们并没有直接调用__init__方法，但是Python解析器知道在对象初始化的时候调用__init__方法。&lt;br /&gt;
+每一个魔法方法都是这样工作的，它们使用特定拼写和方法签名(有时方法是一个对象)，然后再特定的情况下方法被执行。&lt;br /&gt;
+前面提到的__eq__方法，它的参数一个是“self”，表示对象自身，第二个参数表示被用来比较的对象。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MyClass(object):
+  def __eq__(self, other):
+    # 所有MyClass类的实例对象都是等价的，而和其他类的实例对象都不相等，返回False
+    return type(self) == type(other)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;注意到__eq__方法的第二个参数,&amp;ldquo;other&amp;rdquo;,因为Python使用==运算符进行等价判断的时候就会执行__eq__方法，other参数会被设置在==运算符的另一侧。&lt;br /&gt;
+上面__eq__的例子只是简单判断另外一个对象是不是MyClass的实例。因此执行以下代码可以得到如下结果：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;MyClass() == MyClass()
+### 此时命令行输出如下内容：
+True
+MyClass() == 42
+### 此时命令行输出如下内容：
+False
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;两个不同的MyClass对象是相等的，因为isinstance(other,type(self))返回True，另一面，42的类型是int，而不是MyClass，那么__eq__方法或者==运算符就会返回False。&lt;/p&gt;
+
+&lt;h3 id=&#34;有效的魔法方法:e7705e0053df13570ed598ac1c588691&#34;&gt;有效的魔法方法&lt;/h3&gt;
+
+&lt;h4 id=&#34;构造和析构:e7705e0053df13570ed598ac1c588691&#34;&gt;构造和析构&lt;/h4&gt;
+
+&lt;h5 id=&#34;init:e7705e0053df13570ed598ac1c588691&#34;&gt;__init__&lt;/h5&gt;
+
+&lt;h5 id=&#34;new:e7705e0053df13570ed598ac1c588691&#34;&gt;__new__&lt;/h5&gt;
+
+&lt;h5 id=&#34;del:e7705e0053df13570ed598ac1c588691&#34;&gt;__del__&lt;/h5&gt;
+
+&lt;h4 id=&#34;类型转换:e7705e0053df13570ed598ac1c588691&#34;&gt;类型转换&lt;/h4&gt;
+
+&lt;h5 id=&#34;str-unicode-以及-bytes:e7705e0053df13570ed598ac1c588691&#34;&gt;__str__,__unicode__以及__bytes__&lt;/h5&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
