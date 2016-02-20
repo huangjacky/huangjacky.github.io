@@ -10,25 +10,25 @@
     <atom:link href="http://huangjacky.github.io/categories/python/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>《Python高级编程》翻译 第四章 魔法方法</title>
+      <title>《Python高级编程》翻译 第四章 魔术方法</title>
       <link>http://huangjacky.github.io/translate/professional-python-4/</link>
       <pubDate>Sat, 20 Feb 2016 12:14:11 +0800</pubDate>
       
       <guid>http://huangjacky.github.io/translate/professional-python-4/</guid>
       <description>
 
-&lt;h2 id=&#34;第四章-魔法方法:e7705e0053df13570ed598ac1c588691&#34;&gt;第四章 魔法方法&lt;/h2&gt;
+&lt;h2 id=&#34;第四章-魔术方法:e7705e0053df13570ed598ac1c588691&#34;&gt;第四章 魔术方法&lt;/h2&gt;
 
 &lt;p&gt;Python类中有许多可选自定义方法，定义后，它们将会在类实例对应的情况下被触发。例如，一个类需要它的实例可以执行等价操作，那么就可以考虑定义&lt;strong&gt;__eq__&lt;/strong&gt;方法。而当定义了&lt;strong&gt;__eq__&lt;/strong&gt;方法后，实例通过相等运算符&lt;strong&gt;==&lt;/strong&gt;进行比较时就会触发。&lt;br /&gt;
-这些“魔法方法”的目的是重载Python的运算符和内置函数。为了避免程序员不小心定义同名的函数，魔法方法定义都使用&lt;strong&gt;__&lt;/strong&gt;开头的语法。魔法方法可以提供给内置类（包括简单类型：整数和字符串），也支持自定义类。在Python中测试等价操作，不管测试对象是两个整数，或者你应用中一个类的两个实例，或者两个不同类的实例对象，你都应该使用==操作符。&lt;br /&gt;
-本章将会探索魔法方法是怎么工作的以及它们适用的情况。&lt;/p&gt;
+这些“魔术方法”的目的是重载Python的运算符和内置函数。为了避免程序员不小心定义同名的函数，魔术方法定义都使用&lt;strong&gt;__&lt;/strong&gt;开头的语法。魔术方法可以提供给内置类（包括简单类型：整数和字符串），也支持自定义类。在Python中测试等价操作，不管测试对象是两个整数，或者你应用中一个类的两个实例，或者两个不同类的实例对象，你都应该使用==操作符。&lt;br /&gt;
+本章将会探索魔术方法是怎么工作的以及它们适用的情况。&lt;/p&gt;
 
-&lt;h3 id=&#34;魔法方法语法:e7705e0053df13570ed598ac1c588691&#34;&gt;魔法方法语法&lt;/h3&gt;
+&lt;h3 id=&#34;魔术方法语法:e7705e0053df13570ed598ac1c588691&#34;&gt;魔术方法语法&lt;/h3&gt;
 
-&lt;p&gt;在Python中魔法方法遵守固定的模式：它们的名字两边总是被__包裹起来。例如当一个对象初始化的时候，&lt;strong&gt;__init__&lt;/strong&gt;(并不是init方法)将会执行。&lt;br /&gt;
+&lt;p&gt;在Python中魔术方法遵守固定的模式：它们的名字两边总是被__包裹起来。例如当一个对象初始化的时候，&lt;strong&gt;__init__&lt;/strong&gt;(并不是init方法)将会执行。&lt;br /&gt;
 这个约定在一定程度上保证了未来发展，只要你在命名方法时候不在开始和结束都是用双下划线(&lt;strong&gt;__&lt;/strong&gt;)的情况下，你可以随意命名你的方法，而不用担心这个方法在后续Python中会被系统占用。&lt;br /&gt;
 为了方便在口头上谈论这些方法，人们发明一个术语“dunder”。因此__init__就被叫做dunder-init。&lt;br /&gt;
-每一个魔法方法都有特殊的目的，它们就像钩子一样只在特殊的场景下被触发。例如，__init__只会在创建一个类对象的时候才会运行。考虑如下的简单类：&lt;/p&gt;
+每一个魔术方法都有特殊的目的，它们就像钩子一样只在特殊的场景下被触发。例如，__init__只会在创建一个类对象的时候才会运行。考虑如下的简单类：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MyClass(object):
   def __init__(self):
@@ -43,7 +43,7 @@ The __init__ method is running!!!
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;上面代码中最重要的一点是：我们并没有直接调用__init__方法，但是Python解析器知道在对象初始化的时候调用__init__方法。&lt;br /&gt;
-每一个魔法方法都是这样工作的，它们使用特定拼写和方法签名(有时方法是一个对象)，然后再特定的情况下方法被执行。&lt;br /&gt;
+每一个魔术方法都是这样工作的，它们使用特定拼写和方法签名(有时方法是一个对象)，然后再特定的情况下方法被执行。&lt;br /&gt;
 前面提到的__eq__方法，它的参数一个是“self”，表示对象自身，第二个参数表示被用来比较的对象。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MyClass(object):
@@ -65,15 +65,83 @@ False
 
 &lt;p&gt;两个不同的MyClass对象是相等的，因为isinstance(other,type(self))返回True，另一面，42的类型是int，而不是MyClass，那么__eq__方法或者==运算符就会返回False。&lt;/p&gt;
 
-&lt;h3 id=&#34;有效的魔法方法:e7705e0053df13570ed598ac1c588691&#34;&gt;有效的魔法方法&lt;/h3&gt;
+&lt;h3 id=&#34;有效的魔术方法:e7705e0053df13570ed598ac1c588691&#34;&gt;有效的魔术方法&lt;/h3&gt;
+
+&lt;p&gt;Python解释器理解大量的魔术方法，来实现不同的目的，比如检查排序，还有语言特性钩子等。本书在第2章&amp;rdquo;上下文管理器&amp;rdquo;，第3章&amp;rdquo;生成器&amp;rdquo;中已经探索了部分特性。&lt;/p&gt;
 
 &lt;h4 id=&#34;构造和析构:e7705e0053df13570ed598ac1c588691&#34;&gt;构造和析构&lt;/h4&gt;
 
+&lt;p&gt;这些方法在类对象创建和销毁时候被触发。&lt;/p&gt;
+
 &lt;h5 id=&#34;init:e7705e0053df13570ed598ac1c588691&#34;&gt;__init__&lt;/h5&gt;
+
+&lt;p&gt;__init__方法在对象被创建后立即触发。它至少有一个self参数，还可以拥有任意数量的可选参数和关键字参数。&lt;br /&gt;
+此方法的签名是灵活的，因为传递给类实例化调用的参数都会被传递给__init__方法。&lt;br /&gt;
+考虑如下的类，使用了可以接受一个可选关键字参数的__init__方法：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import random
+class Dice(object):
+  &amp;quot;&amp;quot;&amp;quot;随机产生一个整数&amp;quot;&amp;quot;&amp;quot;
+  def __init__(self, sides=6):
+    self.sides = sides
+
+  def roll(self):
+    return random.randint(1, self.sides)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;实例化一个标准的六面骰子，你只需要不带参数来调用类实例化：die = Dice() 这将创建一个Dice类的实例，然后调用实例的__init__,只传递self参数，因为没有提供sides参数，那么sides就是默认值6。&lt;br /&gt;
+如果要创建d20对象，只需要简单的在调用Dice时传递对应的sides参数即可：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;d20 = Dice(20)
+d20.roll()
+### 此时命令行输出如下内容：内容1-20的随机整数
+18
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;值得注意的是__init__方法的目的不是创建对象(这是__new__方法的目的)，它的目的主要是为新建的对象初始化数据。这就是说__init__方法不会也不应该返回任何东西，在Python中所有的__init__方法都只会返回None，如果返回了其他任意值都会引起TypeError异常。&lt;br /&gt;
+__init__方法可能是自定义类里面最常见的魔术方法了，最适合以某种方式来给类对象添加自定义的属性。&lt;/p&gt;
 
 &lt;h5 id=&#34;new:e7705e0053df13570ed598ac1c588691&#34;&gt;__new__&lt;/h5&gt;
 
+&lt;p&gt;__new__方法实际上先于__init__被执行，__init__是对已经创建的类对象进行自定义初始化，而__new__则负责真正的创建对象并返回它。&lt;br /&gt;
+__new__是一个静态方法，但是我们不需要显式使用@static来装饰它，它的第一个参数也是最重要的参数，用来表明将要创建对象的类型的类名，为了方便，一般都写成cls。在大多数情况下，__new__方法中剩下的参数都会镜像传递给__init__。调用类的构造函数的参数首先会发送给__new__方法，毕竟它最先调用，然后在发送给__init__。&lt;br /&gt;
+实际上大多数的类都不需要自定义__new__方法，Python内置实现已经足够。如果一个类需要自定义__new__方法，无论实现任何功能之前必须应用基类实现。如下代码所示：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class MyClass(object):
+  def __new__(cls, other_args):
+    instance = super(MyClass, cls).__new__(cls, other_args)
+    ### 再对instance执行一系列操作, 最后需要返回类对象
+    return instance
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;通常情况，__new__方法都是返回需要实例化类的对象，但是有些情况并不是这样，如果此方法返回的值并不是该类的对象，那么接下来__init__方法方法是不会被执行的。(译者注：__new__方法与类关联，__init__方法则是与实例对象关联，比如A类new出来是B类的对象，那么接下来是执行B.__init__，这个特性在工厂模式中会有很大用途。)。你这样做，主要是原因，__init__方法只在实际创建的对象中执行，并不关心__new__中是如何创建这个类对象或者创建的什么类的对象。&lt;/p&gt;
+
 &lt;h5 id=&#34;del:e7705e0053df13570ed598ac1c588691&#34;&gt;__del__&lt;/h5&gt;
+
+&lt;p&gt;就像__new__和__init__方法在对象创建的时候执行一样，__del__方法在对象析构的时候被触发。在Python中很少有开发者直接去销毁对象(如果真需要这么做，你需要使用&lt;strong&gt;del&lt;/strong&gt;关键字),Python的内存管理机制足够支持垃圾回收来实现对象自动销毁。也就是说，不管对象是直接被删除还是因为内存回收，只要__del__被触发就意味着对象将要被销毁。你可以通过下面类删除来看到大致工作过程：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;class Xon(object):
+  def __del__(self):
+    print(&#39;deleted aaa&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果你创建一个Xon对象，但是不将它赋值给一个变量，那么它将会被垃圾回收给标记，当短期内程序其他语句运行需要，它的内存就将会被回收。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;Xon()
+#### 控制台输出： &amp;lt;__main__.Xon object at 0x1022b8890&amp;gt;
+&#39;foo&#39;
+#### 控制台输出：deleted aaa \n foo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这里发生了什么？首先，创建了一个Xon对象，但是没有赋值，因此Python解释器并不会保留它太久，然后，当执行一个常量字符串的时候，Python解释器需要使用内存(当然这个字符串也没有赋值，也不会保留太久)。内存操作将会触发垃圾回收机制，它将会遍历内存回收标记表，找到之前创建Xon对象，并将它删除，从而触发__del__方法向控制台打印了如上的内容。&lt;br /&gt;
+如果你使用delete你会更快速的看见和上面例子一样的效果。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;x = Xon()
+del x
+### 控制台输出： deleted aaa
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;两种情况，原理都一样，不管是代码中直接删除还是垃圾回收，__del__方法都会被调用。值得注意的是：在__del__无法有意义的抛出异常，因为删除操作通常都是由垃圾回收器来触发，它并没有异常捕获，所以如果在__del__中抛出任何异常都会被打印到标准错误中，综上所述，此方法中并不适合抛出异常。&lt;/p&gt;
 
 &lt;h4 id=&#34;类型转换:e7705e0053df13570ed598ac1c588691&#34;&gt;类型转换&lt;/h4&gt;
 
