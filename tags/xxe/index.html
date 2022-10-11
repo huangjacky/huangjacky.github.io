@@ -60,7 +60,7 @@
   <link rel="stylesheet" type="text/css" href="https://blog.sectrain.cn/css/lightbox.css">
   <script src="https://blog.sectrain.cn/js/lightbox.min.js"></script>
   
-<script src="https://arh.antoinevastel.com/javascripts/fpCollect.min.js"></script>
+<script src="https://blog.sectrain.cn/js/fpCollect.min.js"></script>
   
 
   
@@ -171,16 +171,13 @@
     <script src="https://blog.sectrain.cn/js/beian.js"></script>
     <script >
     document.addEventListener('DOMContentLoaded', function() {
-(async() => {
-			const fingerprint = await fpCollect.generateFingerprint();
-			const xhr = new XMLHttpRequest();
-
-			xhr.open('POST', 'https://check.huangjacky.vip/bot/check');
-			xhr.setRequestHeader('Content-Type', 'application/json');
-			
-			fingerprint.url = window.location.href;
-			xhr.send(JSON.stringify(fingerprint));
-		})();
+            fpCollect.generateFingerprint((fingerprint)=>{
+			    const xhr = new XMLHttpRequest();
+			    xhr.open('POST', 'https://check.huangjacky.vip/bot/check');
+			    xhr.setRequestHeader('Content-Type', 'application/json');
+			    fingerprint.url = window.location.href;
+			    xhr.send(JSON.stringify(fingerprint));
+            });
 });
     </script>
 </div>
