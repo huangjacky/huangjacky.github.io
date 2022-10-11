@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>编程 on SecTrain安全博客</title>
-    <link>http://blog.sectrain.cn/categories/%E7%BC%96%E7%A8%8B/</link>
+    <link>https://blog.sectrain.cn/categories/%E7%BC%96%E7%A8%8B/</link>
     <description>Recent content in 编程 on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 14 Jun 2018 11:42:14 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/categories/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 14 Jun 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://blog.sectrain.cn/categories/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lua - 编程中几种空值的判断</title>
-      <link>http://blog.sectrain.cn/posts/lua-null/</link>
+      <link>https://blog.sectrain.cn/posts/lua-null/</link>
       <pubDate>Thu, 14 Jun 2018 11:42:14 +0800</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/lua-null/</guid>
+      <guid>https://blog.sectrain.cn/posts/lua-null/</guid>
       <description>0x00 背景 最近在写一段nginx+redis的代码，主要基于openresty，其中使用到了lua-resty-redis库。我平时写代码都比较小心，针对外部输入的值一般都会进行异常判断，大概的代码如下：
 local redis = require &amp;#34;redis&amp;#34; local cjson = require &amp;#34;cjson&amp;#34; --[[省略部分代码]] local ok, err = redis:get(&amp;#34;key&amp;#34;) if not ok then ngx.log(ngx.ERR, &amp;#39;[ERROR]:&amp;#39;, err) return end local data = cjson.decode(ok) 在decode这里出现了错误提示，但是ok并没有为空或者nil，不然代码是走不到这里来。
 发现问题后，我们就在前面打印一下ok数据的类型吧，大概的代码如下：
@@ -23,10 +23,10 @@ local function _read_reply(self, sock) local line, err = sock:receive() if not l
     
     <item>
       <title>Nginx错误码502和504的区别</title>
-      <link>http://blog.sectrain.cn/posts/nginx-502-504-diff/</link>
+      <link>https://blog.sectrain.cn/posts/nginx-502-504-diff/</link>
       <pubDate>Mon, 29 May 2017 12:00:00 +0000</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/nginx-502-504-diff/</guid>
+      <guid>https://blog.sectrain.cn/posts/nginx-502-504-diff/</guid>
       <description>0x00 前言 某日某B：我们系统出现了504,你赶紧去问问PHP的人有什么错误日志？
 某A：我已经问过，PHP的人说没有日志。
 某B：PHP那面的人说的话你不要相信，赶紧再去查一遍。
@@ -43,10 +43,10 @@ static void ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u
     
     <item>
       <title>phantomjs - 支持地理位置API</title>
-      <link>http://blog.sectrain.cn/posts/phantomjs-geoloaction-api/</link>
+      <link>https://blog.sectrain.cn/posts/phantomjs-geoloaction-api/</link>
       <pubDate>Sun, 26 Mar 2017 21:20:23 +0800</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/phantomjs-geoloaction-api/</guid>
+      <guid>https://blog.sectrain.cn/posts/phantomjs-geoloaction-api/</guid>
       <description>目前phantomjs并不支持GeolocationAPI,但是我们可以手动编写一个js文件, 用自己的代码实现常见的Geolocation API.
 var webPage = require(&amp;#39;webpage&amp;#39;); var page = webPage.create(); //TODO other codes //初始化之前插入一些常用js utils page.onInitialized = function(){ //模拟地理定位.  page.injectJs(&amp;#34;fake-location.js&amp;#34;); }; fake-location.js的代码也比较简单:
 /** * @author huangjacky * @desc 模拟实现浏览器的获取地理位置的api */ window.navigator.geolocation = { getCurrentPosition: function (success, failure) { success({ coords: { //模拟华中科技大学产学研基地  latitude: 22.52902, longitude: 113.94376 }, timestamp: Date.now() }); }, watchPosition: function(success, failure){ success({ coords: { //模拟华中科技大学产学研基地  latitude: 22.52902, longitude: 113.94376 }, timestamp: Date.now() }); } }; </description>
@@ -54,10 +54,10 @@ var webPage = require(&amp;#39;webpage&amp;#39;); var page = webPage.create(); /
     
     <item>
       <title>SQL中显示所有相同的记录</title>
-      <link>http://blog.sectrain.cn/posts/show_all_same_sql/</link>
+      <link>https://blog.sectrain.cn/posts/show_all_same_sql/</link>
       <pubDate>Sun, 26 Mar 2017 14:33:16 +0800</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/show_all_same_sql/</guid>
+      <guid>https://blog.sectrain.cn/posts/show_all_same_sql/</guid>
       <description>select * from t_cgi WHERE (cHost,cUri) in ( select cHost,cUri from t_cgi GROUP BY cHost,cUri HAVING COUNT(cHash)&amp;gt; 1 ) ORDER BY CONCAT(cHost,cUri) 因为需要统计,所以必须要用GROUP BY, 然后用HAVING COUNT进行判断数据记录数, 这里有一个问题,就是因为是两个字段,所以在获取时候的WHERE IN需要用括号括起来. 附录:表结构
 CREATE TABLE t_cgi( cHash CHAR(32) UNIQUE, cHost VARCHAR(32) NOT NULL , cUri VARCHAR(64) NOT NULL DEFAULT &amp;#39;/&amp;#39;, cRaw TEXT , cTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (cHash) ) </description>
     </item>

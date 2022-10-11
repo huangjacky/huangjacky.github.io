@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>wechat on SecTrain安全博客</title>
-    <link>http://blog.sectrain.cn/tags/wechat/</link>
+    <link>https://blog.sectrain.cn/tags/wechat/</link>
     <description>Recent content in wechat on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 04 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/tags/wechat/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 04 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://blog.sectrain.cn/tags/wechat/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>微信支付SDK XXE漏洞简单分析</title>
-      <link>http://blog.sectrain.cn/posts/wxpay-xxe/</link>
+      <link>https://blog.sectrain.cn/posts/wxpay-xxe/</link>
       <pubDate>Wed, 04 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/wxpay-xxe/</guid>
+      <guid>https://blog.sectrain.cn/posts/wxpay-xxe/</guid>
       <description>微信支付商户端Java SDK XXE漏洞说明 0x00 漏洞影响 影响面 微信支付过程中，商家的服务器需要和微信的服务器进行通讯，需要等待微信服务器通知商家交易完成，比如流水等信息，商家提供的这样接口我们称之为微信回调接口。微信官方为了简化开发门槛，提供了JAVA和PHP的SDK。很不幸，JAVA SDK在近日曝出有重大安全问题。 因此使用了该SDK的服务器，都可能被黑客攻击，造成远程命令执行，敏感信息窃取等，此漏洞属于高危级别，请尽快修复。
 修复方案 下载并使用最新的JAVA SDK。https://pay.weixin.qq.com/wiki/doc/api/download/WxPayAPI_JAVA_v3.zip
 0x01 华为云配套服务 华为云Web应用防火墙 华为云WAF是客户网站和访问者之间一道安全检测卫士，它能够将恶意攻击有效的拦截在客户网站之外。华为云WAF默认支持XXE漏洞攻击的防御拦截。如果有客户来不及修复代码，升级到最新版本，请及时开启WAF防护。

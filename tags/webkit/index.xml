@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Webkit on SecTrain安全博客</title>
-    <link>http://blog.sectrain.cn/tags/webkit/</link>
+    <link>https://blog.sectrain.cn/tags/webkit/</link>
     <description>Recent content in Webkit on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/tags/webkit/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://blog.sectrain.cn/tags/webkit/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>关于爬虫本地JS Hook的研究</title>
-      <link>http://blog.sectrain.cn/posts/js_mocks/</link>
+      <link>https://blog.sectrain.cn/posts/js_mocks/</link>
       <pubDate>Sun, 12 Aug 2018 11:42:14 +0800</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/js_mocks/</guid>
+      <guid>https://blog.sectrain.cn/posts/js_mocks/</guid>
       <description>0x00 背景介绍 最早的爬虫，只需要能够从服务端获取到HTML代码，进行分析即可，随着Web2.0的普及，越来越多的网站都必须JavaScript解析之后才能正常显示。因此这也对爬虫提出了新的要求，当前前人们已经在爬虫中集成Webkit等框架来满足这样的需求。 本文将从实际漏洞扫描器项目中，爬虫遇到的一个问题作为切入点，简单的介绍一下爬虫过程中一些JavaScript上Mock或者Hook的技巧。
 0x01 需求 这里需求主要有两个：
 场景一：弹框阻碍流程 在网页中存在alert，prompt等弹出框，如果没有取消会造成webkit某些API运行异常。当前针对alert的情况，通常的框架都提供一些额外的解决方案，比如PhantomJS的onAlert()函数，Selenium的switch_to.alert().accept()。但是我们还是想和场景二一起使用Hook的方法来解决。

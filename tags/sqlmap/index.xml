@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SQLmap on SecTrain安全博客</title>
-    <link>http://blog.sectrain.cn/tags/sqlmap/</link>
+    <link>https://blog.sectrain.cn/tags/sqlmap/</link>
     <description>Recent content in SQLmap on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 20 Apr 2017 23:00:21 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/tags/sqlmap/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 20 Apr 2017 23:00:21 +0800</lastBuildDate><atom:link href="https://blog.sectrain.cn/tags/sqlmap/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>安全工具 - SQLmap的用法</title>
-      <link>http://blog.sectrain.cn/posts/sec-tools-sqlmap/</link>
+      <link>https://blog.sectrain.cn/posts/sec-tools-sqlmap/</link>
       <pubDate>Thu, 20 Apr 2017 23:00:21 +0800</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/sec-tools-sqlmap/</guid>
+      <guid>https://blog.sectrain.cn/posts/sec-tools-sqlmap/</guid>
       <description>0x00 序言 前一篇文章介绍了nmap的用法, 这次再介绍一个神器, 那就是SQLmap, 它作为SQL注入界自动化检测工具,能够实现高难度漏洞检测, 脱裤等工作,大大减少安全人员的时间.
 0x01 用法 拿到一个工具之前,我们可以用过帮助文档查看它一般的用法. 运行以下命令, 可以查看到详细的帮助:
 sqlmap -hh 目标选定 指定URL sqlmap -u &amp;#34;http://svip.qq.com/abc?d=1&amp;#34; 对指定的URL进行SQL注入检测

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Android on SecTrain安全博客</title>
-    <link>http://blog.sectrain.cn/tags/android/</link>
+    <link>https://blog.sectrain.cn/tags/android/</link>
     <description>Recent content in Android on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://blog.sectrain.cn/tags/android/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>WAF和SNI的前世今生</title>
-      <link>http://blog.sectrain.cn/posts/sni/</link>
+      <link>https://blog.sectrain.cn/posts/sni/</link>
       <pubDate>Thu, 12 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>http://blog.sectrain.cn/posts/sni/</guid>
+      <guid>https://blog.sectrain.cn/posts/sni/</guid>
       <description>0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。 SNI具体的内容在第三节中将会详细介绍，请稍等。
 0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下： TIPS：这个模拟器是基于X86架构，跑起来非常快，但是我们目标APP是ARM架构的，直接还不能运行，我们需要安装额外的ARM-Translate的，这个就不在本文中介绍了，后面我会专门有文章来介绍，或者有需要的朋友可以直接联系我。 我们就在宿主机上面用Wireshark抓包即可，抓包过程也非常简单，就是分别使用浏览器打开目标网址和用APP登录，我直接给出抓包截图，我们对比看一下吧。 首先是浏览器的抓包： 后面这个是APP的包 两者区别在于SSL握手时候Client的扩展字段有没有SNI字段。
 0x01 SNI介绍 SNI是Server Name Indication的缩写，是为了解决一个服务器使用多个域名和证书的SSL/TLS扩展。它允许客户端在发起SSL握手请求时（客户端发出ClientHello消息中）提交请求的HostName信息，使得服务器能够切换到正确的域并返回相应的证书。 在SNI出现之前，HostName信息只存在于HTTP请求中，但SSL/TLS层无法获知这一信息。通过将HostName的信息加入到SNI扩展中，SSL/TLS允许服务器使用一个IP为不同的域名提供不同的证书，从而能够与使用同一个IP的多个“虚拟主机”更方便地建立安全连接。

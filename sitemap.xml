@@ -2,136 +2,136 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://blog.sectrain.cn/categories/</loc>
+    <loc>https://blog.sectrain.cn/categories/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/</loc>
+    <loc>https://blog.sectrain.cn/posts/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/</loc>
+    <loc>https://blog.sectrain.cn/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/</loc>
+    <loc>https://blog.sectrain.cn/tags/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/webkit/</loc>
+    <loc>https://blog.sectrain.cn/tags/webkit/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/js_mocks/</loc>
+    <loc>https://blog.sectrain.cn/posts/js_mocks/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/categories/%E5%AE%89%E5%85%A8/</loc>
+    <loc>https://blog.sectrain.cn/categories/%E5%AE%89%E5%85%A8/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/android/</loc>
+    <loc>https://blog.sectrain.cn/tags/android/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/https/</loc>
+    <loc>https://blog.sectrain.cn/tags/https/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/nginx/</loc>
+    <loc>https://blog.sectrain.cn/tags/nginx/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/sni/</loc>
+    <loc>https://blog.sectrain.cn/posts/sni/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/waf-nginx-time-wait/</loc>
+    <loc>https://blog.sectrain.cn/posts/waf-nginx-time-wait/</loc>
     <lastmod>2018-07-09T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/socket/</loc>
+    <loc>https://blog.sectrain.cn/tags/socket/</loc>
     <lastmod>2018-07-09T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/categories/waf/</loc>
+    <loc>https://blog.sectrain.cn/categories/waf/</loc>
     <lastmod>2018-07-09T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/wechat/</loc>
+    <loc>https://blog.sectrain.cn/tags/wechat/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/xxe/</loc>
+    <loc>https://blog.sectrain.cn/tags/xxe/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/wxpay-xxe/</loc>
+    <loc>https://blog.sectrain.cn/posts/wxpay-xxe/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/categories/%E6%BC%8F%E6%B4%9E/</loc>
+    <loc>https://blog.sectrain.cn/categories/%E6%BC%8F%E6%B4%9E/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/lua/</loc>
+    <loc>https://blog.sectrain.cn/tags/lua/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/lua-null/</loc>
+    <loc>https://blog.sectrain.cn/posts/lua-null/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/null/</loc>
+    <loc>https://blog.sectrain.cn/tags/null/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/categories/%E7%BC%96%E7%A8%8B/</loc>
+    <loc>https://blog.sectrain.cn/categories/%E7%BC%96%E7%A8%8B/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/nginx-502-504-diff/</loc>
+    <loc>https://blog.sectrain.cn/posts/nginx-502-504-diff/</loc>
     <lastmod>2017-05-29T12:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/csrf/</loc>
+    <loc>https://blog.sectrain.cn/tags/csrf/</loc>
     <lastmod>2017-05-07T22:15:36+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/categories/web%E5%AE%89%E5%85%A8/</loc>
+    <loc>https://blog.sectrain.cn/categories/web%E5%AE%89%E5%85%A8/</loc>
     <lastmod>2017-05-07T22:15:36+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/vul-csrf-src-1/</loc>
+    <loc>https://blog.sectrain.cn/posts/vul-csrf-src-1/</loc>
     <lastmod>2017-05-07T22:15:36+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/sqlmap/</loc>
+    <loc>https://blog.sectrain.cn/tags/sqlmap/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/%E5%AE%89%E5%85%A8/</loc>
+    <loc>https://blog.sectrain.cn/tags/%E5%AE%89%E5%85%A8/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://blog.sectrain.cn/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/sec-tools-sqlmap/</loc>
+    <loc>https://blog.sectrain.cn/posts/sec-tools-sqlmap/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/nmap/</loc>
+    <loc>https://blog.sectrain.cn/tags/nmap/</loc>
     <lastmod>2017-04-17T10:44:28+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/sec-tools-nmap/</loc>
+    <loc>https://blog.sectrain.cn/posts/sec-tools-nmap/</loc>
     <lastmod>2017-04-17T10:44:28+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/python/</loc>
+    <loc>https://blog.sectrain.cn/tags/python/</loc>
     <lastmod>2017-04-02T09:28:03+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/categories/%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://blog.sectrain.cn/categories/%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2017-04-02T09:28:03+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/oschina-pages-auto-publish/</loc>
+    <loc>https://blog.sectrain.cn/posts/oschina-pages-auto-publish/</loc>
     <lastmod>2017-04-02T09:28:03+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/stegano-image/</loc>
+    <loc>https://blog.sectrain.cn/posts/stegano-image/</loc>
     <lastmod>2017-03-28T16:07:45+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/%E9%9A%90%E5%86%99/</loc>
+    <loc>https://blog.sectrain.cn/tags/%E9%9A%90%E5%86%99/</loc>
     <lastmod>2017-03-28T16:07:45+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/sql_inject/</loc>
+    <loc>https://blog.sectrain.cn/tags/sql_inject/</loc>
     <lastmod>2017-03-27T11:39:39+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/sql_inject/</loc>
+    <loc>https://blog.sectrain.cn/posts/sql_inject/</loc>
     <lastmod>2017-03-27T11:39:39+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/phantomjs/</loc>
+    <loc>https://blog.sectrain.cn/tags/phantomjs/</loc>
     <lastmod>2017-03-26T21:20:23+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/phantomjs-geoloaction-api/</loc>
+    <loc>https://blog.sectrain.cn/posts/phantomjs-geoloaction-api/</loc>
     <lastmod>2017-03-26T21:20:23+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/tags/mysql/</loc>
+    <loc>https://blog.sectrain.cn/tags/mysql/</loc>
     <lastmod>2017-03-26T14:33:16+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/posts/show_all_same_sql/</loc>
+    <loc>https://blog.sectrain.cn/posts/show_all_same_sql/</loc>
     <lastmod>2017-03-26T14:33:16+08:00</lastmod>
   </url><url>
-    <loc>http://blog.sectrain.cn/about/</loc>
+    <loc>https://blog.sectrain.cn/about/</loc>
     <lastmod>2017-03-26T11:54:45+08:00</lastmod>
   </url>
 </urlset>
