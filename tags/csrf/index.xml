@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CSRF on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/tags/csrf/</link>
+    <link>http://blog.sectrain.cn/tags/csrf/</link>
     <description>Recent content in CSRF on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 07 May 2017 22:15:36 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/tags/csrf/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 07 May 2017 22:15:36 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/tags/csrf/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>【漏洞公告】某平台一个有意思的CSRF</title>
-      <link>https://vul-hunters.gitee.io/posts/vul-csrf-src-1/</link>
+      <link>http://blog.sectrain.cn/posts/vul-csrf-src-1/</link>
       <pubDate>Sun, 07 May 2017 22:15:36 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/posts/vul-csrf-src-1/</guid>
+      <guid>http://blog.sectrain.cn/posts/vul-csrf-src-1/</guid>
       <description>0x00 背景 某日在给某集团平台提交报告的时候，出于习惯就想试试这个平台的安全性怎么样。
 总的来说，平台前面架设了WAF，一些常规的测试Payload都会被拦截，因此不适合强攻。其实随着安全越来越受重视，很多开发同学的安全意识也越来越高，常见的XSS和SQL注入的错误一般都会再犯。但是对于跨站请求伪造CSRF一般都没有太在意。主要原因是这类漏洞的危害不会像注入那样明显，但是威胁等级并不比它们低。
 0x01 案例 前面唠叨了这么多，接下来我们就说说这个具体的例子：

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>socket on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/tags/socket/</link>
+    <link>http://blog.sectrain.cn/tags/socket/</link>
     <description>Recent content in socket on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 09 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/tags/socket/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/tags/socket/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>NGINX WAF出现TIME_WAIT问题</title>
-      <link>https://vul-hunters.gitee.io/posts/waf-nginx-time-wait/</link>
+      <link>http://blog.sectrain.cn/posts/waf-nginx-time-wait/</link>
       <pubDate>Mon, 09 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/posts/waf-nginx-time-wait/</guid>
+      <guid>http://blog.sectrain.cn/posts/waf-nginx-time-wait/</guid>
       <description>0x00 问题描述 近日笔者参与的一款WAF产品，在大流量并发的况下，出现了部分请求500。这里的状态码有两种情况：WAF自身问题产生的内部服务器错误和后端上游服务器产生了内部错误透传过来的。当然这个还是比较好定位，只需要查看一下nginx的error_log即可，由于笔者这面log都是用ELK采集的，因此只需要在Kibana上面查看一下。这里我们看到了如下的错误：
 2018/07/10 16:15:28 [xxx] xxxx#0: *xxxxx bind(xxx.xxx.xxx.xxx) failed (98:Address already in use) while connecting to upstream xxxxxxxxxxxxx 当然如果你用上面的一些内容作为关键字去搜索，不管是Google还是百度，搜索出来多半都是在启动时候listen时候bind failed的，和我们情况完全不一致，说明我们这个问题并不是一个常见的问题，也预示着着并不会那么容易解决。
 0x01 初步排查 解释这个问题前，我们得说一下Socket的四元组：（源IP，源端口，目的IP，目的端口）。当这个四个元素都已经有Socket占用了，那么新创建的Socket就会失败，这个时候NGINX就会报上面这个错误。

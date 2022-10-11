@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>工具 on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/categories/%E5%B7%A5%E5%85%B7/</link>
+    <link>http://blog.sectrain.cn/categories/%E5%B7%A5%E5%85%B7/</link>
     <description>Recent content in 工具 on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 02 Apr 2017 09:28:03 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/categories/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 02 Apr 2017 09:28:03 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/categories/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>开源中国Pages自动发布小介绍</title>
-      <link>https://vul-hunters.gitee.io/posts/oschina-pages-auto-publish/</link>
+      <link>http://blog.sectrain.cn/posts/oschina-pages-auto-publish/</link>
       <pubDate>Sun, 02 Apr 2017 09:28:03 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/posts/oschina-pages-auto-publish/</guid>
+      <guid>http://blog.sectrain.cn/posts/oschina-pages-auto-publish/</guid>
       <description>简单的说明一下Pages自动发布的一个思路,本例子中的接口主要是tornado实现,同时你还需要一台自己的服务器</description>
     </item>
     

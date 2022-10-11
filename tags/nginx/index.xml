@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nginx on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/tags/nginx/</link>
+    <link>http://blog.sectrain.cn/tags/nginx/</link>
     <description>Recent content in Nginx on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="http://blog.sectrain.cn/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>WAF和SNI的前世今生</title>
-      <link>https://vul-hunters.gitee.io/posts/sni/</link>
+      <link>http://blog.sectrain.cn/posts/sni/</link>
       <pubDate>Thu, 12 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/posts/sni/</guid>
+      <guid>http://blog.sectrain.cn/posts/sni/</guid>
       <description>0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。
 SNI具体的内容在第三节中将会详细介绍，请稍等。
 0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：
@@ -38,10 +38,10 @@ HttpsURLConnection try { URL url = new URL(&amp;#34;https://www.huaweicloud.com&
     
     <item>
       <title>NGINX WAF出现TIME_WAIT问题</title>
-      <link>https://vul-hunters.gitee.io/posts/waf-nginx-time-wait/</link>
+      <link>http://blog.sectrain.cn/posts/waf-nginx-time-wait/</link>
       <pubDate>Mon, 09 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/posts/waf-nginx-time-wait/</guid>
+      <guid>http://blog.sectrain.cn/posts/waf-nginx-time-wait/</guid>
       <description>0x00 问题描述 近日笔者参与的一款WAF产品，在大流量并发的况下，出现了部分请求500。这里的状态码有两种情况：WAF自身问题产生的内部服务器错误和后端上游服务器产生了内部错误透传过来的。当然这个还是比较好定位，只需要查看一下nginx的error_log即可，由于笔者这面log都是用ELK采集的，因此只需要在Kibana上面查看一下。这里我们看到了如下的错误：
 2018/07/10 16:15:28 [xxx] xxxx#0: *xxxxx bind(xxx.xxx.xxx.xxx) failed (98:Address already in use) while connecting to upstream xxxxxxxxxxxxx 当然如果你用上面的一些内容作为关键字去搜索，不管是Google还是百度，搜索出来多半都是在启动时候listen时候bind failed的，和我们情况完全不一致，说明我们这个问题并不是一个常见的问题，也预示着着并不会那么容易解决。
 0x01 初步排查 解释这个问题前，我们得说一下Socket的四元组：（源IP，源端口，目的IP，目的端口）。当这个四个元素都已经有Socket占用了，那么新创建的Socket就会失败，这个时候NGINX就会报上面这个错误。
@@ -57,10 +57,10 @@ sysctl -a 如果我们对相关选项做了修改，那么一定记住要执行�
     
     <item>
       <title>Nginx错误码502和504的区别</title>
-      <link>https://vul-hunters.gitee.io/posts/nginx-502-504-diff/</link>
+      <link>http://blog.sectrain.cn/posts/nginx-502-504-diff/</link>
       <pubDate>Mon, 29 May 2017 12:00:00 +0000</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/posts/nginx-502-504-diff/</guid>
+      <guid>http://blog.sectrain.cn/posts/nginx-502-504-diff/</guid>
       <description>0x00 前言 某日某B：我们系统出现了504,你赶紧去问问PHP的人有什么错误日志？
 某A：我已经问过，PHP的人说没有日志。
 某B：PHP那面的人说的话你不要相信，赶紧再去查一遍。
