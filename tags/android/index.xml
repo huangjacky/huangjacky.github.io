@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Android on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/android/</link>
+    <description>Recent content in Android on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>WAF和SNI的前世今生</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</link>
+      <pubDate>Thu, 12 Jul 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</guid>
+      <description>0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。
+SNI具体的内容在第三节中将会详细介绍，请稍等。
+0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：
+TIPS：这个模拟器是基于X86架构，跑起来非常快，但是我们目标APP是ARM架构的，直接还不能运行，我们需要安装额外的ARM-Translate的，这个就不在本文中介绍了，后面我会专门有文章来介绍，或者有需要的朋友可以直接联系我。
+我们就在宿主机上面用Wireshark抓包即可，抓包过程也非常简单，就是分别使用浏览器打开目标网址和用APP登录，我直接给出抓包截图，我们对比看一下吧。
+首先是浏览器的抓包：
+后面这个是APP的包
+两者区别在于SSL握手时候Client的扩展字段有没有SNI字段。
+0x01 SNI介绍 SNI是Server Name Indication的缩写，是为了解决一个服务器使用多个域名和证书的SSL/TLS扩展。它允许客户端在发起SSL握手请求时（客户端发出ClientHello消息中）提交请求的HostName信息，使得服务器能够切换到正确的域并返回相应的证书。
+在SNI出现之前，HostName信息只存在于HTTP请求中，但SSL/TLS层无法获知这一信息。通过将HostName的信息加入到SNI扩展中，SSL/TLS允许服务器使用一个IP为不同的域名提供不同的证书，从而能够与使用同一个IP的多个“虚拟主机”更方便地建立安全连接。
+SSL握手 HTTPS其实是将HTTP的请求使用TLS加密后使用TCP协议传输给目的方，几者之间的关系如下：
+TLS加密需要需要在TCP连接建立之后，双方进行SSL握手，协商随机数和证书。大概的过程是这样的：
+这里和我们这次文章比较相关的部分就是客户端发送Hello后，服务端返回证书，客户端校验证书有效性。
+NGINX反向代理 在现在互联网时代，IP地址越来越紧张，因此我们经常会将多个域名或者网站使用同一台服务器，同一个IP。NGINX通常就是这样的网关。当一个HTTP请求到达时候，NGINX会通过HTTP请求中的Host头来决定转发目的服务器。
+NGINX要能够正常的转发，那么它必须能够解析HTTP协议，从上面图中，我们可以看到HTTPS请求中HTTP内容被TLS加密，NGINX在使用前必须进行解密，而解密需要双方协商证书。好的，问题就来了，如果是多个HTTPS网站共享一个IP和端口，SSL握手时候，服务端如何正确选择域名证书传输给客户端呢？
+为了解决这个问题在RFC 6066中对TLS的扩展进行了定义，其中就提到了在握手阶段一个server_name的扩展，它的内容就是域名的名字。服务端在接收到含有SNI的Client Hello后，根据其内容，去选择该域名的证书返回给客户端。
+因此从上面的解释看出来，这个问题并不是只有WAF才会存在，而是绑定了同一个IP+端口的多个HTTPS网站都会遇到这样的问题。
+0x02 APP分析 在上面定位中，我们同一个系统，浏览器携带了SNI，但是客户的APP没有，因此我们决定对客户的APP再进行一轮分析。这里需要使用到JEB工具对客户的APK进行逆向分析。根据activity去查找登录方法所使用HTTP包即可。我们最后定位到MobileHttpClientManager类，实现的代码大致如下：
+从代码里面看到，使用的SDK默认的DefaultHttpClient，从相关文章我们知道HttPClient默认是不使用SNI的。
+0x02 解决方案 Android 通常情况下，我们可以使用其他默认支持SNI的库，比如URLConnection，OKHttp等
+HttpsURLConnection try { URL url = new URL(&amp;#34;https://www.huaweicloud.com&amp;#34;); U RLConnection urlConnection = url.openConnection(); HttpsURLConnection connection = (HttpsURLConnection) urlConnection; connection.setRequestProperty(&amp;#34;Host&amp;#34;, &amp;#34;www.huaweicloud.com&amp;#34;); connection.setHostnameVerifier(new HostnameVerifier() { @Override public boolean verify(String hostname, SSLSession session) { return HttpsURLConnection.</description>
+    </item>
+    
+  </channel>
+</rss>

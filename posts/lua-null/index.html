@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    Lua - 编程中几种空值的判断 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="在编程过程中我们经常需要判断是否是空值，由于lua中几种空值不能自动转换，因此我们需要了解清楚空值之间的含义">
+<meta name="keywords" content="">
+<meta name="author" content="huangjacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="Lua - 编程中几种空值的判断" />
+<meta property="og:description" content="在编程过程中我们经常需要判断是否是空值，由于lua中几种空值不能自动转换，因此我们需要了解清楚空值之间的含义" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-背景">0x00 背景</a></li>
+    <li><a href="#0x01-分析">0x01 分析</a></li>
+    <li><a href="#0x02-扩展">0x02 扩展</a></li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/lua-null/">Lua - 编程中几种空值的判断</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>14</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Jun</span> <span class="post-date-year">2018</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">huangjacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E7%BC%96%E7%A8%8B">编程</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h2 id="0x00-背景">0x00 背景</h2>
+<p>最近在写一段nginx+redis的代码，主要基于openresty，其中使用到了lua-resty-redis库。我平时写代码都比较小心，针对外部输入的值一般都会进行异常判断，大概的代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lua" data-lang="lua"><span style="color:#66d9ef">local</span> redis <span style="color:#f92672">=</span> require <span style="color:#e6db74">&#34;redis&#34;</span>
+<span style="color:#66d9ef">local</span> cjson <span style="color:#f92672">=</span> require <span style="color:#e6db74">&#34;cjson&#34;</span>
+<span style="color:#75715e">--[[省略部分代码]]</span>
+<span style="color:#66d9ef">local</span> ok, err <span style="color:#f92672">=</span> redis:get(<span style="color:#e6db74">&#34;key&#34;</span>)
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> ok <span style="color:#66d9ef">then</span>
+    ngx.log(ngx.ERR, <span style="color:#e6db74">&#39;[ERROR]:&#39;</span>, err)
+    <span style="color:#66d9ef">return</span>
+<span style="color:#66d9ef">end</span>
+<span style="color:#66d9ef">local</span> data <span style="color:#f92672">=</span> cjson.decode(ok)
+</code></pre></div><p>在decode这里出现了错误提示，但是ok并没有为空或者nil，不然代码是走不到这里来。<br>
+发现问题后，我们就在前面打印一下ok数据的类型吧，大概的代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lua" data-lang="lua">ngx.log(ngx.ERR, <span style="color:#e6db74">&#39;ok type: &#39;</span>, type(ok))
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> ok <span style="color:#66d9ef">then</span>
+<span style="color:#66d9ef">end</span>
+</code></pre></div><p>这个时候我们得到的结果是<strong>userdata</strong>，这个东西算是一种复杂结构体，一般都是跨语言产生的，比如ffi.C这些。当时我的思路大概也是这样，肯定redis存放的数据是二进制的，但是呀，存放什么数据都是我自己控制的，不可能有什么畸形数据，因此这一点也排除了。最后在自己查看中发现，其实就是这个key不存在。</p>
+<h2 id="0x01-分析">0x01 分析</h2>
+<p>既然原因找到了，我们就去看看为什么会这样，主要通过阅读lua-resty-redis的源码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lua" data-lang="lua"><span style="color:#66d9ef">local</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">_read_reply</span>(self, sock)
+    <span style="color:#66d9ef">local</span> line, err <span style="color:#f92672">=</span> sock:receive()
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> line <span style="color:#66d9ef">then</span>
+        <span style="color:#66d9ef">if</span> err <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;timeout&#34;</span> <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> rawget(self, <span style="color:#e6db74">&#34;_subscribed&#34;</span>) <span style="color:#66d9ef">then</span>
+            sock:close()
+        <span style="color:#66d9ef">end</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, err
+    <span style="color:#66d9ef">end</span>
+
+    <span style="color:#66d9ef">local</span> prefix <span style="color:#f92672">=</span> byte(line)
+
+    <span style="color:#66d9ef">if</span> prefix <span style="color:#f92672">==</span> <span style="color:#ae81ff">36</span> <span style="color:#66d9ef">then</span>    <span style="color:#75715e">-- char &#39;$&#39;</span>
+        <span style="color:#75715e">-- print(&#34;bulk reply&#34;)</span>
+
+        <span style="color:#66d9ef">local</span> size <span style="color:#f92672">=</span> tonumber(sub(line, <span style="color:#ae81ff">2</span>))
+        <span style="color:#66d9ef">if</span> size <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">then</span>
+            <span style="color:#66d9ef">return</span> null
+        <span style="color:#66d9ef">end</span>
+
+        <span style="color:#66d9ef">local</span> data, err <span style="color:#f92672">=</span> sock:receive(size)
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> data <span style="color:#66d9ef">then</span>
+            <span style="color:#66d9ef">if</span> err <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;timeout&#34;</span> <span style="color:#66d9ef">then</span>
+                sock:close()
+            <span style="color:#66d9ef">end</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, err
+        <span style="color:#66d9ef">end</span>
+
+        <span style="color:#66d9ef">local</span> dummy, err <span style="color:#f92672">=</span> sock:receive(<span style="color:#ae81ff">2</span>) <span style="color:#75715e">-- ignore CRLF</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> dummy <span style="color:#66d9ef">then</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, err
+        <span style="color:#66d9ef">end</span>
+
+        <span style="color:#66d9ef">return</span> data
+
+    <span style="color:#66d9ef">elseif</span> prefix <span style="color:#f92672">==</span> <span style="color:#ae81ff">43</span> <span style="color:#66d9ef">then</span>    <span style="color:#75715e">-- char &#39;+&#39;</span>
+        <span style="color:#75715e">-- print(&#34;status reply&#34;)</span>
+
+        <span style="color:#66d9ef">return</span> sub(line, <span style="color:#ae81ff">2</span>)
+
+    <span style="color:#66d9ef">elseif</span> prefix <span style="color:#f92672">==</span> <span style="color:#ae81ff">42</span> <span style="color:#66d9ef">then</span> <span style="color:#75715e">-- char &#39;*&#39;</span>
+        <span style="color:#66d9ef">local</span> n <span style="color:#f92672">=</span> tonumber(sub(line, <span style="color:#ae81ff">2</span>))
+
+        <span style="color:#75715e">-- print(&#34;multi-bulk reply: &#34;, n)</span>
+        <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">then</span>
+            <span style="color:#66d9ef">return</span> null
+        <span style="color:#66d9ef">end</span>
+
+        <span style="color:#66d9ef">local</span> vals <span style="color:#f92672">=</span> new_tab(n, <span style="color:#ae81ff">0</span>)
+        <span style="color:#66d9ef">local</span> nvals <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>, n <span style="color:#66d9ef">do</span>
+            <span style="color:#66d9ef">local</span> res, err <span style="color:#f92672">=</span> _read_reply(self, sock)
+            <span style="color:#66d9ef">if</span> res <span style="color:#66d9ef">then</span>
+                nvals <span style="color:#f92672">=</span> nvals <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+                vals[nvals] <span style="color:#f92672">=</span> res
+
+            <span style="color:#66d9ef">elseif</span> res <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">then</span>
+                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, err
+
+            <span style="color:#66d9ef">else</span>
+                <span style="color:#75715e">-- be a valid redis error value</span>
+                nvals <span style="color:#f92672">=</span> nvals <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+                vals[nvals] <span style="color:#f92672">=</span> {<span style="color:#66d9ef">false</span>, err}
+            <span style="color:#66d9ef">end</span>
+        <span style="color:#66d9ef">end</span>
+
+        <span style="color:#66d9ef">return</span> vals
+
+    <span style="color:#66d9ef">elseif</span> prefix <span style="color:#f92672">==</span> <span style="color:#ae81ff">58</span> <span style="color:#66d9ef">then</span>    <span style="color:#75715e">-- char &#39;:&#39;</span>
+        <span style="color:#75715e">-- print(&#34;integer reply&#34;)</span>
+        <span style="color:#66d9ef">return</span> tonumber(sub(line, <span style="color:#ae81ff">2</span>))
+
+    <span style="color:#66d9ef">elseif</span> prefix <span style="color:#f92672">==</span> <span style="color:#ae81ff">45</span> <span style="color:#66d9ef">then</span>    <span style="color:#75715e">-- char &#39;-&#39;</span>
+        <span style="color:#75715e">-- print(&#34;error reply: &#34;, n)</span>
+
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>, sub(line, <span style="color:#ae81ff">2</span>)
+
+    <span style="color:#66d9ef">else</span>
+        <span style="color:#75715e">-- when `line` is an empty string, `prefix` will be equal to nil.</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#e6db74">&#34;unknown prefix: </span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">..</span> tostring(prefix) <span style="color:#f92672">..</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">&#34;</span>
+    <span style="color:#66d9ef">end</span>
+<span style="color:#66d9ef">end</span>
+</code></pre></div><p>从上面的源码可以看到，在读取redis服务器返回数据的时候，如果某些格式不正确，比如数据长度的字节小于0这样的异常情况，函数就会返回null，注意是null不是nil。<br>
+这个null的定义来自ngx.null，这个东西可以追溯到其官方文档lua-nginx-module.</p>
+<blockquote>
+<p>The ngx.null constant is a NULL light userdata usually used to represent nil values in Lua tables etc and is similar to the lua-cjson library&rsquo;s cjson.null constant.</p>
+</blockquote>
+<p>从上面描述看，ngx.null就是一个代表null的userdata结构，类似一个自定义的类，但是没有什么具体含义，同时文档里面也提到了类似的值还有cjson.null，以后小心被坑。</p>
+<h2 id="0x02-扩展">0x02 扩展</h2>
+<p>同时文档中还提到了，使用ngx.log对几个空值进行字符串打印的时候，nil会显示成“nil”，逻辑值会显示成“true”或者“false”，而ngx.null会被显示成“null”。</p>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-lua" href="https://vul-hunters.gitee.io/hunter-blogs//tags/lua">Lua</a>,
+	                
+	                <a class="post-tag post-tag-null" href="https://vul-hunters.gitee.io/hunter-blogs//tags/null">null</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/nginx-502-504-diff/">Nginx错误码502和504的区别</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/wxpay-xxe/">微信支付SDK XXE漏洞简单分析</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="b2aa9f8c39ec073c1cadf5d1a7ae089e" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

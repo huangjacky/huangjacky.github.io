@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="zh">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>桔子理财GIT使用规范讲解</title>
+
+		<meta name="description" content="简单介绍桔子理财相关的GIT使用规范">
+		<meta name="author" content="huangjacky">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../css/reveal.css">
+		<link rel="stylesheet" href="../css/theme/league.css" id="theme">
+
+		<link rel="stylesheet" href="../lib/css/zenburn.css">
+
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../css/print/pdf.css' : '../css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="../lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>桔子理财</h1>
+					<h3>GIT使用规范讲解</h3>
+					<p>
+						<small>by <a href="http://hakim.se">HuangJacky</a></small>
+					</p>
+				</section>
+
+				<section data-transition="convex">
+					<h2>目录</h2>
+					<ol>
+						<li>Why Git?</li>
+						<li>常用命令</li>
+						<li>分支规范</li>
+						<li>标签规范</li>
+					</ol>
+				</section>
+
+				<section data-transition="convex">
+					<section>
+						<h1>Why GIT</h1>
+					</section>
+					<section>
+						<h2>性能优势</h2>
+						<p class="fragment">分布式</p>
+						<p class="fragment">差分编码</p>
+						<p class="fragment">元数据管理</p>
+					</section>
+					<section>
+						<h2>安全</h2>
+						<p class="fragment">SHA1哈希加密</p>
+						<p class="fragment">完整历史记录</p>
+					</section>
+					<section>
+						<h2>灵活</h2>
+						<p class="fragment">非线性工作流程</p>
+						<p class="fragment">分支和标签完整支持</p>
+					</section>
+				</section>
+				<section data-transition="convex">
+					<section>
+						<h1>常用命令</h1>
+					</section>
+					<section>
+						<h2>名称解释</h2>
+						<img src="../img/git_cmds.png" alt="git">
+						<ul>
+							<li class="fragment">远程仓库 - Remote Repository</li>
+							<li class="fragment">本地仓库 - Local Repository</li>
+							<li class="fragment">缓存区 - Index</li>
+							<li class="fragment">工作区 - Workspace</li>
+						</ul>
+					</section>
+					<section>
+						<h2>创建</h2>
+						<pre>
+						<code class="hljs" data-trim contenteditable>
+							# 初始化
+							git init 仓库名
+							# 远程拉取
+							git clone URL
+							# 创建分支
+							git checkout -b 分支名 原分支
+						</code>
+					</pre>
+					</section>
+					<section>
+						<h2>添加/删除文件</h2>
+						<pre>
+						<code class="hljs" data-trim contenteditable="true">
+							# 增加单个文件
+							git add 文件路径
+							# 增加一个目录
+							git add 目录
+							# 增加所有改变的文件
+							git add -A
+							# 删除索引
+							git rm 同上
+							# 修改名称
+							git mv 文件1 文件2
+						</code>
+						</pre>
+						<p>所有操作都只影响本地缓存区</p>
+					</section>
+					<section>
+						<h2>代码提交</h2>
+						<pre>
+							<code class="hljs" data-trim contenteditable="true">
+								# 提交修改到本地仓库
+								git commit -m 修改记录
+								# 提交修改到远程仓库
+								git push origin 分支名
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h2>代码提交注意事项</h2>
+						<ol>
+							<li>必须以项目或者缺陷编号开头,如[S0301]</li>
+							<li>以文件的维度说明本次提交修改功能点</li>
+							<li>最后最好能附带上TAPD连接</li>
+						</ol>
+					</section>
+                    <section>
+                        <h2>提交备注示例</h2>
+                        <img src="../img/commit_demo.png" alt="commit demo"></section>
+					<section>
+						<h2>状态查看</h2>
+						<pre><code class="hljs" data-trim contenteditable="true">
+							# 显示有改变的文件
+							git status
+							# 显示当前分支的版本历史
+							git log
+							# 显示具体修改的文件
+							git log --stat
+							# commit的信息搜索
+							git log -S "关键字"
+							# 查看指定文件修改记录
+							git log --follow 文件
+							git whatchanged 文件
+							# 显示差异
+							git diff 分支|commitid
+							# 查看指定commit的内容
+							git show commitid
+						</code></pre>
+					</section>
+					<section>
+						<h2>撤销</h2>
+						<pre><code class="hljs" data-trim contenteditable="true">
+							git reset commitid
+							git reset HEAD~5
+							git reset --hard commitid
+							# 取消本地修改
+							git stash
+							# 推荐使用
+							git revert commitid
+						</code></pre>
+					</section>
+					<section>
+						<img src="../img/reset01.png" alt="">
+					</section>
+					<section>
+						<img src="../img/reset02.png" alt="">
+					</section>
+					<section>
+						<img src="../img/revert01.png" alt="">
+					</section>
+					<section>
+						<img src="../img/revert02.png" alt="">
+					</section>
+				</section>
+				<section data-transition="convex">
+					<section>
+						<h1>分支规范</h1>
+					</section>
+					<section>
+						<h2>工作流</h2>
+						<ol>
+							<li class="fragment">Git Workflow</li>
+							<li class="fragment">Github Workflow</li>
+							<li class="fragment">Gitlab Workflow</li>
+						</ol>
+					</section>
+					<section>
+						<h2>Master</h2>
+						<ul>
+							<li>与线上代码同步</li>
+							<li>不能直接编辑提交</li>
+							<li>发布系统直接推送</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Develop</h2>
+						<ul>
+							<li>与开发环境的代码同步</li>
+							<li>不能直接编辑提交代码</li>
+							<li>作为其他分支样本</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Feature功能分支</h2>
+						<ul>
+							<li>以<b>feature/xxxx</b>命令</li>
+							<li>从develop分支fork</li>
+							<li>开发完成后合并到develop分支,开发环境测试</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Release预发布分支</h2>
+						<ul>
+							<li>以<b>release/xxxx</b>命令</li>
+							<li>从develop分支fork</li>
+							<li>体验期间如果有BUG修改, 需要合并回<b>develop</b>分支<br>体验完成合并到<b>master</b>分支完成上线</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Hotfix修复分支</h2>
+						<ul>
+							<li>以hotfix/xxxx命名</li>
+							<li>从master分支fork</li>
+							<li>BUG修复完成后分别合并回develop和master</li>
+						</ul>
+					</section>
+					<section>
+						<img src="../img/branch.png" style="height: 600px">
+					</section>
+					<section>
+						<h2>分支常用操作</h2>
+						<pre><code class="hljs" contenteditable="true" data-trim>
+							# 创建分支
+							git checkout develop
+							git checkout -b feature/warmjia
+							# 开发完成需要合并代码到develop
+							git checkout develop
+							# 拉取develop分支中最新的代码,防止开发期间有其他同学提交
+							git pull origin develop
+							git merge --no-ff feature/warmjia
+							# merge命令一般也会要求你填写备注,
+							# 如果成功就不需要这部分,不成功需要手动
+							# git add 你的改变
+							# git commit -m 备注
+							git push origin develop
+							# 删除临时分支
+							git branch -d feature/warmjia
+						</code></pre>
+					</section>
+					<section>
+						<img src="../img/ff-merge.png" alt="快速向前合并">
+						<img src="../img/no-ff-merge.png" alt="">
+					</section>
+					<section>
+						<h2>注意事项</h2>
+						<ol>
+							<li>临时分支结单后都可以删除</li>
+							<li>主干分支不能直接编辑</li>
+							<li>reset和rebase等命令不能在公共分支上面操作</li>
+						</ol>
+					</section>
+				</section>
+				<section data-transition="convex">
+					<section>
+						<h1>标签规范</h1>
+					</section>
+					<section>
+						<h2>作用</h2>
+						<ul>
+							<li>标记每一个版本,方便记忆</li>
+							<li>方便发布和快速回滚</li>
+							<li>和发布系统配合使用方便管理</li>
+						</ul>
+					</section>
+					<section>
+						<h2>桔子理财标签规范</h2>
+						<ol>
+							<li class="fragment">prod标签用于master分支</li>
+							<li class="fragment">dev标签用于develop分支</li>
+							<li class="fragment">版本号格式: 类型.dd.dd.dd</li>
+							<li class="fragment">数字从0~99,大版本.新功能.BUG</li>
+							<li class="fragment">父版本升级,子版本归0</li>
+						</ol>
+					</section>
+					<section>
+						<h2>How</h2>
+						<pre><code class="hljs" contenteditable="true" data-trim>
+							# 添加本地标签
+							git tag -a 版本号 -m 备注 [commitid]
+							# 删除本地标签
+							git tag -d 版本号
+							# 删除远程标签
+							git push origin :refs/tags/版本号
+
+							# 推送标签到远程仓库
+							git push origin 版本号|--tags
+						</code></pre>
+					</section>
+					<section>
+						<h2>When</h2>
+						<ul>
+							<li>dev标签在提测时候打在develop分支上, 比如dev.2.2.0</li>
+							<li>测试期间如果有BUG修复,每次提交都要重新打标签, 比如dev.2.2.2</li>
+							<li>prod标签在灰度测试通过以后打在master分支上, 比如prod.2.2.0</li>
+							<li>hotfix修复后在合并回develop和master时候, 需要分别打上dev和prod标签</li>
+						</ul>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<p>
+						- Thanks
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="../lib/js/head.min.js"></script>
+		<script src="../js/reveal.js"></script>
+
+		<script>
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				slideNumber: true,
+                pdfMaxPagesPerSlide: 1,
+                minScale: 0.2,
+                maxScale: 1.5,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: '../lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../plugin/zoom-js/zoom.js', async: true },
+					{ src: '../plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

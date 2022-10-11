@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nginx on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/nginx/</link>
+    <description>Recent content in Nginx on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>WAF和SNI的前世今生</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</link>
+      <pubDate>Thu, 12 Jul 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</guid>
+      <description>0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。
+SNI具体的内容在第三节中将会详细介绍，请稍等。
+0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：
+TIPS：这个模拟器是基于X86架构，跑起来非常快，但是我们目标APP是ARM架构的，直接还不能运行，我们需要安装额外的ARM-Translate的，这个就不在本文中介绍了，后面我会专门有文章来介绍，或者有需要的朋友可以直接联系我。
+我们就在宿主机上面用Wireshark抓包即可，抓包过程也非常简单，就是分别使用浏览器打开目标网址和用APP登录，我直接给出抓包截图，我们对比看一下吧。
+首先是浏览器的抓包：
+后面这个是APP的包
+两者区别在于SSL握手时候Client的扩展字段有没有SNI字段。
+0x01 SNI介绍 SNI是Server Name Indication的缩写，是为了解决一个服务器使用多个域名和证书的SSL/TLS扩展。它允许客户端在发起SSL握手请求时（客户端发出ClientHello消息中）提交请求的HostName信息，使得服务器能够切换到正确的域并返回相应的证书。
+在SNI出现之前，HostName信息只存在于HTTP请求中，但SSL/TLS层无法获知这一信息。通过将HostName的信息加入到SNI扩展中，SSL/TLS允许服务器使用一个IP为不同的域名提供不同的证书，从而能够与使用同一个IP的多个“虚拟主机”更方便地建立安全连接。
+SSL握手 HTTPS其实是将HTTP的请求使用TLS加密后使用TCP协议传输给目的方，几者之间的关系如下：
+TLS加密需要需要在TCP连接建立之后，双方进行SSL握手，协商随机数和证书。大概的过程是这样的：
+这里和我们这次文章比较相关的部分就是客户端发送Hello后，服务端返回证书，客户端校验证书有效性。
+NGINX反向代理 在现在互联网时代，IP地址越来越紧张，因此我们经常会将多个域名或者网站使用同一台服务器，同一个IP。NGINX通常就是这样的网关。当一个HTTP请求到达时候，NGINX会通过HTTP请求中的Host头来决定转发目的服务器。
+NGINX要能够正常的转发，那么它必须能够解析HTTP协议，从上面图中，我们可以看到HTTPS请求中HTTP内容被TLS加密，NGINX在使用前必须进行解密，而解密需要双方协商证书。好的，问题就来了，如果是多个HTTPS网站共享一个IP和端口，SSL握手时候，服务端如何正确选择域名证书传输给客户端呢？
+为了解决这个问题在RFC 6066中对TLS的扩展进行了定义，其中就提到了在握手阶段一个server_name的扩展，它的内容就是域名的名字。服务端在接收到含有SNI的Client Hello后，根据其内容，去选择该域名的证书返回给客户端。
+因此从上面的解释看出来，这个问题并不是只有WAF才会存在，而是绑定了同一个IP+端口的多个HTTPS网站都会遇到这样的问题。
+0x02 APP分析 在上面定位中，我们同一个系统，浏览器携带了SNI，但是客户的APP没有，因此我们决定对客户的APP再进行一轮分析。这里需要使用到JEB工具对客户的APK进行逆向分析。根据activity去查找登录方法所使用HTTP包即可。我们最后定位到MobileHttpClientManager类，实现的代码大致如下：
+从代码里面看到，使用的SDK默认的DefaultHttpClient，从相关文章我们知道HttPClient默认是不使用SNI的。
+0x02 解决方案 Android 通常情况下，我们可以使用其他默认支持SNI的库，比如URLConnection，OKHttp等
+HttpsURLConnection try { URL url = new URL(&amp;#34;https://www.huaweicloud.com&amp;#34;); U RLConnection urlConnection = url.openConnection(); HttpsURLConnection connection = (HttpsURLConnection) urlConnection; connection.setRequestProperty(&amp;#34;Host&amp;#34;, &amp;#34;www.huaweicloud.com&amp;#34;); connection.setHostnameVerifier(new HostnameVerifier() { @Override public boolean verify(String hostname, SSLSession session) { return HttpsURLConnection.</description>
+    </item>
+    
+    <item>
+      <title>NGINX WAF出现TIME_WAIT问题</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/</link>
+      <pubDate>Mon, 09 Jul 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/</guid>
+      <description>0x00 问题描述 近日笔者参与的一款WAF产品，在大流量并发的况下，出现了部分请求500。这里的状态码有两种情况：WAF自身问题产生的内部服务器错误和后端上游服务器产生了内部错误透传过来的。当然这个还是比较好定位，只需要查看一下nginx的error_log即可，由于笔者这面log都是用ELK采集的，因此只需要在Kibana上面查看一下。这里我们看到了如下的错误：
+2018/07/10 16:15:28 [xxx] xxxx#0: *xxxxx bind(xxx.xxx.xxx.xxx) failed (98:Address already in use) while connecting to upstream xxxxxxxxxxxxx 当然如果你用上面的一些内容作为关键字去搜索，不管是Google还是百度，搜索出来多半都是在启动时候listen时候bind failed的，和我们情况完全不一致，说明我们这个问题并不是一个常见的问题，也预示着着并不会那么容易解决。
+0x01 初步排查 解释这个问题前，我们得说一下Socket的四元组：（源IP，源端口，目的IP，目的端口）。当这个四个元素都已经有Socket占用了，那么新创建的Socket就会失败，这个时候NGINX就会报上面这个错误。
+reuseport 看到这里，可能很多同学就会去搜索各种nginx reuseport的文章，那么多半你已经走偏了。虽然reuseport解决不了我们这个问题这里我还是要提一下它的功效。正常情况下，每个NGINX worker都是一个独立的进程，他们监听的套接字都是从master里面fork出来的，那么说白了，他们手上都是同一个套接字，那么有请求来到的时候，这个套接字会通知所有的worker，但最后只能由一个worker来处理新连接，因此中间必然会存在一个竞争锁的过程，性能肯定也会有损耗的。如下图：
+当这个选项打开的时候，系统允许多个Socket监听在同一个IP和端口上面，当有新请求到达时候，由内核直接从这些Socket中选择一个来处理，此时套接字和Worker是一一对应的，因此该套接字只会通知到一个Worker，这样有效减少进程间竞争。如下图：
+当然使用这个选项是有一些条件的：
+ NGINX版本大于1.9.1 Linux内核版本3.9以后 NGINX中开启相应的配置项  http { server { listen 80 reuseport; server_name localhost; ... } } stream { server { listen 12345 reuseport; ... } } 正解 上面扯得有些多。既然原因不是它，我们继续排查。NGINX作为反向代理服务器，那么它先是作为服务端接收用户的请求，这个时候Socket四元组中目的IP就是我们对外的监听IP，目的端口就是我们监听的端口，而源IP和源端口都是在用户侧，不同的用户就是不同的IP，因此Socket冲突的概率非常之小。NGINX将请求转发给上游服务器的时候，它是作为客户端去请求上游的HTTP服务，那么这个时候Socket四元组中的源IP（NGINX的出口IP），目的IP，目的端口都是固定值，只有源端口可以变化，那么冲突的概率就会非常大了。肯定有朋友会问源端口的取值范围有多大呢？
+ip_local_port_range 在linux系统中的**/etc/sysctl.conf文件中有一个选项net.ipv4.ip_local_port_range**可以决定源端口的取值范围。
+默认值是
+net.ipv4.ip_local_port_range = 32768	61000 大概有28322个端口可以用，如果这个范围内的某个端口已经被占用，系统在创建Socket的时候会自动跳过，去挑选下一个端口。如果各位朋友想要查看自己系统的配置，可以查看这个配置文件，也可以直接执行如下命令：
+sysctl -a 如果我们对相关选项做了修改，那么一定记住要执行命令让其生效。</description>
+    </item>
+    
+    <item>
+      <title>Nginx错误码502和504的区别</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/</link>
+      <pubDate>Mon, 29 May 2017 12:00:00 +0000</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/</guid>
+      <description>0x00 前言 某日某B：我们系统出现了504,你赶紧去问问PHP的人有什么错误日志？
+某A：我已经问过，PHP的人说没有日志。
+某B：PHP那面的人说的话你不要相信，赶紧再去查一遍。
+某A：WTF。。。
+因此某A很疑惑，为什么NGINX有502和504, 有那些原因导致504, PHP那面有没有日志呢？
+0x01 定义 通过阅读nginx的源码，备注：我这里查看的是openresty中nginx-1.11.2的源代码，我们发现502和504的定义。
+ngx_http_request.h的130行有如下的代码
+#define NGX_HTTP_INTERNAL_SERVER_ERROR 500 #define NGX_HTTP_NOT_IMPLEMENTED 501 #define NGX_HTTP_BAD_GATEWAY 502 #define NGX_HTTP_SERVICE_UNAVAILABLE 503 #define NGX_HTTP_GATEWAY_TIME_OUT 504 #define NGX_HTTP_INSUFFICIENT_STORAGE 507 从字面上面翻译看：
+ 502 错误的网关 504 网关超时  网络上有很多关于这两种错误的解决办法，的确他们说的方法能够解决这两种错误，后面我也会总结一下解决办法。但是没有从源头上说明白为什么NGINX会抛出这样的错误码，还有就是在什么情况下会抛出这样的错误码。
+0x02 代码跟踪 为了弄明白什么情况下产生产生这两种错误码，我们继续查看相关的源代码：
+在ngx_http_upstream.c的3935行中定义了一个ngx_http_upstream_next
+static void ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u, ngx_uint_t ft_type) { //-------------省略代码  switch (ft_type) { case NGX_HTTP_UPSTREAM_FT_TIMEOUT: status = NGX_HTTP_GATEWAY_TIME_OUT; break; case NGX_HTTP_UPSTREAM_FT_HTTP_500: status = NGX_HTTP_INTERNAL_SERVER_ERROR; break; case NGX_HTTP_UPSTREAM_FT_HTTP_403: status = NGX_HTTP_FORBIDDEN; break; case NGX_HTTP_UPSTREAM_FT_HTTP_404: status = NGX_HTTP_NOT_FOUND; break; default: status = NGX_HTTP_BAD_GATEWAY; } //-------------省略代码 } 这段代码的作用是：根据ft_type进行status设置，然后根据相关属性判断是传给下一个upstream还是结束连接ngx_http_upstream_finalize_request。</description>
+    </item>
+    
+  </channel>
+</rss>

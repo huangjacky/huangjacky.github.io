@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    HTTPS // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="HTTPS" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/tags/https/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="https://vul-hunters.gitee.io/hunter-blogs/tags/https/index.xml" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+      <a name="top"></a>
+      
+
+      <div class="posts">
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/sni/">WAF和SNI的前世今生</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>12</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Jul</span> <span class="post-date-year">2018</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >HuangJacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>2 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-%E5%AE%89%E5%85%A8" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E5%AE%89%E5%85%A8">安全</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <article class="post-summary">
+            	0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。
+SNI具体的内容在第三节中将会详细介绍，请稍等。
+0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：
+TIPS：这个模拟器是基于X86架构，跑起来非常快，但是我们目标APP是ARM架构的，直接还不能运行，我们需要安装额外的ARM-Translate的，这个就不在本文中介绍了，后面我会专门有文章来介绍，或者有需要的朋友可以直接联系我。
+我们就在宿主机上面用Wireshark抓包即可，抓包过程也非常简单，就是分别使用浏览器打开目标网址和用APP登录，我直接给出抓包截图，我们对比看一下吧。
+首先是浏览器的抓包：
+后面这个是APP的包
+两者区别在于SSL握手时候Client的扩展字段有没有SNI字段。
+0x01 SNI介绍 SNI是Server Name Indication的缩写，是为了解决一个服务器使用多个域名和证书的SSL/TLS扩展。它允许客户端在发起SSL握手请求时（客户端发出ClientHello消息中）提交请求的HostName信息，使得服务器能够切换到正确的域并返回相应的证书。
+在SNI出现之前，HostName信息只存在于HTTP请求中，但SSL/TLS层无法获知这一信息。通过将HostName的信息加入到SNI扩展中，SSL/TLS允许服务器使用一个IP为不同的域名提供不同的证书，从而能够与使用同一个IP的多个“虚拟主机”更方便地建立安全连接。
+SSL握手 HTTPS其实是将HTTP的请求使用TLS加密后使用TCP协议传输给目的方，几者之间的关系如下：
+TLS加密需要需要在TCP连接建立之后，双方进行SSL握手，协商随机数和证书。大概的过程是这样的：
+这里和我们这次文章比较相关的部分就是客户端发送Hello后，服务端返回证书，客户端校验证书有效性。
+NGINX反向代理 在现在互联网时代，IP地址越来越紧张，因此我们经常会将多个域名或者网站使用同一台服务器，同一个IP。NGINX通常就是这样的网关。当一个HTTP请求到达时候，NGINX会通过HTTP请求中的Host头来决定转发目的服务器。
+NGINX要能够正常的转发，那么它必须能够解析HTTP协议，从上面图中，我们可以看到HTTPS请求中HTTP内容被TLS加密，NGINX在使用前必须进行解密，而解密需要双方协商证书。好的，问题就来了，如果是多个HTTPS网站共享一个IP和端口，SSL握手时候，服务端如何正确选择域名证书传输给客户端呢？
+为了解决这个问题在RFC 6066中对TLS的扩展进行了定义，其中就提到了在握手阶段一个server_name的扩展，它的内容就是域名的名字。服务端在接收到含有SNI的Client Hello后，根据其内容，去选择该域名的证书返回给客户端。
+因此从上面的解释看出来，这个问题并不是只有WAF才会存在，而是绑定了同一个IP+端口的多个HTTPS网站都会遇到这样的问题。
+0x02 APP分析 在上面定位中，我们同一个系统，浏览器携带了SNI，但是客户的APP没有，因此我们决定对客户的APP再进行一轮分析。这里需要使用到JEB工具对客户的APK进行逆向分析。根据activity去查找登录方法所使用HTTP包即可。我们最后定位到MobileHttpClientManager类，实现的代码大致如下：
+从代码里面看到，使用的SDK默认的DefaultHttpClient，从相关文章我们知道HttPClient默认是不使用SNI的。
+0x02 解决方案 Android 通常情况下，我们可以使用其他默认支持SNI的库，比如URLConnection，OKHttp等
+HttpsURLConnection try { URL url = new URL(&#34;https://www.huaweicloud.com&#34;); U RLConnection urlConnection = url.openConnection(); HttpsURLConnection connection = (HttpsURLConnection) urlConnection; connection.setRequestProperty(&#34;Host&#34;, &#34;www.huaweicloud.com&#34;); connection.setHostnameVerifier(new HostnameVerifier() { @Override public boolean verify(String hostname, SSLSession session) { return HttpsURLConnection.
+              </article>
+			  <div class="read-more-link">
+				<a href="/hunter-blogs/posts/sni/"><span class="read-more-slashes">//</span>Read More...</a>
+			  </div>
+            
+          </section>
+        
+      </div>
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+  
+</body>
+</html>

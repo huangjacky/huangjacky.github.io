@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    图片隐写术介绍 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="介绍常用的一个图片隐写术的用法和工具">
+<meta name="keywords" content="">
+<meta name="author" content="huangjacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="图片隐写术介绍" />
+<meta property="og:description" content="介绍常用的一个图片隐写术的用法和工具" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#用法">用法</a></li>
+        <li><a href="#后续">后续</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/stegano-image/">图片隐写术介绍</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>28</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2017</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">huangjacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E5%AE%89%E5%85%A8" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E5%AE%89%E5%85%A8">安全</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <p>隐写术是将文本或者文件隐藏到图片文件中,从而实现信息的屏蔽.</p>
+<p>本文主要介绍关于Python的steganography包以及相关的用法,以及编程中使用说明</p>
+<h3 id="安装">安装</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pip install steganography
+</code></pre></div><h3 id="用法">用法</h3>
+<h4 id="命令行">命令行</h4>
+<p>steganography包安装之后,命令行中会存在一个steganography的可执行脚本.</p>
+<h5 id="加密">加密</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">steganography -e 原始图片 加密后的图片 <span style="color:#e6db74">&#34;加密的文本&#34;</span>
+</code></pre></div><h5 id="加密-1">加密</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">steganography -d 加密后的图片
+</code></pre></div><h4 id="代码引用">代码引用</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> steganography.steganography <span style="color:#f92672">import</span> Steganography
+
+<span style="color:#75715e"># hide text to image</span>
+path <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/tmp/image/input.jpg&#34;</span>
+output_path <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/tmp/image/output.jpg&#34;</span>
+text <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;The quick brown fox jumps over the lazy dog.&#39;</span>
+Steganography<span style="color:#f92672">.</span>encode(path, output_path, text)
+
+<span style="color:#75715e"># read secret text from image</span>
+secret_text <span style="color:#f92672">=</span> Steganography<span style="color:#f92672">.</span>decode(output_path)
+</code></pre></div><p>以后都这样尝试了.</p>
+<h3 id="后续">后续</h3>
+<p>在使用过程中,发现如果是windows存进去的中文文本解码之后可能会存在乱码的情况,这个就是编码的问题了,而且存入的内容没有经过加密的内容直接存入还是不安全.
+经过以上分析,我决定自己重写一个脚本.
+内容如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#! /usr/local/bin/python</span>
+<span style="color:#75715e"># -*- coding:utf-8 -*-</span>
+<span style="color:#f92672">import</span> sys
+<span style="color:#f92672">from</span> steganography.steganography <span style="color:#f92672">import</span> Steganography
+<span style="color:#f92672">import</span> argparse
+<span style="color:#f92672">import</span> base64
+<span style="color:#f92672">import</span> chardet
+<span style="color:#f92672">from</span> Crypto.Cipher <span style="color:#f92672">import</span> AES
+<span style="color:#f92672">import</span> os
+reload(sys)
+sys<span style="color:#f92672">.</span>setdefaultencoding(<span style="color:#e6db74">&#34;utf-8&#34;</span>)
+BS <span style="color:#f92672">=</span> <span style="color:#ae81ff">16</span>
+pad <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> s: s <span style="color:#f92672">+</span> (BS <span style="color:#f92672">-</span> len(s) <span style="color:#f92672">%</span> BS) <span style="color:#f92672">*</span> chr(BS <span style="color:#f92672">-</span> len(s) <span style="color:#f92672">%</span> BS)
+unpad <span style="color:#f92672">=</span> <span style="color:#66d9ef">lambda</span> s: s[:<span style="color:#f92672">-</span>ord(s[len(s)<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>:])]
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    parser <span style="color:#f92672">=</span> argparse<span style="color:#f92672">.</span>ArgumentParser(description<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;漏洞挖掘机专用&#39;</span>, version<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.0.1&#39;</span>)
+    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-t&#39;</span>, <span style="color:#e6db74">&#39;--type&#39;</span>, dest<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;type&#39;</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;运行的类型&#34;</span>, choices<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;e&#39;</span>, <span style="color:#e6db74">&#39;d&#39;</span>], required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-i&#39;</span>, <span style="color:#e6db74">&#39;--input&#39;</span>, dest<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;input&#39;</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;输入图片的路径&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-o&#39;</span>, <span style="color:#e6db74">&#39;--output&#39;</span>, dest<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;output&#39;</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;输出图片的路径，加密的时候使用到&#34;</span>)
+    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-c&#39;</span>, <span style="color:#e6db74">&#39;--content&#39;</span>, dest<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;content&#39;</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;需要加密的文本内容，加密时候使用到&#34;</span>)
+    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#39;-k&#39;</span>, <span style="color:#e6db74">&#39;--key&#39;</span>, dest<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;key&#39;</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;内容进行加密的密钥&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+    args <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>parse_args()
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>exists(args<span style="color:#f92672">.</span>input):
+        print <span style="color:#e6db74">u</span><span style="color:#e6db74">&#39;文件不存在：</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> args<span style="color:#f92672">.</span>input
+        <span style="color:#66d9ef">return</span>
+    key <span style="color:#f92672">=</span> pad(args<span style="color:#f92672">.</span>key)
+    <span style="color:#75715e"># 加密</span>
+    <span style="color:#66d9ef">if</span> args<span style="color:#f92672">.</span>type <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;e&#39;</span>:
+        <span style="color:#66d9ef">if</span> args<span style="color:#f92672">.</span>output <span style="color:#f92672">and</span> args<span style="color:#f92672">.</span>content:
+            print <span style="color:#e6db74">u</span><span style="color:#e6db74">&#39;Starting encrypt&#39;</span>
+            aes <span style="color:#f92672">=</span> AES<span style="color:#f92672">.</span>new(key, AES<span style="color:#f92672">.</span>MODE_CBC, key)
+            txt <span style="color:#f92672">=</span> args<span style="color:#f92672">.</span>content
+            data <span style="color:#f92672">=</span> pad(txt)
+            content <span style="color:#f92672">=</span> aes<span style="color:#f92672">.</span>encrypt(data)
+            content <span style="color:#f92672">=</span> base64<span style="color:#f92672">.</span>b64encode(content)
+            Steganography<span style="color:#f92672">.</span>encode(args<span style="color:#f92672">.</span>input, args<span style="color:#f92672">.</span>output, content)
+            print <span style="color:#e6db74">u</span><span style="color:#e6db74">&#39;Done&#39;</span>
+        <span style="color:#66d9ef">else</span>:
+            print <span style="color:#e6db74">u</span><span style="color:#e6db74">&#34;加密操作时候必须要output和content参数&#34;</span>
+            <span style="color:#66d9ef">return</span>
+    <span style="color:#66d9ef">else</span>:  <span style="color:#75715e"># 解密</span>
+        print <span style="color:#e6db74">u</span><span style="color:#e6db74">&#39;Starting decrypt&#39;</span>
+        content <span style="color:#f92672">=</span> Steganography<span style="color:#f92672">.</span>decode(args<span style="color:#f92672">.</span>input)
+        aes <span style="color:#f92672">=</span> AES<span style="color:#f92672">.</span>new(key, AES<span style="color:#f92672">.</span>MODE_CBC, key)
+        txt <span style="color:#f92672">=</span> base64<span style="color:#f92672">.</span>b64decode(content)
+        txt <span style="color:#f92672">=</span> unpad(aes<span style="color:#f92672">.</span>decrypt(txt))
+        <span style="color:#66d9ef">try</span>:
+            c <span style="color:#f92672">=</span> chardet<span style="color:#f92672">.</span>detect(txt)
+            <span style="color:#66d9ef">if</span> c[<span style="color:#e6db74">&#39;confidence&#39;</span>] <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0.8</span>:
+                ret <span style="color:#f92672">=</span> txt<span style="color:#f92672">.</span>decode(c[<span style="color:#e6db74">&#39;encoding&#39;</span>])
+            <span style="color:#66d9ef">else</span>:
+                ret <span style="color:#f92672">=</span> txt<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#34;gbk&#34;</span>)
+        <span style="color:#66d9ef">except</span>:
+            ret <span style="color:#f92672">=</span> txt
+        print <span style="color:#e6db74">u</span><span style="color:#e6db74">&#39;Content: &#39;</span>
+        print ret
+        print <span style="color:#e6db74">u</span><span style="color:#e6db74">&#39;Done&#39;</span>
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    main()
+
+</code></pre></div><p>加密我们使用了aes, 同时使用chardet检测内容的编码.
+用法:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 加密</span>
+python hunter.py -t e -i abc.jpg -o d.jpg -c 内容 -k 密钥
+<span style="color:#75715e"># 解密</span>
+python hunter.py -t d -i d.jpg -k 密钥
+<span style="color:#75715e"># 帮助</span>
+python hunter.py -h
+</code></pre></div><p>运行前需要安装依赖的包:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pip install pycrypto chardet
+</code></pre></div>
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-%E9%9A%90%E5%86%99" href="https://vul-hunters.gitee.io/hunter-blogs//tags/%E9%9A%90%E5%86%99">隐写</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/sql_inject/">SQL注入</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/oschina-pages-auto-publish/">开源中国Pages自动发布小介绍</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="d61e9ee4cafa21fec93d2e15b4157fb9" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>隐写 on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/%E9%9A%90%E5%86%99/</link>
+    <description>Recent content in 隐写 on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 28 Mar 2017 16:07:45 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/%E9%9A%90%E5%86%99/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>图片隐写术介绍</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</link>
+      <pubDate>Tue, 28 Mar 2017 16:07:45 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</guid>
+      <description>隐写术是将文本或者文件隐藏到图片文件中,从而实现信息的屏蔽.
+本文主要介绍关于Python的steganography包以及相关的用法,以及编程中使用说明
+安装 pip install steganography 用法 命令行 steganography包安装之后,命令行中会存在一个steganography的可执行脚本.
+加密 steganography -e 原始图片 加密后的图片 &amp;#34;加密的文本&amp;#34; 加密 steganography -d 加密后的图片 代码引用 from steganography.steganography import Steganography # hide text to image path = &amp;#34;/tmp/image/input.jpg&amp;#34; output_path = &amp;#34;/tmp/image/output.jpg&amp;#34; text = &amp;#39;The quick brown fox jumps over the lazy dog.&amp;#39; Steganography.encode(path, output_path, text) # read secret text from image secret_text = Steganography.decode(output_path) 以后都这样尝试了.
+后续 在使用过程中,发现如果是windows存进去的中文文本解码之后可能会存在乱码的情况,这个就是编码的问题了,而且存入的内容没有经过加密的内容直接存入还是不安全. 经过以上分析,我决定自己重写一个脚本. 内容如下:
+#! /usr/local/bin/python # -*- coding:utf-8 -*- import sys from steganography.</description>
+    </item>
+    
+  </channel>
+</rss>

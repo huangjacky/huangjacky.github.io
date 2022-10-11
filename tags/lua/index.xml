@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lua on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/lua/</link>
+    <description>Recent content in Lua on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 14 Jun 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/lua/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lua - 编程中几种空值的判断</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</link>
+      <pubDate>Thu, 14 Jun 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</guid>
+      <description>0x00 背景 最近在写一段nginx+redis的代码，主要基于openresty，其中使用到了lua-resty-redis库。我平时写代码都比较小心，针对外部输入的值一般都会进行异常判断，大概的代码如下：
+local redis = require &amp;#34;redis&amp;#34; local cjson = require &amp;#34;cjson&amp;#34; --[[省略部分代码]] local ok, err = redis:get(&amp;#34;key&amp;#34;) if not ok then ngx.log(ngx.ERR, &amp;#39;[ERROR]:&amp;#39;, err) return end local data = cjson.decode(ok) 在decode这里出现了错误提示，但是ok并没有为空或者nil，不然代码是走不到这里来。
+发现问题后，我们就在前面打印一下ok数据的类型吧，大概的代码如下：
+ngx.log(ngx.ERR, &amp;#39;ok type: &amp;#39;, type(ok)) if not ok then end 这个时候我们得到的结果是userdata，这个东西算是一种复杂结构体，一般都是跨语言产生的，比如ffi.C这些。当时我的思路大概也是这样，肯定redis存放的数据是二进制的，但是呀，存放什么数据都是我自己控制的，不可能有什么畸形数据，因此这一点也排除了。最后在自己查看中发现，其实就是这个key不存在。
+0x01 分析 既然原因找到了，我们就去看看为什么会这样，主要通过阅读lua-resty-redis的源码：
+local function _read_reply(self, sock) local line, err = sock:receive() if not line then if err == &amp;#34;timeout&amp;#34; and not rawget(self, &amp;#34;_subscribed&amp;#34;) then sock:close() end return nil, err end local prefix = byte(line) if prefix == 36 then -- char &amp;#39;$&amp;#39; -- print(&amp;#34;bulk reply&amp;#34;) local size = tonumber(sub(line, 2)) if size &amp;lt; 0 then return null end local data, err = sock:receive(size) if not data then if err == &amp;#34;timeout&amp;#34; then sock:close() end return nil, err end local dummy, err = sock:receive(2) -- ignore CRLF if not dummy then return nil, err end return data elseif prefix == 43 then -- char &amp;#39;+&amp;#39; -- print(&amp;#34;status reply&amp;#34;) return sub(line, 2) elseif prefix == 42 then -- char &amp;#39;*&amp;#39; local n = tonumber(sub(line, 2)) -- print(&amp;#34;multi-bulk reply: &amp;#34;, n) if n &amp;lt; 0 then return null end local vals = new_tab(n, 0) local nvals = 0 for i = 1, n do local res, err = _read_reply(self, sock) if res then nvals = nvals + 1 vals[nvals] = res elseif res == nil then return nil, err else -- be a valid redis error value nvals = nvals + 1 vals[nvals] = {false, err} end end return vals elseif prefix == 58 then -- char &amp;#39;:&amp;#39; -- print(&amp;#34;integer reply&amp;#34;) return tonumber(sub(line, 2)) elseif prefix == 45 then -- char &amp;#39;-&amp;#39; -- print(&amp;#34;error reply: &amp;#34;, n) return false, sub(line, 2) else -- when `line` is an empty string, `prefix` will be equal to nil.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>笔记 on SecTrain安全博客</title>
+    <link>http://vul-hunters.oschina.io/hunter-blogs/categories/%E7%AC%94%E8%AE%B0/</link>
+    <description>Recent content in 笔记 on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>SecTrain 粤ICP备15077600号</copyright>
+    <lastBuildDate>Sun, 04 Jun 2017 19:44:25 +0800</lastBuildDate>
+    
+	<atom:link href="http://vul-hunters.oschina.io/hunter-blogs/categories/%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>PHP-FPM安装笔记</title>
+      <link>http://vul-hunters.oschina.io/hunter-blogs/posts/php-fpm-install/</link>
+      <pubDate>Sun, 04 Jun 2017 19:44:25 +0800</pubDate>
+      
+      <guid>http://vul-hunters.oschina.io/hunter-blogs/posts/php-fpm-install/</guid>
+      <description>0x00 为什么？ 为什么要写这样的文章？作为一个Web安全从业人员，一般需要懂两门编程语言：python用来写自己的工具，php用来漏洞演示或者白盒审计。 为什么是PHP而不是java之类的编程语言，当然懂的编程语言越多越好，但是如果精力有限，那么就挑选一门大众语言吧，PHP作为宇宙最好的编程语言，当仁不让。
+扯淡了这么久，为了漏洞演示，我们必须要有一套PHP环境，因此就涉及到如何安装PHP了。懒一点儿的人会选择XAMPP，LAMP等集成环境，一键安装，全自动傻瓜化。
+但是如果没有折腾精神，我感觉你就不适合干安全这一行。
+0x01 环境 本次编译安装主要在ubuntu类的debian和centos系统上面介绍，部分依赖包通过软件库直接安装。
+我们编译的PHP选择最新的PHP7.1.5。
+从远古时代开始，常见的PHP的环境是：Apache+PHP-Mod，这种方式需要先安装PHP，然后安装Apache，把PHP当成其一个模块来执行，因此需要安装两个软件，复杂了一点儿。
+后来PHP推出了FPM模式使得PHP能够独立运行而且性能上面也得到了提升，因此本次教程主要是讲怎么安装FPM和其一些用法。
+未完待续！！</description>
+    </item>
+    
+  </channel>
+</rss>

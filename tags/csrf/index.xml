@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CSRF on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/csrf/</link>
+    <description>Recent content in CSRF on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 07 May 2017 22:15:36 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/csrf/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【漏洞公告】某平台一个有意思的CSRF</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/vul-csrf-src-1/</link>
+      <pubDate>Sun, 07 May 2017 22:15:36 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/vul-csrf-src-1/</guid>
+      <description>0x00 背景 某日在给某集团平台提交报告的时候，出于习惯就想试试这个平台的安全性怎么样。
+总的来说，平台前面架设了WAF，一些常规的测试Payload都会被拦截，因此不适合强攻。其实随着安全越来越受重视，很多开发同学的安全意识也越来越高，常见的XSS和SQL注入的错误一般都会再犯。但是对于跨站请求伪造CSRF一般都没有太在意。主要原因是这类漏洞的危害不会像注入那样明显，但是威胁等级并不比它们低。
+0x01 案例 前面唠叨了这么多，接下来我们就说说这个具体的例子：
+问题接口 我们发现退出登录，这个平台采用的GET请求，同时没有其他防护策略，比如token，比如referer校验。
+这个接口存在两个问题：
+ 不规范，我们知道在HTTP语义中，修改用户的登录态写操作要用POST或者PUT，而GET操作主要用于获取资源信息等。至于开发人员为什么要这么做？肯定就是为了图方便。所有违背规范的操作，都是为了主管的便利性。 重要的接口没有进行二次校验。接口功能是正常的，就是清空session中的用户登录态，但是在清除过程中，并没有确认请求是否用户发送的。  假设这个接口地址是：http://security.lxxxxxxxxxxh.com/account/logout ,这样的接口很好找，因为只要有登录态的网站，一般在显眼的地方都会存在这样退出功能的接口。
+注入点 现在问题接口找到了，但是我们需要怎样才能诱骗其他用户来触发呢？
+第一个办法，也是最简单的，就是找到你的目标用户，然后把URL发给他，等他点击。但是这里有两个明显的问题：
+ SRC平台不是社交网站，一般不提供用户之间交流的渠道，因此我们能否把URL发出去都是一个问题 一个不熟悉的人给你发的URL你会点击么？何况URL名字这么明显，有个logout。
+经验告诉我们GET型的CSRF最好的载体是IMG，好处在于隐蔽和简单，整个网页可以显示其他内容，但是其中一个IMG却悄悄的发送一个退出登录的请求。比如： http://www.huangjacky.com/h.html  &amp;lt;html&amp;gt; &amp;lt;head&amp;gt; &amp;lt;title&amp;gt;精彩刺激好看的爱情动作片&amp;lt;/title&amp;gt; &amp;lt;/head&amp;gt; &amp;lt;body&amp;gt; 显示一些吸引用户的内容来吸引和误导用户 &amp;lt;img style=&amp;#34;display:none&amp;#34; src=http://security.lxxxxxxxxxxh.com/account/logout&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; 这样只要将上面的网址配上吸引人的标题就可以发送给其他用户的。
+这样做有多个好处：
+ 内容吸引用户，提高用户点击的概率 独立的域名，很多用户都知道跨域保护，不会认为这个网站能影响到我。  但是这样还是不能保证百分百用户点击，也不能保证如何将入口发送给用户的渠道问题。
+突破点 这个时候，我们发现平台默认使用的头像是QQ或微信的，但是它提供头像修改功能。头像就是IMG，那么如果设置成功后，平台任意一个显示我们头像的地方都可以触发这个CSRF。安全应急响应平台的管理总要处理我们漏洞吧，漏洞详情页面或者排行榜都可能出现我们的头像，传播渠道也解决了。
+那么我们上传图片，然后抓包提交修改那一下，修改POST里面headImg为http://security.lxxxxxxxxxxh.com/account/logout ，修改成功了，亲测成功，等着管理员查看漏洞时候的懊恼的表情吧。
+0x02 原理讲解 CSRF全称叫做跨站请求伪造，漏洞的利用主要是诱骗用户在浏览A网站的同时向B网站发送一个特定请求，让B网站去执行相关的操作。 从上面的描述我们可以看出来主要有两点：
+ 从一个网站向另一个网站发送了请求。 在用户不知情的情况下请求发送了。而不是用户再主动进行点击。
+有些知识的朋友就会问从一个网站向另外一个网站发送请求不是跨域了么？其实这是你们把跨域知识点弄错了，跨域问题主要存在脚本操作中，比如AJAX请求等。但是对于浏览器的script，img，iframe等标签操作是没有作用。不然CDN怎么能运行？CDN通常来说都是一个独立的域名。当然在现代的浏览器里面，如果网页是HTTPS协议的时候，如果你去请求一个HTTP的资源，这个是会禁止的，因为整个系统的安全性取决于最短的那块木板，如果这个被放行，整个网页HTTPS的作用也无效了。HTML代码因为HTTPS不会被劫持，但是里面嵌入的图片和脚本资源因为是HTTP的，是会被劫持的。
+这这种情况下我们推荐开发的同学在编码的时候使用相对协议：  &amp;lt;script src=//huangjacky.com/static/js/sec.js&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;img src=//huangjacky.com/test.png /&amp;gt; 但是为什么我们会遭受到CSRF攻击？
+会话保持功能 现在所有的浏览器，为了保持用户浏览时的体验，当用户任何操作的时候，都会带上对应的Cookie。 那么上面例子当中，
+ 我们在请求http://www.huangjacky.com/h.html 的时候，这个时候浏览器会带上本地保持的www.huangjacky.com的Cookie将请求发送给www.huangjacky.com的服务器，这个很好理解。 浏览器渲染得到HTML代码，发现里面有一张图片，就会去请求http://security.lxxxxxxxxxxh.com/account/logout 注意这个时候虽然网页停留在www.</description>
+    </item>
+    
+  </channel>
+</rss>

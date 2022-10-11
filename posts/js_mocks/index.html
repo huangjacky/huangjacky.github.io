@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    关于爬虫本地JS Hook的研究 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="在爬虫或者自动化测试过程中，如何调用Hook指定的JS函数">
+<meta name="keywords" content="">
+<meta name="author" content="HuangJacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="关于爬虫本地JS Hook的研究" />
+<meta property="og:description" content="在爬虫或者自动化测试过程中，如何调用Hook指定的JS函数" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-背景介绍">0x00 背景介绍</a></li>
+    <li><a href="#0x01-需求">0x01 需求</a>
+      <ul>
+        <li><a href="#场景一弹框阻碍流程">场景一：弹框阻碍流程</a></li>
+        <li><a href="#场景二记录指定函数被调用情况">场景二：记录指定函数被调用情况</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-javascript-hook">0x02 JavaScript Hook</a></li>
+    <li><a href="#0x03-注入实战">0x03 注入实战</a>
+      <ul>
+        <li><a href="#phantomjs">PhantomJS</a></li>
+        <li><a href="#selenium">Selenium</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x04-结论">0x04 结论</a></li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/js_mocks/">关于爬虫本地JS Hook的研究</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>12</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Aug</span> <span class="post-date-year">2018</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">HuangJacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E5%AE%89%E5%85%A8" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E5%AE%89%E5%85%A8">安全</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h2 id="0x00-背景介绍">0x00 背景介绍</h2>
+<p>最早的爬虫，只需要能够从服务端获取到HTML代码，进行分析即可，随着Web2.0的普及，越来越多的网站都必须JavaScript解析之后才能正常显示。因此这也对爬虫提出了新的要求，当前前人们已经在爬虫中集成Webkit等框架来满足这样的需求。<br>
+本文将从实际漏洞扫描器项目中，爬虫遇到的一个问题作为切入点，简单的介绍一下爬虫过程中一些JavaScript上Mock或者Hook的技巧。</p>
+<h2 id="0x01-需求">0x01 需求</h2>
+<p>这里需求主要有两个：</p>
+<h3 id="场景一弹框阻碍流程">场景一：弹框阻碍流程</h3>
+<p>在网页中存在alert，prompt等弹出框，如果没有取消会造成webkit某些API运行异常。当前针对alert的情况，通常的框架都提供一些额外的解决方案，比如PhantomJS的onAlert()函数，Selenium的switch_to.alert().accept()。但是我们还是想和场景二一起使用Hook的方法来解决。</p>
+<h3 id="场景二记录指定函数被调用情况">场景二：记录指定函数被调用情况</h3>
+<p>存储型XSS的验证过程通常分为Payload的注入和执行情况验证。作为一款优秀的扫描器（没错，说的就是<a href="https://www.huaweicloud.com/product/vss.html">华为云漏洞扫描服务</a>），注入的Payload一定不能对目标系统有危害，因此我们通常会选用一些温柔的函数，比如console.log，而非alert或者随机不存在的函数。但是当第二次爬虫在爬取过程中，如何统计Payload触发的情况，就会成为一个难题。</p>
+<h2 id="0x02-javascript-hook">0x02 JavaScript Hook</h2>
+<p>函数的Hook，其实就是在函数被调用前，对函数进行替换。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">old_alert</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">alert</span>;
+window.<span style="color:#a6e22e">alert</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">message</span>){
+    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;receive: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">message</span>);
+    <span style="color:#a6e22e">old_alert</span>(<span style="color:#a6e22e">message</span>);
+}
+</code></pre></div><p>上面的例子是对alert函数增加一个日志打印的功能。<br>
+Hook很简单，现在唯一的问题就是要在函数执行之前就进行替换，很多函数是在网页加载中（head部分）或者网页加载完成后立即就执行了，没有空隙给我们替换函数。</p>
+<h2 id="0x03-注入实战">0x03 注入实战</h2>
+<h3 id="phantomjs">PhantomJS</h3>
+<p>它是基于QT和Webkit的无头(Headless)浏览框架，因为其不依赖Xvfb，资源占用比较小，有段时间非常受大家欢迎。其Project的Owner已经宣布不维护了，现在版本定格在2.1.1。PhantomJS良好的接口，使其能够非常方便的支持JS代码注入。<br>
+假如某个网页(<a href="http://fake.hack.com/location.html">http://fake.hack.com/location.html</a>) 会获取地理位置，只有指定位置的用户才会进行下一步处理。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">webPage</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;webpage&#39;</span>);
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">page</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">webPage</span>.<span style="color:#a6e22e">create</span>();
+<span style="color:#75715e">//页面初始化之前插入一段JS
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">page</span>.<span style="color:#a6e22e">onInitialized</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(){
+    <span style="color:#75715e">//模拟地理定位.
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">page</span>.<span style="color:#a6e22e">injectJs</span>(<span style="color:#e6db74">&#34;fake-location.js&#34;</span>);
+};
+</code></pre></div><p>fake-location.js的代码也非常简单，内容如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript">window.<span style="color:#a6e22e">navigator</span>.<span style="color:#a6e22e">geolocation</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">getCurrentPosition</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">success</span>, <span style="color:#a6e22e">failure</span>) {
+        <span style="color:#a6e22e">success</span>({
+            <span style="color:#a6e22e">coords</span><span style="color:#f92672">:</span> {
+                <span style="color:#75715e">//模拟华中科技大学产学研基地
+</span><span style="color:#75715e"></span>                <span style="color:#a6e22e">latitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">22.52902</span>,
+                <span style="color:#a6e22e">longitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">113.94376</span>
+            }, <span style="color:#a6e22e">timestamp</span><span style="color:#f92672">:</span> Date.<span style="color:#a6e22e">now</span>()
+        });
+    },
+    <span style="color:#a6e22e">watchPosition</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">success</span>, <span style="color:#a6e22e">failure</span>){
+        <span style="color:#a6e22e">success</span>({
+            <span style="color:#a6e22e">coords</span><span style="color:#f92672">:</span> {
+                <span style="color:#75715e">//模拟华中科技大学产学研基地
+</span><span style="color:#75715e"></span>                <span style="color:#a6e22e">latitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">22.52902</span>,
+                <span style="color:#a6e22e">longitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">113.94376</span>
+            }, <span style="color:#a6e22e">timestamp</span><span style="color:#f92672">:</span> Date.<span style="color:#a6e22e">now</span>()
+        });
+    }
+};
+</code></pre></div><p>从上面的例子可以看到我们Hook了getCurrentPosition函数，它只会返回指定的经纬度。当然这一切都依赖于PhantomJS提供了<strong>injectJs</strong>这个方法以及<strong>onInitialized</strong>这个事件。</p>
+<h3 id="selenium">Selenium</h3>
+<p>PhantomJS始终是小众的选择，Selenium才是主流，尤其是Chrome推出了Headless模式之后，大大提高了Selenium的效率。<br>
+由于时间原因，本文只研究了ChromeWebDriver的情况。首先看一段代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> selenium <span style="color:#f92672">import</span> webdriver
+<span style="color:#f92672">from</span> selenium.webdriver.chrome.options <span style="color:#f92672">import</span> Options
+<span style="color:#75715e"># 定义Chrome和ChromeWebDriver的路径</span>
+DRIVER_PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/Users/huangjacky/program/tools/chromedriver&#34;</span>
+CHROME_PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/Applications/Google Chrome.app/Contents/MacOS/Google Chrome&#34;</span>
+URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://127.0.0.1:8080/test.html&#34;</span>
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    <span style="color:#75715e"># 创建一个WebDriver实例</span>
+    options <span style="color:#f92672">=</span> Options()
+    options<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--headless&#34;</span>)
+    options<span style="color:#f92672">.</span>binary_location <span style="color:#f92672">=</span> CHROME_PATH
+    driver <span style="color:#f92672">=</span> webdriver<span style="color:#f92672">.</span>Chrome(executable_path<span style="color:#f92672">=</span>DRIVER_PATH, chrome_options<span style="color:#f92672">=</span>options)
+    <span style="color:#66d9ef">try</span>:
+        driver<span style="color:#f92672">.</span>get(URL)
+        driver<span style="color:#f92672">.</span>get_screenshot_as_file(<span style="color:#e6db74">&#34;test.png&#34;</span>)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+        print(e)
+    <span style="color:#66d9ef">finally</span>:
+        driver<span style="color:#f92672">.</span>close()
+        driver<span style="color:#f92672">.</span>quit()
+</code></pre></div><p>代码很简单就是打开一个网页，然后截图。这个网页的内容就是一个弹框：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html"><span style="color:#75715e">&lt;!DOCTYPE html&gt;</span>
+&lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en&#34;</span>&gt;
+&lt;<span style="color:#f92672">head</span>&gt;
+    &lt;<span style="color:#f92672">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;UTF-8&#34;</span>&gt;
+    &lt;<span style="color:#f92672">title</span>&gt;test&lt;/<span style="color:#f92672">title</span>&gt;
+&lt;/<span style="color:#f92672">head</span>&gt;
+&lt;<span style="color:#f92672">body</span>&gt;
+&lt;<span style="color:#f92672">script</span>&gt;
+    <span style="color:#a6e22e">alert</span>(<span style="color:#e6db74">&#34;huangjacky&#34;</span>);
+&lt;/<span style="color:#f92672">script</span>&gt;
+&lt;/<span style="color:#f92672">body</span>&gt;
+&lt;/<span style="color:#f92672">html</span>&gt;
+</code></pre></div><p>而运行结果并不符合预期：<br>
+<img src="http://vul-hunters.oschina.io/hunter-blogs/img/Selenium.alert.error.png" alt=""><br>
+截图失败，因为有alert弹出框。<br>
+通过查看WebDriver的API，我们发现一个函数<strong>execute_script</strong>, 因此我们修改代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">driver<span style="color:#f92672">.</span>execute_script(<span style="color:#e6db74">&#39;window.alert=null;&#39;</span>)
+driver<span style="color:#f92672">.</span>get(URL)
+driver<span style="color:#f92672">.</span>get_screenshot_as_file(<span style="color:#e6db74">&#34;test.png&#34;</span>)
+</code></pre></div><p>结果肯定是不成功的，不然就不会有这篇文章了。<br>
+大概是因为driver.get之后才会有window对象，之前执行的js代码都无效。</p>
+<p>Google了大半天，无果。看来从WebDriver上面入手是不行了，我们将目光回到Chrome浏览器自身来，它提供Chrome Devtools Protocol来方便我们这些开发者进行定制，通过<a href="https://chromedevtools.github.io/devtools-protocol/tot/Page">官方文档</a> 的查看，我发现了<strong>Page.addScriptToEvaluateOnNewDocument</strong>这个Method是可以满足我们需求的。<strong>Chrome Devtools Protocol</strong>的一些细节，请读者自行Google或者等我下一篇文章吧。<br>
+新的代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">resource <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/session/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/chromium/send_command_and_get_result&#34;</span> <span style="color:#f92672">%</span> driver<span style="color:#f92672">.</span>session_id
+url <span style="color:#f92672">=</span> driver<span style="color:#f92672">.</span>command_executor<span style="color:#f92672">.</span>_url <span style="color:#f92672">+</span> resource
+body <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>dumps({
+    <span style="color:#e6db74">&#39;cmd&#39;</span>: <span style="color:#e6db74">&#39;Page.addScriptToEvaluateOnNewDocument&#39;</span>,
+    <span style="color:#e6db74">&#39;params&#39;</span>: {<span style="color:#e6db74">&#34;source&#34;</span>: <span style="color:#e6db74">&#34;window.alert=function(msg){console.log(msg)}&#34;</span>}
+})
+response <span style="color:#f92672">=</span> driver<span style="color:#f92672">.</span>command_executor<span style="color:#f92672">.</span>_request(<span style="color:#e6db74">&#39;POST&#39;</span>, url, body)
+<span style="color:#66d9ef">if</span> response[<span style="color:#e6db74">&#39;status&#39;</span>]:
+    <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(response<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;value&#39;</span>))
+print(response<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;value&#39;</span>))
+driver<span style="color:#f92672">.</span>get(URL)
+driver<span style="color:#f92672">.</span>get_screenshot_as_file(<span style="color:#e6db74">&#34;test.png&#34;</span>)
+</code></pre></div><p>代码运行成功，截图OK啦。<br>
+这里需要注意几点：</p>
+<ol>
+<li>url的获取以及session，这些WebDriver里面都有方法</li>
+<li>请求的通道，这个主要复用WebDriver.command_executor</li>
+</ol>
+<h2 id="0x04-结论">0x04 结论</h2>
+<p>遇到问题，我们首先研究框架支持的情况，当框架不支持的时候，我们可以从事情本质出发，也就是框架的底座，Chrome浏览器自身。最重要的就是多Google，技术问题千万别百度。</p>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-webkit" href="https://vul-hunters.gitee.io/hunter-blogs//tags/webkit">Webkit</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/sni/">WAF和SNI的前世今生</a>
+		            </div>
+		            
+
+					
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="a3d8e7ab233cdf18d13ab4a628519ed6" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

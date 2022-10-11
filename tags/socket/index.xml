@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>socket on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/socket/</link>
+    <description>Recent content in socket on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 09 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/socket/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NGINX WAF出现TIME_WAIT问题</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/</link>
+      <pubDate>Mon, 09 Jul 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/</guid>
+      <description>0x00 问题描述 近日笔者参与的一款WAF产品，在大流量并发的况下，出现了部分请求500。这里的状态码有两种情况：WAF自身问题产生的内部服务器错误和后端上游服务器产生了内部错误透传过来的。当然这个还是比较好定位，只需要查看一下nginx的error_log即可，由于笔者这面log都是用ELK采集的，因此只需要在Kibana上面查看一下。这里我们看到了如下的错误：
+2018/07/10 16:15:28 [xxx] xxxx#0: *xxxxx bind(xxx.xxx.xxx.xxx) failed (98:Address already in use) while connecting to upstream xxxxxxxxxxxxx 当然如果你用上面的一些内容作为关键字去搜索，不管是Google还是百度，搜索出来多半都是在启动时候listen时候bind failed的，和我们情况完全不一致，说明我们这个问题并不是一个常见的问题，也预示着着并不会那么容易解决。
+0x01 初步排查 解释这个问题前，我们得说一下Socket的四元组：（源IP，源端口，目的IP，目的端口）。当这个四个元素都已经有Socket占用了，那么新创建的Socket就会失败，这个时候NGINX就会报上面这个错误。
+reuseport 看到这里，可能很多同学就会去搜索各种nginx reuseport的文章，那么多半你已经走偏了。虽然reuseport解决不了我们这个问题这里我还是要提一下它的功效。正常情况下，每个NGINX worker都是一个独立的进程，他们监听的套接字都是从master里面fork出来的，那么说白了，他们手上都是同一个套接字，那么有请求来到的时候，这个套接字会通知所有的worker，但最后只能由一个worker来处理新连接，因此中间必然会存在一个竞争锁的过程，性能肯定也会有损耗的。如下图：
+当这个选项打开的时候，系统允许多个Socket监听在同一个IP和端口上面，当有新请求到达时候，由内核直接从这些Socket中选择一个来处理，此时套接字和Worker是一一对应的，因此该套接字只会通知到一个Worker，这样有效减少进程间竞争。如下图：
+当然使用这个选项是有一些条件的：
+ NGINX版本大于1.9.1 Linux内核版本3.9以后 NGINX中开启相应的配置项  http { server { listen 80 reuseport; server_name localhost; ... } } stream { server { listen 12345 reuseport; ... } } 正解 上面扯得有些多。既然原因不是它，我们继续排查。NGINX作为反向代理服务器，那么它先是作为服务端接收用户的请求，这个时候Socket四元组中目的IP就是我们对外的监听IP，目的端口就是我们监听的端口，而源IP和源端口都是在用户侧，不同的用户就是不同的IP，因此Socket冲突的概率非常之小。NGINX将请求转发给上游服务器的时候，它是作为客户端去请求上游的HTTP服务，那么这个时候Socket四元组中的源IP（NGINX的出口IP），目的IP，目的端口都是固定值，只有源端口可以变化，那么冲突的概率就会非常大了。肯定有朋友会问源端口的取值范围有多大呢？
+ip_local_port_range 在linux系统中的**/etc/sysctl.conf文件中有一个选项net.ipv4.ip_local_port_range**可以决定源端口的取值范围。
+默认值是
+net.ipv4.ip_local_port_range = 32768	61000 大概有28322个端口可以用，如果这个范围内的某个端口已经被占用，系统在创建Socket的时候会自动跳过，去挑选下一个端口。如果各位朋友想要查看自己系统的配置，可以查看这个配置文件，也可以直接执行如下命令：
+sysctl -a 如果我们对相关选项做了修改，那么一定记住要执行命令让其生效。</description>
+    </item>
+    
+  </channel>
+</rss>

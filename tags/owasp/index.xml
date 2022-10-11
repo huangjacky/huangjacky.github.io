@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Owasp on SecTrain安全博客</title>
+    <link>http://vul-hunters.oschina.io/hunter-blogs/tags/owasp/</link>
+    <description>Recent content in Owasp on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>SecTrain 粤ICP备15077600号</copyright>
+    <lastBuildDate>Wed, 12 Apr 2017 18:00:15 +0800</lastBuildDate>
+    
+	<atom:link href="http://vul-hunters.oschina.io/hunter-blogs/tags/owasp/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>OWASP的TOP10 2017版解读</title>
+      <link>http://vul-hunters.oschina.io/hunter-blogs/posts/owasp-top10-2017/</link>
+      <pubDate>Wed, 12 Apr 2017 18:00:15 +0800</pubDate>
+      
+      <guid>http://vul-hunters.oschina.io/hunter-blogs/posts/owasp-top10-2017/</guid>
+      <description> 0x00 前言 0x05 参考资料  OWASP TOP10 2017RC英文原版  </description>
+    </item>
+    
+  </channel>
+</rss>

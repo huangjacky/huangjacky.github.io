@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    安全工具 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="安全工具" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/index.xml" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+      <a name="top"></a>
+      
+
+      <div class="posts">
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/sec-tools-sqlmap/">安全工具 - SQLmap的用法</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>20</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Apr</span> <span class="post-date-year">2017</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >HuangJacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>3 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7">安全工具</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <article class="post-summary">
+            	0x00 序言 前一篇文章介绍了nmap的用法, 这次再介绍一个神器, 那就是SQLmap, 它作为SQL注入界自动化检测工具,能够实现高难度漏洞检测, 脱裤等工作,大大减少安全人员的时间.
+0x01 用法 拿到一个工具之前,我们可以用过帮助文档查看它一般的用法. 运行以下命令, 可以查看到详细的帮助:
+sqlmap -hh 目标选定 指定URL sqlmap -u &#34;http://svip.qq.com/abc?d=1&#34; 对指定的URL进行SQL注入检测
+指定GOOGLE搜索的关键字 sqlmap -g &#39;site:&#34;svip.qq.com&#34; filetype:pdf&#39; 对GOOGLE搜索出来的每一页结果中的链接进行SQL注入检测
+指定BURP或者WebScarab导出文件 sqlmap -l ./a.log 将BURP等安全抓包工具中导出的需要分析的请求进行SQL注入检测
+指定sitemap.xml sqlmap -x &#34;https://m.juzilicai.com/sitemap.xml&#34; 读取指定sitemap.xml文件,并分析其中URL进行SQL注入检测
+指定HTTP请求报文 sqlmap -r ./request.txt 这个是sqlmap最简单的, 也是最好用的一个用法, sqlmap会去读取这个HTTP请求文件, 从文件中提取出所有HTTP请求相关的参数进行填充, 这样可以为了省去很多参数的配置.
+指定多个请求 sqlmap -m ./multi.txt 从文件中读取多个请求进行SQL注入检测
+请求相关的参数 指定请求方式 sqlmap -u &#34;http://db.qq.com/test&#34; --method POST 使用POST请求对URL进行SQL检测
+指定请求的内容 sqlmap -u &#34;http://db.qq.com/test&#34; --method POST --data &#34;a=1&amp;b=2&#34; 向指定URL通过POST发送data数据,并且对相关参数进行SQL注入检测, data通常用在POST和PUT请求中
+指定Cookie sqlmap -u &#34;http://db.
+              </article>
+			  <div class="read-more-link">
+				<a href="/hunter-blogs/posts/sec-tools-sqlmap/"><span class="read-more-slashes">//</span>Read More...</a>
+			  </div>
+            
+          </section>
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/sec-tools-nmap/">安全工具 - nmap用法</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>17</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Apr</span> <span class="post-date-year">2017</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >HuangJacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>1 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7">安全工具</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <article class="post-summary">
+            	0x00 序言 工欲善其事, 必先利其器. 当然这系列的文章都是偏入门级的, 主要是方便我自己熟悉相关的工具, 以及日后使用过程中, 自己有个地方作为参考. nmap作为安全圈的神器, 在黑客帝国里面也有露面, 因此你可以想象到它的用途了吧
+0x01 用法 扫描目标 nmap接受的输入可以有单IP,域名,网段和IP列表文件.
+# 扫描单个ip nmap 127.0.0.1 # 扫描一个ip端 nmap 192.168.2.1-25 # 扫描一个子网段 nmap 192.168.2.0/24 # 扫描一个域名 nmap www.test.com # 扫描文件列表中IP nmap -iL ips.txt # 排除指定ip, 不扫描192.168.3.1 nmap 192.168.3.0/24 --exclude 192.168.3.1 端口选项 默认nmap会扫描1000个端口, 但是可以用过-p参数来设置.
+# 扫描常见的100哥端口, 快速扫描模式 nmap -F 192.168.3.1 # 扫描指定端口, 可以使单个也可以是多个 nmap -p22,23,443 192.168.3.1 # 扫描所有端口1-65535 nmap -p- 192.168.3.1 主机发现 nmap在对主机进行扫描前, 通常会通过ping命令来发现主机是否存活, 主要用来优化扫描速度. 目前很多服务器都屏蔽了ping包, 因此这里可能造成一定的误报.
+-sP 通过ping来发现主机
+              </article>
+			  <div class="read-more-link">
+				<a href="/hunter-blogs/posts/sec-tools-nmap/"><span class="read-more-slashes">//</span>Read More...</a>
+			  </div>
+            
+          </section>
+        
+      </div>
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+  
+</body>
+</html>

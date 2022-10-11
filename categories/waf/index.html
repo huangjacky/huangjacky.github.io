@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    WAF // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="WAF" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/categories/waf/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="https://vul-hunters.gitee.io/hunter-blogs/categories/waf/index.xml" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+      <a name="top"></a>
+      
+
+      <div class="posts">
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/waf-nginx-time-wait/">NGINX WAF出现TIME_WAIT问题</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>9</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Jul</span> <span class="post-date-year">2018</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >HuangJacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>2 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-waf" href="https://vul-hunters.gitee.io/hunter-blogs//categories/waf">WAF</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <article class="post-summary">
+            	0x00 问题描述 近日笔者参与的一款WAF产品，在大流量并发的况下，出现了部分请求500。这里的状态码有两种情况：WAF自身问题产生的内部服务器错误和后端上游服务器产生了内部错误透传过来的。当然这个还是比较好定位，只需要查看一下nginx的error_log即可，由于笔者这面log都是用ELK采集的，因此只需要在Kibana上面查看一下。这里我们看到了如下的错误：
+2018/07/10 16:15:28 [xxx] xxxx#0: *xxxxx bind(xxx.xxx.xxx.xxx) failed (98:Address already in use) while connecting to upstream xxxxxxxxxxxxx 当然如果你用上面的一些内容作为关键字去搜索，不管是Google还是百度，搜索出来多半都是在启动时候listen时候bind failed的，和我们情况完全不一致，说明我们这个问题并不是一个常见的问题，也预示着着并不会那么容易解决。
+0x01 初步排查 解释这个问题前，我们得说一下Socket的四元组：（源IP，源端口，目的IP，目的端口）。当这个四个元素都已经有Socket占用了，那么新创建的Socket就会失败，这个时候NGINX就会报上面这个错误。
+reuseport 看到这里，可能很多同学就会去搜索各种nginx reuseport的文章，那么多半你已经走偏了。虽然reuseport解决不了我们这个问题这里我还是要提一下它的功效。正常情况下，每个NGINX worker都是一个独立的进程，他们监听的套接字都是从master里面fork出来的，那么说白了，他们手上都是同一个套接字，那么有请求来到的时候，这个套接字会通知所有的worker，但最后只能由一个worker来处理新连接，因此中间必然会存在一个竞争锁的过程，性能肯定也会有损耗的。如下图：
+当这个选项打开的时候，系统允许多个Socket监听在同一个IP和端口上面，当有新请求到达时候，由内核直接从这些Socket中选择一个来处理，此时套接字和Worker是一一对应的，因此该套接字只会通知到一个Worker，这样有效减少进程间竞争。如下图：
+当然使用这个选项是有一些条件的：
+ NGINX版本大于1.9.1 Linux内核版本3.9以后 NGINX中开启相应的配置项  http { server { listen 80 reuseport; server_name localhost; ... } } stream { server { listen 12345 reuseport; ... } } 正解 上面扯得有些多。既然原因不是它，我们继续排查。NGINX作为反向代理服务器，那么它先是作为服务端接收用户的请求，这个时候Socket四元组中目的IP就是我们对外的监听IP，目的端口就是我们监听的端口，而源IP和源端口都是在用户侧，不同的用户就是不同的IP，因此Socket冲突的概率非常之小。NGINX将请求转发给上游服务器的时候，它是作为客户端去请求上游的HTTP服务，那么这个时候Socket四元组中的源IP（NGINX的出口IP），目的IP，目的端口都是固定值，只有源端口可以变化，那么冲突的概率就会非常大了。肯定有朋友会问源端口的取值范围有多大呢？
+ip_local_port_range 在linux系统中的**/etc/sysctl.conf文件中有一个选项net.ipv4.ip_local_port_range**可以决定源端口的取值范围。
+默认值是
+net.ipv4.ip_local_port_range = 32768	61000 大概有28322个端口可以用，如果这个范围内的某个端口已经被占用，系统在创建Socket的时候会自动跳过，去挑选下一个端口。如果各位朋友想要查看自己系统的配置，可以查看这个配置文件，也可以直接执行如下命令：
+sysctl -a 如果我们对相关选项做了修改，那么一定记住要执行命令让其生效。
+              </article>
+			  <div class="read-more-link">
+				<a href="/hunter-blogs/posts/waf-nginx-time-wait/"><span class="read-more-slashes">//</span>Read More...</a>
+			  </div>
+            
+          </section>
+        
+      </div>
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+  
+</body>
+</html>

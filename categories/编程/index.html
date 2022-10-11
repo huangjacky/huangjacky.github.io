@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    编程 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="编程" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/categories/%E7%BC%96%E7%A8%8B/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="https://vul-hunters.gitee.io/hunter-blogs/categories/%E7%BC%96%E7%A8%8B/index.xml" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+      <a name="top"></a>
+      
+
+      <div class="posts">
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/lua-null/">Lua - 编程中几种空值的判断</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>14</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Jun</span> <span class="post-date-year">2018</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >huangjacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>2 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E7%BC%96%E7%A8%8B">编程</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <article class="post-summary">
+            	0x00 背景 最近在写一段nginx+redis的代码，主要基于openresty，其中使用到了lua-resty-redis库。我平时写代码都比较小心，针对外部输入的值一般都会进行异常判断，大概的代码如下：
+local redis = require &#34;redis&#34; local cjson = require &#34;cjson&#34; --[[省略部分代码]] local ok, err = redis:get(&#34;key&#34;) if not ok then ngx.log(ngx.ERR, &#39;[ERROR]:&#39;, err) return end local data = cjson.decode(ok) 在decode这里出现了错误提示，但是ok并没有为空或者nil，不然代码是走不到这里来。
+发现问题后，我们就在前面打印一下ok数据的类型吧，大概的代码如下：
+ngx.log(ngx.ERR, &#39;ok type: &#39;, type(ok)) if not ok then end 这个时候我们得到的结果是userdata，这个东西算是一种复杂结构体，一般都是跨语言产生的，比如ffi.C这些。当时我的思路大概也是这样，肯定redis存放的数据是二进制的，但是呀，存放什么数据都是我自己控制的，不可能有什么畸形数据，因此这一点也排除了。最后在自己查看中发现，其实就是这个key不存在。
+0x01 分析 既然原因找到了，我们就去看看为什么会这样，主要通过阅读lua-resty-redis的源码：
+local function _read_reply(self, sock) local line, err = sock:receive() if not line then if err == &#34;timeout&#34; and not rawget(self, &#34;_subscribed&#34;) then sock:close() end return nil, err end local prefix = byte(line) if prefix == 36 then -- char &#39;$&#39; -- print(&#34;bulk reply&#34;) local size = tonumber(sub(line, 2)) if size &lt; 0 then return null end local data, err = sock:receive(size) if not data then if err == &#34;timeout&#34; then sock:close() end return nil, err end local dummy, err = sock:receive(2) -- ignore CRLF if not dummy then return nil, err end return data elseif prefix == 43 then -- char &#39;+&#39; -- print(&#34;status reply&#34;) return sub(line, 2) elseif prefix == 42 then -- char &#39;*&#39; local n = tonumber(sub(line, 2)) -- print(&#34;multi-bulk reply: &#34;, n) if n &lt; 0 then return null end local vals = new_tab(n, 0) local nvals = 0 for i = 1, n do local res, err = _read_reply(self, sock) if res then nvals = nvals + 1 vals[nvals] = res elseif res == nil then return nil, err else -- be a valid redis error value nvals = nvals + 1 vals[nvals] = {false, err} end end return vals elseif prefix == 58 then -- char &#39;:&#39; -- print(&#34;integer reply&#34;) return tonumber(sub(line, 2)) elseif prefix == 45 then -- char &#39;-&#39; -- print(&#34;error reply: &#34;, n) return false, sub(line, 2) else -- when `line` is an empty string, `prefix` will be equal to nil.
+              </article>
+			  <div class="read-more-link">
+				<a href="/hunter-blogs/posts/lua-null/"><span class="read-more-slashes">//</span>Read More...</a>
+			  </div>
+            
+          </section>
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/nginx-502-504-diff/">Nginx错误码502和504的区别</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>29</sup></span><span class="post-date-separator">/</span><span class="post-date-month">May</span> <span class="post-date-year">2017</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >HuangJacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>3 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E7%BC%96%E7%A8%8B">编程</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <article class="post-summary">
+            	0x00 前言 某日某B：我们系统出现了504,你赶紧去问问PHP的人有什么错误日志？
+某A：我已经问过，PHP的人说没有日志。
+某B：PHP那面的人说的话你不要相信，赶紧再去查一遍。
+某A：WTF。。。
+因此某A很疑惑，为什么NGINX有502和504, 有那些原因导致504, PHP那面有没有日志呢？
+0x01 定义 通过阅读nginx的源码，备注：我这里查看的是openresty中nginx-1.11.2的源代码，我们发现502和504的定义。
+ngx_http_request.h的130行有如下的代码
+#define NGX_HTTP_INTERNAL_SERVER_ERROR 500 #define NGX_HTTP_NOT_IMPLEMENTED 501 #define NGX_HTTP_BAD_GATEWAY 502 #define NGX_HTTP_SERVICE_UNAVAILABLE 503 #define NGX_HTTP_GATEWAY_TIME_OUT 504 #define NGX_HTTP_INSUFFICIENT_STORAGE 507 从字面上面翻译看：
+ 502 错误的网关 504 网关超时  网络上有很多关于这两种错误的解决办法，的确他们说的方法能够解决这两种错误，后面我也会总结一下解决办法。但是没有从源头上说明白为什么NGINX会抛出这样的错误码，还有就是在什么情况下会抛出这样的错误码。
+0x02 代码跟踪 为了弄明白什么情况下产生产生这两种错误码，我们继续查看相关的源代码：
+在ngx_http_upstream.c的3935行中定义了一个ngx_http_upstream_next
+static void ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u, ngx_uint_t ft_type) { //-------------省略代码  switch (ft_type) { case NGX_HTTP_UPSTREAM_FT_TIMEOUT: status = NGX_HTTP_GATEWAY_TIME_OUT; break; case NGX_HTTP_UPSTREAM_FT_HTTP_500: status = NGX_HTTP_INTERNAL_SERVER_ERROR; break; case NGX_HTTP_UPSTREAM_FT_HTTP_403: status = NGX_HTTP_FORBIDDEN; break; case NGX_HTTP_UPSTREAM_FT_HTTP_404: status = NGX_HTTP_NOT_FOUND; break; default: status = NGX_HTTP_BAD_GATEWAY; } //-------------省略代码 } 这段代码的作用是：根据ft_type进行status设置，然后根据相关属性判断是传给下一个upstream还是结束连接ngx_http_upstream_finalize_request。
+              </article>
+			  <div class="read-more-link">
+				<a href="/hunter-blogs/posts/nginx-502-504-diff/"><span class="read-more-slashes">//</span>Read More...</a>
+			  </div>
+            
+          </section>
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/phantomjs-geoloaction-api/">phantomjs - 支持地理位置API</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>26</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2017</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >huangjacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>1 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E7%BC%96%E7%A8%8B">编程</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <p>目前phantomjs并不支持GeolocationAPI,但是我们可以手动编写一个js文件, 用自己的代码实现常见的Geolocation API.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">webPage</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;webpage&#39;</span>);
+<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">page</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">webPage</span>.<span style="color:#a6e22e">create</span>();
+<span style="color:#75715e">//TODO other codes
+</span><span style="color:#75715e">//初始化之前插入一些常用js utils
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">page</span>.<span style="color:#a6e22e">onInitialized</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(){
+    <span style="color:#75715e">//模拟地理定位.
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">page</span>.<span style="color:#a6e22e">injectJs</span>(<span style="color:#e6db74">&#34;fake-location.js&#34;</span>);
+};
+</code></pre></div><p>fake-location.js的代码也比较简单:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * @author huangjacky
+</span><span style="color:#75715e"> * @desc 模拟实现浏览器的获取地理位置的api
+</span><span style="color:#75715e"> */</span>
+
+window.<span style="color:#a6e22e">navigator</span>.<span style="color:#a6e22e">geolocation</span> <span style="color:#f92672">=</span> {
+    <span style="color:#a6e22e">getCurrentPosition</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span> (<span style="color:#a6e22e">success</span>, <span style="color:#a6e22e">failure</span>) {
+        <span style="color:#a6e22e">success</span>({
+            <span style="color:#a6e22e">coords</span><span style="color:#f92672">:</span> {
+                <span style="color:#75715e">//模拟华中科技大学产学研基地
+</span><span style="color:#75715e"></span>                <span style="color:#a6e22e">latitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">22.52902</span>,
+                <span style="color:#a6e22e">longitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">113.94376</span>
+            }, <span style="color:#a6e22e">timestamp</span><span style="color:#f92672">:</span> Date.<span style="color:#a6e22e">now</span>()
+        });
+    },
+    <span style="color:#a6e22e">watchPosition</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">function</span>(<span style="color:#a6e22e">success</span>, <span style="color:#a6e22e">failure</span>){
+        <span style="color:#a6e22e">success</span>({
+            <span style="color:#a6e22e">coords</span><span style="color:#f92672">:</span> {
+                <span style="color:#75715e">//模拟华中科技大学产学研基地
+</span><span style="color:#75715e"></span>                <span style="color:#a6e22e">latitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">22.52902</span>,
+                <span style="color:#a6e22e">longitude</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">113.94376</span>
+            }, <span style="color:#a6e22e">timestamp</span><span style="color:#f92672">:</span> Date.<span style="color:#a6e22e">now</span>()
+        });
+    }
+};
+</code></pre></div>
+            
+          </section>
+        
+          <section  class="post">
+            <header class="post-header">
+            
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/show_all_same_sql/">SQL中显示所有相同的记录</a>
+            </h1>
+            </header>
+            <p class="post-meta">
+            	
+		          <span class="post-date">
+		            <span class="post-date-day"><sup>26</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Mar</span> <span class="post-date-year">2017</span>
+		          </span>
+      				
+      				
+      					By <a class="post-author" >huangjacky</a>
+      				
+              
+                <span class="post-reading-time"><i class="fa fa-clock-o"></i> <em>1 min. read</em></span>
+              
+      				
+      					<div class="post-categories">
+				        
+      					
+					        <a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E7%BC%96%E7%A8%8B">编程</a>
+      					
+      					</div>
+      				
+            </p>
+            
+              <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> t_cgi
+	 <span style="color:#66d9ef">WHERE</span> (cHost,cUri) <span style="color:#66d9ef">in</span> (
+		<span style="color:#66d9ef">select</span> cHost,cUri <span style="color:#66d9ef">from</span> t_cgi <span style="color:#66d9ef">GROUP</span> <span style="color:#66d9ef">BY</span> cHost,cUri <span style="color:#66d9ef">HAVING</span> <span style="color:#66d9ef">COUNT</span>(cHash)<span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>
+	) <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> CONCAT(cHost,cUri)
+</code></pre></div><p>因为需要统计,所以必须要用<strong>GROUP BY</strong>, 然后用<strong>HAVING COUNT</strong>进行判断数据记录数, 这里有一个问题,就是因为是两个字段,所以在获取时候的WHERE IN需要用括号括起来.
+附录:表结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> t_cgi(
+  cHash CHAR(<span style="color:#ae81ff">32</span>) <span style="color:#66d9ef">UNIQUE</span>,
+  cHost VARCHAR(<span style="color:#ae81ff">32</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> ,
+  cUri VARCHAR(<span style="color:#ae81ff">64</span>) <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#e6db74">&#39;/&#39;</span>,
+  cRaw TEXT ,
+  cTime <span style="color:#66d9ef">TIMESTAMP</span> <span style="color:#66d9ef">NOT</span> <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">CURRENT_TIMESTAMP</span>,
+  <span style="color:#66d9ef">PRIMARY</span> <span style="color:#66d9ef">KEY</span> (cHash)
+)
+</code></pre></div>
+            
+          </section>
+        
+      </div>
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+  
+</body>
+</html>

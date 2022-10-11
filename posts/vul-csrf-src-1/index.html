@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    【漏洞公告】某平台一个有意思的CSRF // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="漏洞不是很难，这篇文章中主要还是介绍CSRF的一些原理以及挖掘的一些技巧">
+<meta name="keywords" content="">
+<meta name="author" content="HuangJacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="【漏洞公告】某平台一个有意思的CSRF" />
+<meta property="og:description" content="漏洞不是很难，这篇文章中主要还是介绍CSRF的一些原理以及挖掘的一些技巧" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/vul-csrf-src-1/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-背景">0x00 背景</a></li>
+    <li><a href="#0x01-案例">0x01 案例</a>
+      <ul>
+        <li><a href="#问题接口">问题接口</a></li>
+        <li><a href="#注入点">注入点</a></li>
+        <li><a href="#突破点">突破点</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-原理讲解">0x02 原理讲解</a>
+      <ul>
+        <li><a href="#会话保持功能">会话保持功能</a></li>
+        <li><a href="#服务器身份认证">服务器身份认证</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-攻击手法">0x03 攻击手法</a></li>
+    <li><a href="#0x04-修复手法">0x04 修复手法</a>
+      <ul>
+        <li><a href="#不正确的修复方法">不正确的修复方法</a></li>
+        <li><a href="#正确修复方法">正确修复方法</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x05-检测手法">0x05 检测手法</a></li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/vul-csrf-src-1/">【漏洞公告】某平台一个有意思的CSRF</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>7</sup></span><span class="post-date-separator">/</span><span class="post-date-month">May</span> <span class="post-date-year">2017</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">HuangJacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E6%BC%8F%E6%B4%9E" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E6%BC%8F%E6%B4%9E">漏洞</a>
+				
+					<a class="post-category post-category-web%E5%AE%89%E5%85%A8" href="https://vul-hunters.gitee.io/hunter-blogs//categories/web%E5%AE%89%E5%85%A8">Web安全</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h2 id="0x00-背景">0x00 背景</h2>
+<p>某日在给某集团平台提交报告的时候，出于习惯就想试试这个平台的安全性怎么样。<br>
+总的来说，平台前面架设了WAF，一些常规的测试Payload都会被拦截，因此不适合强攻。其实随着安全越来越受重视，很多开发同学的安全意识也越来越高，常见的XSS和SQL注入的错误一般都会再犯。但是对于跨站请求伪造CSRF一般都没有太在意。主要原因是这类漏洞的危害不会像注入那样明显，但是威胁等级并不比它们低。</p>
+<h2 id="0x01-案例">0x01 案例</h2>
+<p>前面唠叨了这么多，接下来我们就说说这个具体的例子：</p>
+<h3 id="问题接口">问题接口</h3>
+<p>我们发现退出登录，这个平台采用的GET请求，同时没有其他防护策略，比如token，比如referer校验。<br>
+这个接口存在两个问题：</p>
+<ol>
+<li>不规范，我们知道在HTTP语义中，修改用户的登录态写操作要用<strong>POST或者PUT</strong>，而<strong>GET</strong>操作主要用于获取资源信息等。至于开发人员为什么要这么做？肯定就是为了图方便。所有违背规范的操作，都是为了主管的便利性。</li>
+<li>重要的接口没有进行二次校验。接口功能是正常的，就是清空session中的用户登录态，但是在清除过程中，并没有确认请求是否用户发送的。</li>
+</ol>
+<p>假设这个接口地址是：<strong><a href="http://security.lxxxxxxxxxxh.com/account/logout">http://security.lxxxxxxxxxxh.com/account/logout</a></strong> ,这样的接口很好找，因为只要有登录态的网站，一般在显眼的地方都会存在这样退出功能的接口。</p>
+<h3 id="注入点">注入点</h3>
+<p>现在问题接口找到了，但是我们需要怎样才能诱骗其他用户来触发呢？<br>
+第一个办法，也是最简单的，就是找到你的目标用户，然后把URL发给他，等他点击。但是这里有两个明显的问题：</p>
+<ol>
+<li>SRC平台不是社交网站，一般不提供用户之间交流的渠道，因此我们能否把URL发出去都是一个问题</li>
+<li>一个不熟悉的人给你发的URL你会点击么？何况URL名字这么明显，有个logout。<br>
+经验告诉我们<strong>GET型的CSRF最好的载体是IMG</strong>，好处在于隐蔽和简单，整个网页可以显示其他内容，但是其中一个IMG却悄悄的发送一个退出登录的请求。比如：   <br>
+<a href="http://www.huangjacky.com/h.html">http://www.huangjacky.com/h.html</a></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;html&gt;</span>
+	<span style="color:#f92672">&lt;head&gt;</span>
+		<span style="color:#f92672">&lt;title&gt;</span>精彩刺激好看的爱情动作片<span style="color:#f92672">&lt;/title&gt;</span>
+	<span style="color:#f92672">&lt;/head&gt;</span>
+	<span style="color:#f92672">&lt;body&gt;</span>
+		显示一些吸引用户的内容来吸引和误导用户
+		<span style="color:#f92672">&lt;img</span> <span style="color:#a6e22e">style=</span><span style="color:#e6db74">&#34;display:none&#34;</span> <span style="color:#a6e22e">src=</span><span style="color:#e6db74">http://security.lxxxxxxxxxxh.com/account/logout</span><span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;/body&gt;</span>
+<span style="color:#f92672">&lt;/html&gt;</span>
+</code></pre></div><p>这样只要将上面的网址配上吸引人的标题就可以发送给其他用户的。<br>
+这样做有多个好处：</p>
+<ol>
+<li>内容吸引用户，提高用户点击的概率</li>
+<li>独立的域名，很多用户都知道跨域保护，不会认为这个网站能影响到我。</li>
+</ol>
+<p>但是这样还是不能保证百分百用户点击，也不能保证如何将入口发送给用户的渠道问题。</p>
+<h3 id="突破点">突破点</h3>
+<p>这个时候，我们发现平台默认使用的头像是QQ或微信的，但是它提供头像修改功能。头像就是IMG，那么如果设置成功后，平台任意一个显示我们头像的地方都可以触发这个CSRF。安全应急响应平台的管理总要处理我们漏洞吧，漏洞详情页面或者排行榜都可能出现我们的头像，传播渠道也解决了。<br>
+那么我们上传图片，然后抓包提交修改那一下，修改POST里面headImg为http://security.lxxxxxxxxxxh.com/account/logout ，修改成功了，亲测成功，等着管理员查看漏洞时候的懊恼的表情吧。</p>
+<h2 id="0x02-原理讲解">0x02 原理讲解</h2>
+<p>CSRF全称叫做跨站请求伪造，漏洞的利用主要是诱骗用户在浏览A网站的同时向B网站发送一个特定请求，让B网站去执行相关的操作。
+从上面的描述我们可以看出来主要有两点：</p>
+<ol>
+<li>从一个网站向另一个网站发送了请求。</li>
+<li>在用户不知情的情况下请求发送了。而不是用户再主动进行点击。<br>
+有些知识的朋友就会问从一个网站向另外一个网站发送请求不是跨域了么？其实这是你们把跨域知识点弄错了，跨域问题主要存在脚本操作中，比如AJAX请求等。但是对于浏览器的script，img，iframe等标签操作是没有作用。不然CDN怎么能运行？CDN通常来说都是一个独立的域名。<strong>当然在现代的浏览器里面，如果网页是HTTPS协议的时候，如果你去请求一个HTTP的资源，这个是会禁止的</strong>，因为整个系统的安全性取决于最短的那块木板，如果这个被放行，整个网页HTTPS的作用也无效了。HTML代码因为HTTPS不会被劫持，但是里面嵌入的图片和脚本资源因为是HTTP的，是会被劫持的。<br>
+这这种情况下我们推荐开发的同学在编码的时候使用相对协议：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;script</span> <span style="color:#a6e22e">src=</span><span style="color:#e6db74">//huangjacky.com/static/js/sec.js</span><span style="color:#f92672">&gt;&lt;/script&gt;</span>
+<span style="color:#f92672">&lt;img</span> <span style="color:#a6e22e">src=</span><span style="color:#e6db74">//huangjacky.com/test.png</span> <span style="color:#f92672">/&gt;</span>
+</code></pre></div><p>但是为什么我们会遭受到CSRF攻击？</p>
+<h3 id="会话保持功能">会话保持功能</h3>
+<p>现在所有的浏览器，为了保持用户浏览时的体验，当用户任何操作的时候，都会带上对应的Cookie。
+那么上面例子当中，</p>
+<ol>
+<li>我们在请求http://www.huangjacky.com/h.html  的时候，这个时候浏览器会带上本地保持的www.huangjacky.com的Cookie将请求发送给www.huangjacky.com的服务器，这个很好理解。</li>
+<li>浏览器渲染得到HTML代码，发现里面有一张图片，就会去请求http://security.lxxxxxxxxxxh.com/account/logout
+注意这个时候虽然网页停留在www.huangjacky.com，但是<strong>因为请求发送给security.lxxxxxxxxxxh.com，因此浏览器带的是用户在security.lxxxxxxxxxxh.com下的Cookie</strong>，这个一定要理解清楚。</li>
+</ol>
+<h3 id="服务器身份认证">服务器身份认证</h3>
+<p>这里说的身份认证不是帐号密码体系，而是在帐号体系登录之后，服务器是怎么识别用户？其实很简单<strong>绝大多数Web程序都是采用Cookie，其中某个字段是SessionID</strong>，比如PHP默认的SESSIONID，JAVA容器的JSESSIONID等。在API类的程序中一般在HTTP请求头里面自定义一个字段，带上唯一身份标识，那是因为API的客户端也都是程序可以自定义请求头。但是浏览器的请求基本上都是使用Cookie，这个有一些历史的原因吧。<br>
+这里插入一个问题：**Cookie和Session的区别？**请认真理解<br>
+通过上面说的，服务器通过客户端请求中的Cookie拿到了对应的Session信息之后，会去判断Session中的登录态和身份针对接口请求是否有权限？如果有就进行操作了， 这里并没有进行恶意检测。</p>
+<h2 id="0x03-攻击手法">0x03 攻击手法</h2>
+<p>针对存在CSRF的GET请求，我们一般利用上面例子中的<strong>隐藏IMG标签的手法</strong>。<br>
+但是如果是一个POST的请求我们怎么办？</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-http" data-lang="http"><span style="color:#a6e22e">POST</span> /blog/del?t=11111111 <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+Referer<span style="color:#f92672">:</span> <span style="color:#ae81ff">http://www.test.com/blog/index</span>
+Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">www.test.com</span>
+Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/form-data</span>
+
+blog_id=1
+</code></pre></div><p>我们可以<strong>使用FORM表单，然后通过javascript脚本去提交表单，因为最后请求是表单触发的，不存在跨域的问题</strong>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;html&gt;</span>
+	<span style="color:#f92672">&lt;head&gt;</span>
+		<span style="color:#f92672">&lt;title&gt;</span>精彩刺激好看的爱情动作片<span style="color:#f92672">&lt;/title&gt;</span>
+	<span style="color:#f92672">&lt;/head&gt;</span>
+	<span style="color:#f92672">&lt;body&gt;</span>
+		显示一些吸引用户的内容来吸引和误导用户
+		<span style="color:#f92672">&lt;form</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;test&#34;</span> <span style="color:#a6e22e">style=</span><span style="color:#e6db74">&#34;display:none&#34;</span> <span style="color:#a6e22e">action=</span><span style="color:#e6db74">&#34;http://www.test.com/blog/del&#34;</span> <span style="color:#a6e22e">method=</span><span style="color:#e6db74">&#34;POST&#34;</span> <span style="color:#a6e22e">enctype=</span><span style="color:#e6db74">&#34;form-data&#34;</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;input</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;blog_id&#34;</span> <span style="color:#a6e22e">value=</span><span style="color:#e6db74">&#34;1&#34;</span> <span style="color:#f92672">/&gt;</span>
+		<span style="color:#f92672">&lt;/form&gt;</span>
+		<span style="color:#f92672">&lt;script&gt;</span>
+			var form = document.getElementByID(&#34;test&#34;);
+			form.submit();
+		<span style="color:#f92672">&lt;/script&gt;</span>
+	<span style="color:#f92672">&lt;/body&gt;</span>
+<span style="color:#f92672">&lt;/html&gt;</span>
+</code></pre></div><p>用户在浏览网页的时候，<strong>script脚本就会执行，去提交一个已经预埋好参数的表单</strong>，整个过程不需要用户参与和交互，他只需要看片。</p>
+<h2 id="0x04-修复手法">0x04 修复手法</h2>
+<h3 id="不正确的修复方法">不正确的修复方法</h3>
+<h4 id="将get请求改成post">将GET请求改成POST</h4>
+<p>上面利用手法第二点我们已经演示了，POST一样是可以利用的，同时也是没有什么难度的。</p>
+<h4 id="校验请求的referer">校验请求的Referer</h4>
+<p>正常来说每一个请求在发送前，浏览器都会带上当前页面的URL作为Referer。因此我们只需要校验这个Referer是不是自己网站就好了。但是这个在具体实施过程中却存在三个问题：</p>
+<ol>
+<li>Referer可能为空，比如用户在地址栏手打URL，然后敲回车，那么这个请求，浏览器是不会带上Referer的。如果我们放开空Referer，那么这就可能被黑客绕过。</li>
+<li>校验Referer的方式不对。很多开发人员会使用contains来判断Referer是否合法，那么Referer: <a href="http://www.test.com.hj.cn/index">http://www.test.com.hj.cn/index</a>完全就可能是一个合法请求</li>
+<li>像上面例子那样，如果请求伪造是来自本站的图片，那么所有的Referer都是合法，因此这个校验完全就被绕过了。</li>
+</ol>
+<h3 id="正确修复方法">正确修复方法</h3>
+<h4 id="postreferer校验">POST+Referer校验</h4>
+<p>当然这个方法我不推荐，因为需要注意的细节比较多。</p>
+<ol>
+<li>GET请求可以允许外部Referer，因为从百度搜索跳转过来的用户的Referer肯定是baidu.com，也允许空Referer，但是GET操作不能进行敏感操作，所有操作都根据规范转到其他方式上面。</li>
+<li>POST请求进行严格校验Referer，必须拦截空Referer的情况</li>
+</ol>
+<h4 id="token校验">Token校验</h4>
+<p>上面所有攻击手法当中，<strong>我们必须要事先知道接口中每一个参数的值，然后通过隐藏的方式进行预埋，等正常用户在浏览的时候触发</strong>。那么如果每一个用户在登录成功的时候，服务器都会随机生成一个字符串，存在Session里面，以后用户所有的请求到服务器来之前，服务器都会先校验一下字符串是否一致，然后才会接口操作。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+	$token <span style="color:#f92672">=</span> <span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;token&#39;</span>])<span style="color:#f92672">?</span>$_GET[<span style="color:#e6db74">&#39;token&#39;</span>]<span style="color:#f92672">:</span><span style="color:#e6db74">&#39;&#39;</span>;
+	<span style="color:#66d9ef">if</span>($token <span style="color:#f92672">!=</span> $_SESSION[<span style="color:#e6db74">&#39;token&#39;</span>]){
+		<span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#39;WRONG token&#39;</span>);
+	}
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>前端怎么知道这个token呢？我们服务器在生成HTML的时候，可以将它设置成javascript的一个变量，所有的请求在发送前都需要读取这个变量并将它加入到URL中。<br>
+推荐。</p>
+<h2 id="0x05-检测手法">0x05 检测手法</h2>
+<ol>
+<li>观察请求中所有的参数，看是否有一个参数的格式是随机字符串。如果没有，进入下一步；如果有，尝试修改1位或者删除这个参数，然后发送请求。对比得到的响应包，如果不一致，那么基本就是有token防护，这个接口已经没有戏了，放弃CSRF吧。如果一致，进入下一步。</li>
+<li>尝试修改Referer头或者修改Referer的值，分别发送请求，判断返回的包是否和正常请求一样，如果一样，那么就是存在CSRF；如果不一样，那么看这个接口的请求方法是不是GET，网站是否存在插入图片的地方，这个就是靠缘分了。</li>
+</ol>
+<p>上面说到了，允许空Referer不安全的，因为在正常的浏览器情况，如果请求发送出来后存在跨域的情况，那么Referer就是空的。通常在CSRF中可以利用的跨域有：</p>
+<ol>
+<li>从HTTP域名发送请求到HTTPS域名下</li>
+<li>如果域名协议都一样，那么我们可以在A域名下面<strong>由javascript生成整个form表单并提交，而不是由HTML预埋，这个时候form表单的协议是javascript: 伪协议</strong>，因此请求也是跨协议的，那么Referer也是空。</li>
+</ol>
+<p>好了介绍就这么多，主要是入门扫盲的文章。上面检测手法，已经集成到本人的CSRFChecker工具中了。</p>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-csrf" href="https://vul-hunters.gitee.io/hunter-blogs//tags/csrf">CSRF</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/sec-tools-sqlmap/">安全工具 - SQLmap的用法</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/nginx-502-504-diff/">Nginx错误码502和504的区别</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="59ef4880207ebc5e0abf94883c657248" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Webkit on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/webkit/</link>
+    <description>Recent content in Webkit on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/webkit/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>关于爬虫本地JS Hook的研究</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/</link>
+      <pubDate>Sun, 12 Aug 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/</guid>
+      <description>0x00 背景介绍 最早的爬虫，只需要能够从服务端获取到HTML代码，进行分析即可，随着Web2.0的普及，越来越多的网站都必须JavaScript解析之后才能正常显示。因此这也对爬虫提出了新的要求，当前前人们已经在爬虫中集成Webkit等框架来满足这样的需求。
+本文将从实际漏洞扫描器项目中，爬虫遇到的一个问题作为切入点，简单的介绍一下爬虫过程中一些JavaScript上Mock或者Hook的技巧。
+0x01 需求 这里需求主要有两个：
+场景一：弹框阻碍流程 在网页中存在alert，prompt等弹出框，如果没有取消会造成webkit某些API运行异常。当前针对alert的情况，通常的框架都提供一些额外的解决方案，比如PhantomJS的onAlert()函数，Selenium的switch_to.alert().accept()。但是我们还是想和场景二一起使用Hook的方法来解决。
+场景二：记录指定函数被调用情况 存储型XSS的验证过程通常分为Payload的注入和执行情况验证。作为一款优秀的扫描器（没错，说的就是华为云漏洞扫描服务），注入的Payload一定不能对目标系统有危害，因此我们通常会选用一些温柔的函数，比如console.log，而非alert或者随机不存在的函数。但是当第二次爬虫在爬取过程中，如何统计Payload触发的情况，就会成为一个难题。
+0x02 JavaScript Hook 函数的Hook，其实就是在函数被调用前，对函数进行替换。
+var old_alert = window.alert; window.alert = function(message){ console.log(&amp;#34;receive: &amp;#34; + message); old_alert(message); } 上面的例子是对alert函数增加一个日志打印的功能。
+Hook很简单，现在唯一的问题就是要在函数执行之前就进行替换，很多函数是在网页加载中（head部分）或者网页加载完成后立即就执行了，没有空隙给我们替换函数。
+0x03 注入实战 PhantomJS 它是基于QT和Webkit的无头(Headless)浏览框架，因为其不依赖Xvfb，资源占用比较小，有段时间非常受大家欢迎。其Project的Owner已经宣布不维护了，现在版本定格在2.1.1。PhantomJS良好的接口，使其能够非常方便的支持JS代码注入。
+假如某个网页(http://fake.hack.com/location.html) 会获取地理位置，只有指定位置的用户才会进行下一步处理。
+var webPage = require(&amp;#39;webpage&amp;#39;); var page = webPage.create(); //页面初始化之前插入一段JS page.onInitialized = function(){ //模拟地理定位.  page.injectJs(&amp;#34;fake-location.js&amp;#34;); }; fake-location.js的代码也非常简单，内容如下：
+window.navigator.geolocation = { getCurrentPosition: function (success, failure) { success({ coords: { //模拟华中科技大学产学研基地  latitude: 22.52902, longitude: 113.94376 }, timestamp: Date.</description>
+    </item>
+    
+  </channel>
+</rss>

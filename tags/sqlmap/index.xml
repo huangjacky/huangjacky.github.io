@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SQLmap on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/sqlmap/</link>
+    <description>Recent content in SQLmap on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 20 Apr 2017 23:00:21 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/sqlmap/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>安全工具 - SQLmap的用法</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-sqlmap/</link>
+      <pubDate>Thu, 20 Apr 2017 23:00:21 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-sqlmap/</guid>
+      <description>0x00 序言 前一篇文章介绍了nmap的用法, 这次再介绍一个神器, 那就是SQLmap, 它作为SQL注入界自动化检测工具,能够实现高难度漏洞检测, 脱裤等工作,大大减少安全人员的时间.
+0x01 用法 拿到一个工具之前,我们可以用过帮助文档查看它一般的用法. 运行以下命令, 可以查看到详细的帮助:
+sqlmap -hh 目标选定 指定URL sqlmap -u &amp;#34;http://svip.qq.com/abc?d=1&amp;#34; 对指定的URL进行SQL注入检测
+指定GOOGLE搜索的关键字 sqlmap -g &amp;#39;site:&amp;#34;svip.qq.com&amp;#34; filetype:pdf&amp;#39; 对GOOGLE搜索出来的每一页结果中的链接进行SQL注入检测
+指定BURP或者WebScarab导出文件 sqlmap -l ./a.log 将BURP等安全抓包工具中导出的需要分析的请求进行SQL注入检测
+指定sitemap.xml sqlmap -x &amp;#34;https://m.juzilicai.com/sitemap.xml&amp;#34; 读取指定sitemap.xml文件,并分析其中URL进行SQL注入检测
+指定HTTP请求报文 sqlmap -r ./request.txt 这个是sqlmap最简单的, 也是最好用的一个用法, sqlmap会去读取这个HTTP请求文件, 从文件中提取出所有HTTP请求相关的参数进行填充, 这样可以为了省去很多参数的配置.
+指定多个请求 sqlmap -m ./multi.txt 从文件中读取多个请求进行SQL注入检测
+请求相关的参数 指定请求方式 sqlmap -u &amp;#34;http://db.qq.com/test&amp;#34; --method POST 使用POST请求对URL进行SQL检测
+指定请求的内容 sqlmap -u &amp;#34;http://db.qq.com/test&amp;#34; --method POST --data &amp;#34;a=1&amp;amp;b=2&amp;#34; 向指定URL通过POST发送data数据,并且对相关参数进行SQL注入检测, data通常用在POST和PUT请求中
+指定Cookie sqlmap -u &amp;#34;http://db.</description>
+    </item>
+    
+  </channel>
+</rss>

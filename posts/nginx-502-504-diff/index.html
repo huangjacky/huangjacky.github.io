@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    Nginx错误码502和504的区别 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="从Nginx源码分析502和504的区别">
+<meta name="keywords" content="">
+<meta name="author" content="HuangJacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="Nginx错误码502和504的区别" />
+<meta property="og:description" content="从Nginx源码分析502和504的区别" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#0x00-前言">0x00 前言</a></li>
+        <li><a href="#0x01-定义">0x01 定义</a></li>
+        <li><a href="#0x02-代码跟踪">0x02 代码跟踪</a></li>
+        <li><a href="#0x03-总结">0x03 总结</a></li>
+        <li><a href="#0x04-参考资料">0x04 参考资料</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/nginx-502-504-diff/">Nginx错误码502和504的区别</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>29</sup></span><span class="post-date-separator">/</span><span class="post-date-month">May</span> <span class="post-date-year">2017</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">HuangJacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E7%BC%96%E7%A8%8B">编程</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h3 id="0x00-前言">0x00 前言</h3>
+<p>某日某B：我们系统出现了504,你赶紧去问问PHP的人有什么错误日志？<br>
+某A：我已经问过，PHP的人说没有日志。<br>
+某B：PHP那面的人说的话你不要相信，赶紧再去查一遍。<br>
+某A：WTF。。。<br>
+因此某A很疑惑，为什么NGINX有502和504, 有那些原因导致504, PHP那面有没有日志呢？</p>
+<h3 id="0x01-定义">0x01 定义</h3>
+<p>通过阅读nginx的源码，备注：我这里查看的是openresty中nginx-1.11.2的源代码，我们发现502和504的定义。<br>
+<strong>ngx_http_request.h</strong>的130行有如下的代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#75715e">#define NGX_HTTP_INTERNAL_SERVER_ERROR     500
+</span><span style="color:#75715e">#define NGX_HTTP_NOT_IMPLEMENTED           501
+</span><span style="color:#75715e">#define NGX_HTTP_BAD_GATEWAY               502
+</span><span style="color:#75715e">#define NGX_HTTP_SERVICE_UNAVAILABLE       503
+</span><span style="color:#75715e">#define NGX_HTTP_GATEWAY_TIME_OUT          504
+</span><span style="color:#75715e">#define NGX_HTTP_INSUFFICIENT_STORAGE      507
+</span></code></pre></div><p>从字面上面翻译看：</p>
+<ol>
+<li>502 错误的网关</li>
+<li>504 网关超时</li>
+</ol>
+<p>网络上有很多关于这两种错误的解决办法，的确他们说的方法能够解决这两种错误，后面我也会总结一下解决办法。但是没有从源头上说明白为什么NGINX会抛出这样的错误码，还有就是在什么情况下会抛出这样的错误码。</p>
+<h3 id="0x02-代码跟踪">0x02 代码跟踪</h3>
+<p>为了弄明白什么情况下产生产生这两种错误码，我们继续查看相关的源代码：<br>
+在<strong>ngx_http_upstream.c</strong>的3935行中定义了一个<strong>ngx_http_upstream_next</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span>
+<span style="color:#a6e22e">ngx_http_upstream_next</span>(ngx_http_request_t <span style="color:#f92672">*</span>r, ngx_http_upstream_t <span style="color:#f92672">*</span>u,
+    ngx_uint_t ft_type)
+{
+  <span style="color:#75715e">//-------------省略代码
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">switch</span> (ft_type) {
+  <span style="color:#66d9ef">case</span> NGX_HTTP_UPSTREAM_FT_TIMEOUT:
+      status <span style="color:#f92672">=</span> NGX_HTTP_GATEWAY_TIME_OUT;
+      <span style="color:#66d9ef">break</span>;
+
+  <span style="color:#66d9ef">case</span> NGX_HTTP_UPSTREAM_FT_HTTP_500:
+      status <span style="color:#f92672">=</span> NGX_HTTP_INTERNAL_SERVER_ERROR;
+      <span style="color:#66d9ef">break</span>;
+
+  <span style="color:#66d9ef">case</span> NGX_HTTP_UPSTREAM_FT_HTTP_403:
+      status <span style="color:#f92672">=</span> NGX_HTTP_FORBIDDEN;
+      <span style="color:#66d9ef">break</span>;
+
+  <span style="color:#66d9ef">case</span> NGX_HTTP_UPSTREAM_FT_HTTP_404:
+      status <span style="color:#f92672">=</span> NGX_HTTP_NOT_FOUND;
+      <span style="color:#66d9ef">break</span>;
+  <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+      status <span style="color:#f92672">=</span> NGX_HTTP_BAD_GATEWAY;
+  }
+  <span style="color:#75715e">//-------------省略代码
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>这段代码的作用是：根据ft_type进行status设置，然后根据相关属性判断是传给下一个upstream还是结束连接ngx_http_upstream_finalize_request。<br>
+我们可以看到了ft_type除了指定几种类型外，比如504对应的NGX_HTTP_UPSTREAM_FT_TIMEOUT，都是502对应的NGX_HTTP_BAD_GATEWAY。<br>
+从上面的代码看出来了，我们只需要跟踪什么地方调用ngx_http_upstream_next的同时，判断第三个参数ft_type的赋值情况即可。<br>
+但是从整个代码文件中，我们可以看到基本上所有的函数都调用到它，比如ngx_http_upstream_connect等。<br>
+具体的各个地方的调用代码如下：</p>
+<h4 id="ngx_http_upstream_connect">ngx_http_upstream_connect</h4>
+<p>作用：连接到upstream并发送请求，这里如果设置了SSL，那么还会调用SSL连接</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">rc <span style="color:#f92672">=</span> ngx_event_connect_peer(<span style="color:#f92672">&amp;</span>u<span style="color:#f92672">-&gt;</span>peer);
+ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r<span style="color:#f92672">-&gt;</span>connection<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;http upstream connect: %i&#34;</span>, rc);
+
+<span style="color:#66d9ef">if</span> (rc <span style="color:#f92672">==</span> NGX_ERROR) {
+    ngx_http_upstream_finalize_request(r, u, NGX_HTTP_INTERNAL_SERVER_ERROR); <span style="color:#75715e">//500
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+
+u<span style="color:#f92672">-&gt;</span>state<span style="color:#f92672">-&gt;</span>peer <span style="color:#f92672">=</span> u<span style="color:#f92672">-&gt;</span>peer.name;
+
+<span style="color:#66d9ef">if</span> (rc <span style="color:#f92672">==</span> NGX_BUSY) {
+    ngx_log_error(NGX_LOG_ERR, r<span style="color:#f92672">-&gt;</span>connection<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;no live upstreams&#34;</span>);
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_NOLIVE); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+
+<span style="color:#66d9ef">if</span> (rc <span style="color:#f92672">==</span> NGX_DECLINED) {
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_ssl_init_connection">ngx_http_upstream_ssl_init_connection</h4>
+<p>作用：初始化一个到upstream的ssl连接，其中包括了SSL握手。
+调用的代码比较少：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (ngx_http_upstream_test_connect(c) <span style="color:#f92672">!=</span> NGX_OK) {
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_ssl_handshake">ngx_http_upstream_ssl_handshake</h4>
+<p>作用：在SSL握手的过程中，校验证书等操作</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">failed:
+    c <span style="color:#f92672">=</span> r<span style="color:#f92672">-&gt;</span>connection;
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    ngx_http_run_posted_requests(c);
+</code></pre></div><h4 id="ngx_http_upstream_send_request">ngx_http_upstream_send_request</h4>
+<p>作用：向upstream发送请求包</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>u<span style="color:#f92672">-&gt;</span>request_sent <span style="color:#f92672">&amp;&amp;</span> ngx_http_upstream_test_connect(c) <span style="color:#f92672">!=</span> NGX_OK) {
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_send_request_handler">ngx_http_upstream_send_request_handler</h4>
+<p>作用：和upstream连接的write_event的处理函数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (c<span style="color:#f92672">-&gt;</span>write<span style="color:#f92672">-&gt;</span>timedout) {
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_TIMEOUT); <span style="color:#75715e">//504
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_process_header">ngx_http_upstream_process_header</h4>
+<p>作用：和upstream连接的read_event的处理函数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (c<span style="color:#f92672">-&gt;</span>read<span style="color:#f92672">-&gt;</span>timedout) {
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_TIMEOUT); <span style="color:#75715e">//504
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+
+<span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>u<span style="color:#f92672">-&gt;</span>request_sent <span style="color:#f92672">&amp;&amp;</span> ngx_http_upstream_test_connect(c) <span style="color:#f92672">!=</span> NGX_OK) {
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><p>无法从connection中recv到数据，返回502错误</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">n <span style="color:#f92672">=</span> c<span style="color:#f92672">-&gt;</span>recv(c, u<span style="color:#f92672">-&gt;</span>buffer.last, u<span style="color:#f92672">-&gt;</span>buffer.end <span style="color:#f92672">-</span> u<span style="color:#f92672">-&gt;</span>buffer.last);
+........
+<span style="color:#66d9ef">if</span> (n <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+    ngx_log_error(NGX_LOG_ERR, c<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;upstream prematurely closed connection&#34;</span>);
+}
+<span style="color:#66d9ef">if</span> (n <span style="color:#f92672">==</span> NGX_ERROR <span style="color:#f92672">||</span> n <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+    ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><p>对接收到的内容进行HTTP头解析，无效的头结构返回502,其他错误返回500</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">rc <span style="color:#f92672">=</span> u<span style="color:#f92672">-&gt;</span>process_header(r);
+<span style="color:#66d9ef">if</span> (rc <span style="color:#f92672">==</span> NGX_AGAIN) {
+    <span style="color:#66d9ef">if</span> (u<span style="color:#f92672">-&gt;</span>buffer.last <span style="color:#f92672">==</span> u<span style="color:#f92672">-&gt;</span>buffer.end) {
+        ngx_log_error(NGX_LOG_ERR, c<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;upstream sent too big header&#34;</span>);
+        ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_INVALID_HEADER); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span>;
+    }
+    <span style="color:#66d9ef">continue</span>;
+}
+<span style="color:#66d9ef">break</span>;
+}
+<span style="color:#66d9ef">if</span> (rc <span style="color:#f92672">==</span> NGX_HTTP_UPSTREAM_INVALID_HEADER) {
+  ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_INVALID_HEADER); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span>;
+}
+<span style="color:#66d9ef">if</span> (rc <span style="color:#f92672">==</span> NGX_ERROR) {
+  ngx_http_upstream_finalize_request(r, u, NGX_HTTP_INTERNAL_SERVER_ERROR); <span style="color:#75715e">//500
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_process_body_in_memory">ngx_http_upstream_process_body_in_memory</h4>
+<p>作用：处理upstream的响应包body的内容<br>
+读取内容超时就返回504错误码，这里并没有调用next_upstream</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">c <span style="color:#f92672">=</span> u<span style="color:#f92672">-&gt;</span>peer.connection;
+rev <span style="color:#f92672">=</span> c<span style="color:#f92672">-&gt;</span>read;
+ngx_log_debug0(NGX_LOG_DEBUG_HTTP, c<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;http upstream process body on memory&#34;</span>);
+<span style="color:#66d9ef">if</span> (rev<span style="color:#f92672">-&gt;</span>timedout) {
+    ngx_connection_error(c, NGX_ETIMEDOUT, <span style="color:#e6db74">&#34;upstream timed out&#34;</span>);
+    ngx_http_upstream_finalize_request(r, u, NGX_HTTP_GATEWAY_TIME_OUT); <span style="color:#75715e">//504
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_process_upgraded">ngx_http_upstream_process_upgraded</h4>
+<p>作用：upstream的upgrade，这里的具体调用还需要了解一下。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (upstream<span style="color:#f92672">-&gt;</span>read<span style="color:#f92672">-&gt;</span>timedout <span style="color:#f92672">||</span> upstream<span style="color:#f92672">-&gt;</span>write<span style="color:#f92672">-&gt;</span>timedout) {
+    ngx_connection_error(c, NGX_ETIMEDOUT, <span style="color:#e6db74">&#34;upstream timed out&#34;</span>);
+    ngx_http_upstream_finalize_request(r, u, NGX_HTTP_GATEWAY_TIME_OUT); <span style="color:#75715e">//504
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_process_non_buffered_upstream">ngx_http_upstream_process_non_buffered_upstream</h4>
+<p>作用：接收non buffered upstream的数据</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (c<span style="color:#f92672">-&gt;</span>read<span style="color:#f92672">-&gt;</span>timedout) {
+    ngx_connection_error(c, NGX_ETIMEDOUT, <span style="color:#e6db74">&#34;upstream timed out&#34;</span>);
+    ngx_http_upstream_finalize_request(r, u, NGX_HTTP_GATEWAY_TIME_OUT); <span style="color:#75715e">//504
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_process_non_buffered_request">ngx_http_upstream_process_non_buffered_request</h4>
+<p>作用：处理上面non buffered upstream的请求</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (upstream<span style="color:#f92672">-&gt;</span>read<span style="color:#f92672">-&gt;</span>eof) {
+    ngx_log_error(NGX_LOG_ERR, upstream<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;upstream prematurely closed connection&#34;</span>);
+    ngx_http_upstream_finalize_request(r, u, NGX_HTTP_BAD_GATEWAY); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+<span style="color:#66d9ef">if</span> (upstream<span style="color:#f92672">-&gt;</span>read<span style="color:#f92672">-&gt;</span>error) {
+    ngx_http_upstream_finalize_request(r, u, NGX_HTTP_BAD_GATEWAY); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h4 id="ngx_http_upstream_process_request">ngx_http_upstream_process_request</h4>
+<p>作用：处理upstream的请求。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">if</span> (p<span style="color:#f92672">-&gt;</span>upstream_done <span style="color:#f92672">||</span> p<span style="color:#f92672">-&gt;</span>upstream_eof <span style="color:#f92672">||</span> p<span style="color:#f92672">-&gt;</span>upstream_error) {
+    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r<span style="color:#f92672">-&gt;</span>connection<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;http upstream exit: %p&#34;</span>, p<span style="color:#f92672">-&gt;</span>out);
+    <span style="color:#66d9ef">if</span> (p<span style="color:#f92672">-&gt;</span>upstream_done <span style="color:#f92672">||</span> (p<span style="color:#f92672">-&gt;</span>upstream_eof <span style="color:#f92672">&amp;&amp;</span> p<span style="color:#f92672">-&gt;</span>length <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))
+    {
+        ngx_http_upstream_finalize_request(r, u, <span style="color:#ae81ff">0</span>);
+        <span style="color:#66d9ef">return</span>;
+    }
+
+    <span style="color:#66d9ef">if</span> (p<span style="color:#f92672">-&gt;</span>upstream_eof) {
+        ngx_log_error(NGX_LOG_ERR, r<span style="color:#f92672">-&gt;</span>connection<span style="color:#f92672">-&gt;</span>log, <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;upstream prematurely closed connection&#34;</span>);
+    }
+    ngx_http_upstream_finalize_request(r, u, NGX_HTTP_BAD_GATEWAY); <span style="color:#75715e">//502
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span>;
+}
+</code></pre></div><h3 id="0x03-总结">0x03 总结</h3>
+<h4 id="504">504</h4>
+<p>504出现的次数比较少，我就先说它吧。</p>
+<ol>
+<li>向upstream中write请求数据超时</li>
+<li>从upstream中read响应数据超时</li>
+</ol>
+<p>NGINX错误日志中会出现以下字样：</p>
+<ol>
+<li>upstream timed out</li>
+</ol>
+<p>在socket异步编程里面，好像socket的connected和closed事件触发都是在read事件中，当然我已经好久没有写这块代码了，所以这些都是我以前写windows编程中event_select的一些记忆，可能有一些偏差。<br>
+我只是觉得connect_timeout应该也是触发的504，当然这里有待考证，我持保留意见。<br>
+情况1中<strong>write_timeout</strong>，那么数据还没有发送到upstream的server上，因此后端的业务是没有执行的。<br>
+情况2中<strong>read_timeout</strong>，表示数据发送给upstream了，但是upstream在规定的时间内没有返回任意一个字节。
+因此这里后端业务可能还没有执行，请求还在服务器TCP队列里面；有可能已经在执行中，只是还没有执行完。如果后端业务平均处理速度都比较快，那么更大的可能性就是请求还在队列中。<br>
+这里可能的原因有系统的TCP队列设置过大，而后端WebServer的backlog不够。<br>
+常见的解决办法：</p>
+<ol>
+<li>如果是proxy_pass，那么加大配置文件中<strong>proxy_timeout,proxy_connect_timeout,proxy_buffer_size</strong></li>
+<li>如果是fastcgi_pass，那么加大配置文件中<strong>fastcgi_buffer_size,fastcgi_connect_timeout,fastcgi_read_timeout,fastcgi_write_timeout</strong></li>
+</ol>
+<p>这样调大相关参数会有一定的效果，但是如果大请求量一直持续，填满了相关TCP队列，那么整个upstream可能就雪崩了，因此最佳的办法还是优化业务逻辑。</p>
+<h4 id="502">502</h4>
+<p>502出现的原因非常多，我这里大致划分一下：</p>
+<ol>
+<li>upstream连接不上，比如后端服务没有开启</li>
+<li>SSL初始化或者握手失败，比如证书不对</li>
+<li>发送请求时，和upstream的连接已经断掉</li>
+<li>从upstream中recv数据失败或者长度为0或者eof</li>
+<li>upstream中recv的数据太大或者不是有效的HTTP header</li>
+</ol>
+<p>NGINX的错误日志中会出现以下字样：</p>
+<ol>
+<li>no live upstreams</li>
+<li>upstream prematurely closed connection</li>
+<li>upstream sent too big header</li>
+<li>Connection reset by peer</li>
+</ol>
+<p>情况1,2,3都是在连接或者发送数据过程中出现了错误，upstream是没有接收到数据，那么后端业务是没有执行的，具体失败的原因需要在NGINX服务器上面查找。<br>
+与之相反，情况4和5都是在接收响应数据的时候，upstream主动关闭连接或者发送的数据错乱造成的，因此失败原因需要在upstream上面查找，这个阶段后端业务已经执行完毕。
+常见的原因有后端WebServer设置了最大执行时间，但是业务还没有执行完毕。<br>
+常见的解决办法：</p>
+<ol>
+<li>加大后端业务服务器单个请求可以执行时间，比如php.ini中的<strong>max_execution_timout和request_terminate_timeout</strong></li>
+</ol>
+<p>当然这个还是一个表面的解决办法，<strong>针对这种场景最优的解决办法就是后端扩容和前端限流</strong>。</p>
+<h3 id="0x04-参考资料">0x04 参考资料</h3>
+<ol>
+<li><a href="https://segmentfault.com/a/1190000002686153">Nginx 中 502 和 504 错误详解</a></li>
+<li><a href="http://www.jianshu.com/p/dea83c229e0c">nginx下502和504错误的解决办法</a></li>
+<li><a href="https://www.nosa.me/2015/09/16/%E5%85%B3%E4%BA%8E-tcp-syn-%E9%98%9F%E5%88%97%E5%92%8C-accept-%E9%98%9F%E5%88%97/">关于 tcp syn 队列和 accept 队列</a></li>
+<li><a href="http://www.jianshu.com/p/71aba04df492">TCP Listen backlog</a></li>
+</ol>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-nginx" href="https://vul-hunters.gitee.io/hunter-blogs//tags/nginx">Nginx</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/vul-csrf-src-1/">【漏洞公告】某平台一个有意思的CSRF</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/lua-null/">Lua - 编程中几种空值的判断</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="84ef033dbf82cac6ea0083d51e64514a" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

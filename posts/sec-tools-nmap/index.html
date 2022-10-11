@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    安全工具 - nmap用法 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="基础篇 - 主要讲解一些nmap的基本用法">
+<meta name="keywords" content="">
+<meta name="author" content="HuangJacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="安全工具 - nmap用法" />
+<meta property="og:description" content="基础篇 - 主要讲解一些nmap的基本用法" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-nmap/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-序言">0x00 序言</a></li>
+    <li><a href="#0x01-用法">0x01 用法</a>
+      <ul>
+        <li><a href="#扫描目标">扫描目标</a></li>
+        <li><a href="#端口选项">端口选项</a></li>
+        <li><a href="#主机发现">主机发现</a></li>
+        <li><a href="#端口扫描技术">端口扫描技术</a></li>
+        <li><a href="#版本和系统指纹探测">版本和系统指纹探测</a></li>
+        <li><a href="#输出">输出</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-常用用法">0x02 常用用法</a>
+      <ul>
+        <li><a href="#快速全端口扫描">快速全端口扫描</a></li>
+        <li><a href="#详细快速扫描">详细快速扫描</a></li>
+        <li><a href="#快速扫描指定端口">快速扫描指定端口</a></li>
+        <li><a href="#将扫描结果导出成html">将扫描结果导出成HTML</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-附录">0x03 附录</a></li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/sec-tools-nmap/">安全工具 - nmap用法</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>17</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Apr</span> <span class="post-date-year">2017</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">HuangJacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7">安全工具</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h2 id="0x00-序言">0x00 序言</h2>
+<p>工欲善其事, 必先利其器. 当然这系列的文章都是偏入门级的, 主要是方便我自己熟悉相关的工具, 以及日后使用过程中, 自己有个地方作为参考.
+nmap作为安全圈的神器, 在黑客帝国里面也有露面, 因此你可以想象到它的用途了吧</p>
+<h2 id="0x01-用法">0x01 用法</h2>
+<h3 id="扫描目标">扫描目标</h3>
+<p>nmap接受的输入可以有单IP,域名,网段和IP列表文件.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 扫描单个ip</span>
+nmap 127.0.0.1
+<span style="color:#75715e"># 扫描一个ip端</span>
+nmap 192.168.2.1-25
+<span style="color:#75715e"># 扫描一个子网段</span>
+nmap 192.168.2.0/24
+<span style="color:#75715e"># 扫描一个域名</span>
+nmap www.test.com
+<span style="color:#75715e"># 扫描文件列表中IP</span>
+nmap -iL ips.txt
+<span style="color:#75715e"># 排除指定ip, 不扫描192.168.3.1</span>
+nmap 192.168.3.0/24 --exclude 192.168.3.1
+</code></pre></div><h3 id="端口选项">端口选项</h3>
+<p>默认nmap会扫描1000个端口, 但是可以用过-p参数来设置.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 扫描常见的100哥端口, 快速扫描模式</span>
+nmap -F 192.168.3.1
+<span style="color:#75715e"># 扫描指定端口, 可以使单个也可以是多个</span>
+nmap -p22,23,443 192.168.3.1
+<span style="color:#75715e"># 扫描所有端口1-65535</span>
+nmap -p- 192.168.3.1
+</code></pre></div><h3 id="主机发现">主机发现</h3>
+<p>nmap在对主机进行扫描前, 通常会通过ping命令来发现主机是否存活, 主要用来优化扫描速度. 目前很多服务器都屏蔽了ping包, 因此这里可能造成一定的误报.</p>
+<h4 id="-sp">-sP</h4>
+<p>通过ping来发现主机</p>
+<h4 id="-p0--pn">-P0, -Pn</h4>
+<p>跳过ping发现过程</p>
+<h4 id="-ps">-PS</h4>
+<p>通过TCP SYN ping来发现主机</p>
+<h4 id="-pa">-PA</h4>
+<p>通过TCP ACK ping来发现主机</p>
+<h4 id="-pu">-PU</h4>
+<p>通过UDP ping来发现主机</p>
+<h4 id="-pe--pp--pm">-PE; -PP; -PM</h4>
+<p>通过ICMP ping来发现主机</p>
+<h4 id="-pr">-PR</h4>
+<p>通过ARP ping来发现主机</p>
+<h3 id="端口扫描技术">端口扫描技术</h3>
+<p>nmap提供多种端口扫描技术,一般来说一次只能使用一种扫描技术,但是sU可以和其他扫描技术并用.</p>
+<h4 id="-ss">-sS</h4>
+<p>通过TCP SYN扫描, 也是nmap默认的扫描类型, 也叫做半开放式扫描, 每秒钟可以扫描上千个端口.</p>
+<h4 id="-st">-sT</h4>
+<p>通过TCP connect扫描, 当-sS不能使用的时候, nmap将会采用-sT方式来扫描.</p>
+<h4 id="-su">-sU</h4>
+<p>通过UDP扫描. 目前有很多服务都使用UDP协议, 但是UDP因为没有常驻监听端口, 所以很多人都会忽略.</p>
+<h4 id="-sn">-sN</h4>
+<p>通过TCP NULL进行扫描</p>
+<h4 id="-sf">-sF</h4>
+<p>通过TCP FIN进行扫描</p>
+<h4 id="-sx">-sX</h4>
+<p>通过TCP Xmas进行扫描</p>
+<h4 id="-sa">-sA</h4>
+<p>通过TCP ACK进行扫描, 主要用来发现防火墙规则</p>
+<h3 id="版本和系统指纹探测">版本和系统指纹探测</h3>
+<p>当端口连接上后, 通过报文包内容, nmap内置多种匹配规则能够发现目标端口和主机的服务以及系统版本等有效信息.</p>
+<h4 id="-sv">-sV</h4>
+<p>打开版本探测, 结合-version-intensity 来设置版本探测的强度,0~9可以设置,默认为7</p>
+<h4 id="-o">-O</h4>
+<p>打开操作系统探测</p>
+<h4 id="-a">-A</h4>
+<p>同时打开版本探测和操作系统探测, 因此-A 是上面两个功能的集合.</p>
+<h3 id="输出">输出</h3>
+<p>nmap主要提供两种输出格式,其中oN是正常的输出,oX是XML格式,可以用于后期程序利用. 为了简化,nmap还提供oA来简化输出选项, 这个可以输出所有格式.</p>
+<h2 id="0x02-常用用法">0x02 常用用法</h2>
+<h3 id="快速全端口扫描">快速全端口扫描</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nmap -p 1-65535 -sV -sS -T4 target
+</code></pre></div><h3 id="详细快速扫描">详细快速扫描</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nmap -v -sS -A -T4 target
+</code></pre></div><h3 id="快速扫描指定端口">快速扫描指定端口</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nmap -sV -p 139,445 -oG grep-output.txt 10.0.1.0/24
+</code></pre></div><h3 id="将扫描结果导出成html">将扫描结果导出成HTML</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nmap -sS -sV -T5 10.0.1.99 --webxml -oX - | xsltproc --output file.html -
+</code></pre></div><h2 id="0x03-附录">0x03 附录</h2>
+<ol>
+<li><a href="https://nmap.org/man/zh/index.html">nmap官方参考指南</a></li>
+<li><a href="http://tools.kali.org/information-gathering/nmap">kali的nmap教程</a></li>
+<li><a href="https://hackertarget.com/nmap-cheatsheet-a-quick-reference-guide/">nmap手册1</a></li>
+<li><a href="https://highon.coffee/blog/nmap-cheat-sheet/">nmap手册2</a></li>
+</ol>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-%E5%AE%89%E5%85%A8" href="https://vul-hunters.gitee.io/hunter-blogs//tags/%E5%AE%89%E5%85%A8">安全</a>,
+	                
+	                <a class="post-tag post-tag-nmap" href="https://vul-hunters.gitee.io/hunter-blogs//tags/nmap">nmap</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/oschina-pages-auto-publish/">开源中国Pages自动发布小介绍</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/sec-tools-sqlmap/">安全工具 - SQLmap的用法</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="238b9cc9f62403f7a40859784ddcf5a2" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

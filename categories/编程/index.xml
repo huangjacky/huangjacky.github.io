@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>编程 on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/categories/%E7%BC%96%E7%A8%8B/</link>
+    <description>Recent content in 编程 on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 14 Jun 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/categories/%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lua - 编程中几种空值的判断</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</link>
+      <pubDate>Thu, 14 Jun 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</guid>
+      <description>0x00 背景 最近在写一段nginx+redis的代码，主要基于openresty，其中使用到了lua-resty-redis库。我平时写代码都比较小心，针对外部输入的值一般都会进行异常判断，大概的代码如下：
+local redis = require &amp;#34;redis&amp;#34; local cjson = require &amp;#34;cjson&amp;#34; --[[省略部分代码]] local ok, err = redis:get(&amp;#34;key&amp;#34;) if not ok then ngx.log(ngx.ERR, &amp;#39;[ERROR]:&amp;#39;, err) return end local data = cjson.decode(ok) 在decode这里出现了错误提示，但是ok并没有为空或者nil，不然代码是走不到这里来。
+发现问题后，我们就在前面打印一下ok数据的类型吧，大概的代码如下：
+ngx.log(ngx.ERR, &amp;#39;ok type: &amp;#39;, type(ok)) if not ok then end 这个时候我们得到的结果是userdata，这个东西算是一种复杂结构体，一般都是跨语言产生的，比如ffi.C这些。当时我的思路大概也是这样，肯定redis存放的数据是二进制的，但是呀，存放什么数据都是我自己控制的，不可能有什么畸形数据，因此这一点也排除了。最后在自己查看中发现，其实就是这个key不存在。
+0x01 分析 既然原因找到了，我们就去看看为什么会这样，主要通过阅读lua-resty-redis的源码：
+local function _read_reply(self, sock) local line, err = sock:receive() if not line then if err == &amp;#34;timeout&amp;#34; and not rawget(self, &amp;#34;_subscribed&amp;#34;) then sock:close() end return nil, err end local prefix = byte(line) if prefix == 36 then -- char &amp;#39;$&amp;#39; -- print(&amp;#34;bulk reply&amp;#34;) local size = tonumber(sub(line, 2)) if size &amp;lt; 0 then return null end local data, err = sock:receive(size) if not data then if err == &amp;#34;timeout&amp;#34; then sock:close() end return nil, err end local dummy, err = sock:receive(2) -- ignore CRLF if not dummy then return nil, err end return data elseif prefix == 43 then -- char &amp;#39;+&amp;#39; -- print(&amp;#34;status reply&amp;#34;) return sub(line, 2) elseif prefix == 42 then -- char &amp;#39;*&amp;#39; local n = tonumber(sub(line, 2)) -- print(&amp;#34;multi-bulk reply: &amp;#34;, n) if n &amp;lt; 0 then return null end local vals = new_tab(n, 0) local nvals = 0 for i = 1, n do local res, err = _read_reply(self, sock) if res then nvals = nvals + 1 vals[nvals] = res elseif res == nil then return nil, err else -- be a valid redis error value nvals = nvals + 1 vals[nvals] = {false, err} end end return vals elseif prefix == 58 then -- char &amp;#39;:&amp;#39; -- print(&amp;#34;integer reply&amp;#34;) return tonumber(sub(line, 2)) elseif prefix == 45 then -- char &amp;#39;-&amp;#39; -- print(&amp;#34;error reply: &amp;#34;, n) return false, sub(line, 2) else -- when `line` is an empty string, `prefix` will be equal to nil.</description>
+    </item>
+    
+    <item>
+      <title>Nginx错误码502和504的区别</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/</link>
+      <pubDate>Mon, 29 May 2017 12:00:00 +0000</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/</guid>
+      <description>0x00 前言 某日某B：我们系统出现了504,你赶紧去问问PHP的人有什么错误日志？
+某A：我已经问过，PHP的人说没有日志。
+某B：PHP那面的人说的话你不要相信，赶紧再去查一遍。
+某A：WTF。。。
+因此某A很疑惑，为什么NGINX有502和504, 有那些原因导致504, PHP那面有没有日志呢？
+0x01 定义 通过阅读nginx的源码，备注：我这里查看的是openresty中nginx-1.11.2的源代码，我们发现502和504的定义。
+ngx_http_request.h的130行有如下的代码
+#define NGX_HTTP_INTERNAL_SERVER_ERROR 500 #define NGX_HTTP_NOT_IMPLEMENTED 501 #define NGX_HTTP_BAD_GATEWAY 502 #define NGX_HTTP_SERVICE_UNAVAILABLE 503 #define NGX_HTTP_GATEWAY_TIME_OUT 504 #define NGX_HTTP_INSUFFICIENT_STORAGE 507 从字面上面翻译看：
+ 502 错误的网关 504 网关超时  网络上有很多关于这两种错误的解决办法，的确他们说的方法能够解决这两种错误，后面我也会总结一下解决办法。但是没有从源头上说明白为什么NGINX会抛出这样的错误码，还有就是在什么情况下会抛出这样的错误码。
+0x02 代码跟踪 为了弄明白什么情况下产生产生这两种错误码，我们继续查看相关的源代码：
+在ngx_http_upstream.c的3935行中定义了一个ngx_http_upstream_next
+static void ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u, ngx_uint_t ft_type) { //-------------省略代码  switch (ft_type) { case NGX_HTTP_UPSTREAM_FT_TIMEOUT: status = NGX_HTTP_GATEWAY_TIME_OUT; break; case NGX_HTTP_UPSTREAM_FT_HTTP_500: status = NGX_HTTP_INTERNAL_SERVER_ERROR; break; case NGX_HTTP_UPSTREAM_FT_HTTP_403: status = NGX_HTTP_FORBIDDEN; break; case NGX_HTTP_UPSTREAM_FT_HTTP_404: status = NGX_HTTP_NOT_FOUND; break; default: status = NGX_HTTP_BAD_GATEWAY; } //-------------省略代码 } 这段代码的作用是：根据ft_type进行status设置，然后根据相关属性判断是传给下一个upstream还是结束连接ngx_http_upstream_finalize_request。</description>
+    </item>
+    
+    <item>
+      <title>phantomjs - 支持地理位置API</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/phantomjs-geoloaction-api/</link>
+      <pubDate>Sun, 26 Mar 2017 21:20:23 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/phantomjs-geoloaction-api/</guid>
+      <description>目前phantomjs并不支持GeolocationAPI,但是我们可以手动编写一个js文件, 用自己的代码实现常见的Geolocation API.
+var webPage = require(&amp;#39;webpage&amp;#39;); var page = webPage.create(); //TODO other codes //初始化之前插入一些常用js utils page.onInitialized = function(){ //模拟地理定位.  page.injectJs(&amp;#34;fake-location.js&amp;#34;); }; fake-location.js的代码也比较简单:
+/** * @author huangjacky * @desc 模拟实现浏览器的获取地理位置的api */ window.navigator.geolocation = { getCurrentPosition: function (success, failure) { success({ coords: { //模拟华中科技大学产学研基地  latitude: 22.52902, longitude: 113.94376 }, timestamp: Date.now() }); }, watchPosition: function(success, failure){ success({ coords: { //模拟华中科技大学产学研基地  latitude: 22.52902, longitude: 113.94376 }, timestamp: Date.now() }); } }; </description>
+    </item>
+    
+    <item>
+      <title>SQL中显示所有相同的记录</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/show_all_same_sql/</link>
+      <pubDate>Sun, 26 Mar 2017 14:33:16 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/show_all_same_sql/</guid>
+      <description>select * from t_cgi WHERE (cHost,cUri) in ( select cHost,cUri from t_cgi GROUP BY cHost,cUri HAVING COUNT(cHash)&amp;gt; 1 ) ORDER BY CONCAT(cHost,cUri) 因为需要统计,所以必须要用GROUP BY, 然后用HAVING COUNT进行判断数据记录数, 这里有一个问题,就是因为是两个字段,所以在获取时候的WHERE IN需要用括号括起来. 附录:表结构
+CREATE TABLE t_cgi( cHash CHAR(32) UNIQUE, cHost VARCHAR(32) NOT NULL , cUri VARCHAR(64) NOT NULL DEFAULT &amp;#39;/&amp;#39;, cRaw TEXT , cTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (cHash) ) </description>
+    </item>
+    
+  </channel>
+</rss>

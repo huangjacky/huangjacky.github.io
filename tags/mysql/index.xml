@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MySQL on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/mysql/</link>
+    <description>Recent content in MySQL on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 26 Mar 2017 14:33:16 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SQL中显示所有相同的记录</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/show_all_same_sql/</link>
+      <pubDate>Sun, 26 Mar 2017 14:33:16 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/show_all_same_sql/</guid>
+      <description>select * from t_cgi WHERE (cHost,cUri) in ( select cHost,cUri from t_cgi GROUP BY cHost,cUri HAVING COUNT(cHash)&amp;gt; 1 ) ORDER BY CONCAT(cHost,cUri) 因为需要统计,所以必须要用GROUP BY, 然后用HAVING COUNT进行判断数据记录数, 这里有一个问题,就是因为是两个字段,所以在获取时候的WHERE IN需要用括号括起来. 附录:表结构
+CREATE TABLE t_cgi( cHash CHAR(32) UNIQUE, cHost VARCHAR(32) NOT NULL , cUri VARCHAR(64) NOT NULL DEFAULT &amp;#39;/&amp;#39;, cRaw TEXT , cTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (cHash) ) </description>
+    </item>
+    
+  </channel>
+</rss>

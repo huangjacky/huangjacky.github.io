@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <title>
+    NGINX WAF出现TIME_WAIT问题 // SecTrain安全博客
+  </title>
+
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+<meta name="description" content="实际WAF开发过程中，遇见一些TIME_WAIT超标的情况，进行相关优化的记录">
+<meta name="keywords" content="">
+<meta name="author" content="HuangJacky">
+<meta name="generator" content="Hugo 0.92.0" />
+
+  <meta property="og:title" content="NGINX WAF出现TIME_WAIT问题" />
+<meta property="og:description" content="实际WAF开发过程中，遇见一些TIME_WAIT超标的情况，进行相关优化的记录" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/" />
+
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/base-min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/pure-min.css">
+  
+  
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pure/1.0.0/grids-responsive-min.css">
+  
+  
+
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
+  <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+
+    
+  
+  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  
+  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+  
+  <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  
+
+  
+
+  
+
+  
+</head>
+
+<body>
+	
+
+	<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+  <div class="header">
+    
+
+	
+	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	
+
+    <h1 class="brand-title">个人技术分享</h1>
+    <h2 class="brand-tagline">相互成就理想</h2>
+
+    <nav class="nav">
+      <ul class="nav-list">
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+        
+      </ul>
+    </nav>
+
+    
+
+  </div>
+</div>
+
+
+	
+
+    <div class="content pure-u-1 pure-u-md-3-4">
+		<a name="top"></a>
+		
+
+		
+			
+		    <div id="toc" class="pure-u-1 pure-u-md-1-4">
+				<small class="toc-label">Contents</small>
+		   	 	<nav id="TableOfContents">
+  <ul>
+    <li><a href="#0x00-问题描述">0x00 问题描述</a></li>
+    <li><a href="#0x01-初步排查">0x01 初步排查</a>
+      <ul>
+        <li><a href="#reuseport">reuseport</a></li>
+        <li><a href="#正解">正解</a></li>
+        <li><a href="#ip_local_port_range">ip_local_port_range</a></li>
+        <li><a href="#proxy_bind">proxy_bind</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x02-深入定位">0x02 深入定位</a>
+      <ul>
+        <li><a href="#time_wait">TIME_WAIT</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x03-解决方法">0x03 解决方法</a>
+      <ul>
+        <li><a href="#默认短连接">默认短连接</a></li>
+        <li><a href="#keepalive">keepalive</a></li>
+      </ul>
+    </li>
+    <li><a href="#0x04-总结">0x04 总结</a></li>
+  </ul>
+</nav>
+		    </div>
+		    
+	    
+  		<section class="post">
+            <h1 class="post-title">
+              <a href="/hunter-blogs/posts/waf-nginx-time-wait/">NGINX WAF出现TIME_WAIT问题</a>
+            </h1>
+            <h3 class="post-subtitle">
+            	
+            </h3>
+            
+            	<span class="post-date">
+                	<span class="post-date-day"><sup>9</sup></span><span class="post-date-separator">/</span><span class="post-date-month">Jul</span> <span class="post-date-year">2018</span>
+            	</span>
+            	
+            
+            	
+            		<span class="post-author-single">By <a class="post-author"  target="">HuangJacky</a></span>
+            		
+
+
+
+
+            	
+            
+
+			
+			
+				<div class="post-categories">
+				
+					<a class="post-category post-category-waf" href="https://vul-hunters.gitee.io/hunter-blogs//categories/waf">WAF</a>
+				
+				</div>
+			
+
+			
+
+			
+
+            <h2 id="0x00-问题描述">0x00 问题描述</h2>
+<p>近日笔者参与的一款WAF产品，在大流量并发的况下，出现了部分请求500。这里的状态码有两种情况：<strong>WAF自身问题产生的内部服务器错误</strong>和<strong>后端上游服务器产生了内部错误透传过来的</strong>。当然这个还是比较好定位，只需要查看一下nginx的error_log即可，由于笔者这面log都是用ELK采集的，因此只需要在Kibana上面查看一下。这里我们看到了如下的错误：</p>
+<pre tabindex="0"><code>2018/07/10 16:15:28 [xxx] xxxx#0: *xxxxx bind(xxx.xxx.xxx.xxx) failed (98:Address already in use) while connecting to upstream xxxxxxxxxxxxx
+</code></pre><p>当然如果你用上面的一些内容作为关键字去搜索，不管是Google还是百度，搜索出来多半都是在启动时候listen时候bind failed的，和我们情况完全不一致，说明我们这个问题并不是一个常见的问题，也预示着着并不会那么容易解决。</p>
+<h2 id="0x01-初步排查">0x01 初步排查</h2>
+<p>解释这个问题前，我们得说一下Socket的四元组：<strong>（源IP，源端口，目的IP，目的端口）</strong>。当这个四个元素都已经有Socket占用了，那么新创建的Socket就会失败，这个时候NGINX就会报上面这个错误。</p>
+<h3 id="reuseport">reuseport</h3>
+<p>看到这里，可能很多同学就会去搜索各种nginx reuseport的文章，那么多半你已经走偏了。虽然reuseport解决不了我们这个问题这里我还是要提一下它的功效。正常情况下，每个NGINX worker都是一个独立的进程，他们监听的套接字都是从master里面fork出来的，那么说白了，他们手上都是同一个套接字，那么有请求来到的时候，这个套接字会通知所有的worker，但最后只能由一个worker来处理新连接，因此中间必然会存在一个竞争锁的过程，性能肯定也会有损耗的。如下图：<br>
+<img src="http://vul-hunters.oschina.io/hunter-blogs/img/nginx-no-reuse.png" alt="没有使用reuseport"><br>
+当这个选项打开的时候，系统允许多个Socket监听在同一个IP和端口上面，当有新请求到达时候，由内核直接从这些Socket中选择一个来处理，此时套接字和Worker是一一对应的，因此该套接字只会通知到一个Worker，这样有效减少进程间竞争。如下图：<br>
+<img src="http://vul-hunters.oschina.io/hunter-blogs/img/nginx-reuse.png" alt="使用reuseport"><br>
+当然使用这个选项是有一些条件的：</p>
+<ol>
+<li>NGINX版本大于1.9.1</li>
+<li>Linux内核版本3.9以后</li>
+<li>NGINX中开启相应的配置项</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">http</span> {
+    <span style="color:#f92672">server</span> {
+        <span style="color:#f92672">listen</span> <span style="color:#ae81ff">80</span> <span style="color:#e6db74">reuseport</span>;
+        <span style="color:#f92672">server_name</span>  <span style="color:#e6db74">localhost</span>;
+        <span style="color:#f92672">...</span>
+    <span style="color:#960050;background-color:#1e0010">}</span>
+<span style="color:#960050;background-color:#1e0010">}</span>
+
+<span style="color:#e6db74">stream</span> {
+    <span style="color:#f92672">server</span> {
+        <span style="color:#f92672">listen</span> <span style="color:#ae81ff">12345</span> <span style="color:#e6db74">reuseport</span>;
+        <span style="color:#f92672">...</span>
+    <span style="color:#960050;background-color:#1e0010">}</span>
+<span style="color:#960050;background-color:#1e0010">}</span>
+</code></pre></div><h3 id="正解">正解</h3>
+<p>上面扯得有些多。既然原因不是它，我们继续排查。NGINX作为反向代理服务器，那么它先是作为服务端接收用户的请求，这个时候Socket四元组中<strong>目的IP</strong>就是我们对外的监听IP，<strong>目的端口</strong>就是我们监听的端口，而<strong>源IP和源端口</strong>都是在用户侧，不同的用户就是不同的IP，因此Socket冲突的概率非常之小。NGINX将请求转发给上游服务器的时候，它是作为客户端去请求上游的HTTP服务，那么这个时候Socket四元组中的源IP（NGINX的出口IP），目的IP，目的端口都是固定值，只有源端口可以变化，那么冲突的概率就会非常大了。肯定有朋友会问源端口的取值范围有多大呢？</p>
+<h3 id="ip_local_port_range">ip_local_port_range</h3>
+<p>在linux系统中的**/etc/sysctl.conf<strong>文件中有一个选项</strong>net.ipv4.ip_local_port_range**可以决定源端口的取值范围。<br>
+默认值是</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#a6e22e">net.ipv4.ip_local_port_range</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">32768	61000</span>
+</code></pre></div><p>大概有28322个端口可以用，如果这个范围内的某个端口已经被占用，系统在创建Socket的时候会自动跳过，去挑选下一个端口。如果各位朋友想要查看自己系统的配置，可以查看这个配置文件，也可以直接执行如下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sysctl -a
+</code></pre></div><p>如果我们对相关选项做了修改，那么一定记住要执行命令让其生效。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sysctl -p
+</code></pre></div><p>随后，我排查了我们的服务器，这一项设置值已经优化了，非常大了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#a6e22e">net.ipv4.ip_local_port_range</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1024	65535</span>
+</code></pre></div><p>源端口已经最优了，这个时候我们将目光聚焦在四元组中的源IP上面，虽然目前服务器只有一个源IP，但是我们可以给服务器加IP呀，然后在NGINX给上游服务器请求的时候，使用不用的IP即可。</p>
+<h3 id="proxy_bind">proxy_bind</h3>
+<p>在多网卡情况下，NGINX如何选择网卡进行对外通讯，这个我也不太清楚，但是NGINX给我们提供一个指令：<strong>proxy_bind</strong>。<br>
+官方文档，解释如下：</p>
+<blockquote>
+<p>Makes outgoing connections to a proxied server originate from the specified local IP address with an optional port (1.11.2). Parameter value can contain variables (1.3.12). The special value off (1.3.12) cancels the effect of the proxy_bind directive inherited from the previous configuration level, which allows the system to auto-assign the local IP address and port.</p>
+</blockquote>
+<p>那么问题又来了，这里只能设置一个IP，不能设置一堆IP，怎么能够让多网卡生效呢？<br>
+既然我们是WAF，基于NGINX上面的LUA编程，那么就用编程能力去实现它就OK啦。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">set</span> <span style="color:#e6db74">upstream_uri</span> <span style="color:#e6db74">&#34;http://127.0.0.1:8080&#34;</span>;
+<span style="color:#66d9ef">set</span> <span style="color:#e6db74">bind_ip</span> <span style="color:#e6db74">&#34;123.456.789.1&#34;</span>;
+<span style="color:#66d9ef">proxy_bind</span> $bind_id;
+<span style="color:#66d9ef">proxy_pass</span> $upstream_uri;
+</code></pre></div><p>在上面的模板中，proxy_bind是一个变量，我们只要upstream转发之前设置好这个变量的IP就可以了，具体的LUA代码比较简单，就是操作ngx.var.bind_id这个变量的值，这里就不赘述了。</p>
+<h2 id="0x02-深入定位">0x02 深入定位</h2>
+<p>加了IP后，安心了几天，但是零星还是会有“Address already in use”的错误，证明还是有个别IP+port已经使用耗尽，但是通过我们ELK算出来的每一秒的QPS远小于<strong>N个IP*6w</strong>的数目，因此中间肯定还有猫腻。<br>
+通过下面命令在引擎上面排查：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 查看socket使用情况的概要</span>
+ss -s
+<span style="color:#75715e"># 或者详情打印</span>
+netstat -antlp &gt; netstat.txt
+</code></pre></div><p>上面的命令可以显示出系统当前总的TCP连接数，连接中，孤儿，TIME_WAIT的数量。大概的数字，总共有30W的连接数，连接中有9W，但是TIME_WAIT有18W左右。概况上面看好像很正常，连接中也不少。就如上面所说的那样，反向代理的时候NGINX既是服务端也是客户端，因此连接中的Socket，可能是NGINX和Client之间的，也可能是NGINX和Upstream之间。和Client之间的连接中的Socket，这个不是我们的瓶颈，上面分析的四元组的时候已经给出了答案。这个时候需要用到上面生成的netstat.txt了，因为有接近30W的连接数，netstat命令运行一次需要比较久的时间，所以我建议各位将结果重定向到txt文件中，方便我们后面分析。通过这个文件，我们发现和Client之间的连接中的Socket有接近8.5W，那么和Upstream之间居然少到可怜的5k，其余大多数local port都耗在这些TIME_WAIT的Socket上面了。</p>
+<h3 id="time_wait">TIME_WAIT</h3>
+<p>要想说清楚TIME_WAIT首先得从Socket的状态切换图来说啦，先上图：<br>
+<img src="http://vul-hunters.oschina.io/hunter-blogs/img/tcp-state.jpg" alt=""><br>
+长话短说，Established的双方，谁主动要求断开，那么谁的Socket状态就会切换成TIME_WAIT，TIME_WAIT的持续时间是2MSL。<strong>MSL是指Max Segment Lifetime，即数据包在网络中的最大生存时间。<strong>这个值建议是2分钟，但是有些系统中是30秒，那么TIME_WAIT持续的时间就是</strong>1~4分钟</strong>。在TCP协议设计的时候，为了保证其可靠性，所以增加了这个状态，主要是为了下面两种情况：</p>
+<ol>
+<li>要实现TCP全双工连接的正常终止，必须处理终止过程中四个分节任何一个分节的丢失情况，主动关闭连接的A端必须维持TIME_WAIT状态</li>
+<li>TCP协议不允许处于TIME_WAIT状态的连接启动一个新的可用连接，因为TIME_WAIT状态持续2MSL，就可以保证当成功建立一个新TCP连接的时候，来自旧连接重复分组已经在网络中消逝。</li>
+</ol>
+<p>额外说明一下，作为服务端，TIME_WAIT过多，没有什么影响，具体还是参考上面的四元组解释，就占用多一些内存，一个Socket大约占用4K内存。但是作为客户端的时候，TIME_WAIT同样占用local port，因此影响非常大。那么我们可以通过下面几个参数来优化，同样是/etc/sysctl.conf:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ini" data-lang="ini"><span style="color:#75715e"># 允许的TIME_WAIT数，小了系统会报错</span>
+<span style="color:#a6e22e">tcp_max_tw_buckets</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">256000 </span>
+<span style="color:#75715e"># 调整次参数的同时，要调整TIME_WAIT_2到TIME_WAIT的超时时间，默认是60s，优化到30s：</span>
+<span style="color:#a6e22e">net.ipv4.tcp_fin_timeout</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">30</span>
+<span style="color:#75715e"># 这个必须开启，否则reuse会失效，默认开启的</span>
+<span style="color:#a6e22e">net.ipv4.tcp_timestamps</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
+<span style="color:#75715e"># TIME_WAIT允许重用</span>
+<span style="color:#a6e22e">net.ipv4.tcp_tw_reuse</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">1</span>
+<span style="color:#75715e"># 这个建议关闭，因为NAT情况下，不用用户看到的ClientIP是一样的，会导致认为是同一个用户，造成建立连接失败。</span>
+<span style="color:#a6e22e">net.ipv4.tcp_tw_recycle</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">0 </span>
+</code></pre></div><h2 id="0x03-解决方法">0x03 解决方法</h2>
+<p>按照上面修改后，问题依旧没有明显改善。毕竟MSL的时间是改不了，TIME_WAIT就要存在2MSL这么长的时间，一累积那这个量就不得了了。这种情况下，终极解决办法就是<strong>长连接</strong>，我们作为客户端，就耗着，不要主动发起关闭操作。上面说到过谁关闭谁TIME_WAIT，上面也说到过服务端的TIME_WAIT过多是没有什么影响的。因此我们就不断开。好，这里又有几个坑。</p>
+<h3 id="默认短连接">默认短连接</h3>
+<p>NGINX的proxy_pass默认是使用短连接的，那么这里需要设置成长连接。既然说到长连接了，这里又有一个坑。NGINX作为服务端，它和Client端，只要Client的请求头中有<strong>Connection: Keep-alive</strong>，那么这就是一个长连接了。但是就如前面说的，NGINX作为客户端的时候，默认使用的是短连接，而且协议是HTTP1.0。<br>
+在NGINX里面有一个指令叫做： <strong>proxy_http_version</strong>, 它的默认值 1.0。官方有一段说明如下：</p>
+<blockquote>
+<p>Version 1.1 is recommended for use with keepalive connections and NTLM authentication</p>
+</blockquote>
+<p>因此我们需要在nginx.conf的相关设置项中加上：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">server</span> {
+    
+    <span style="color:#f92672">location</span> <span style="color:#e6db74">/http/</span> {
+        <span style="color:#f92672">proxy_pass</span> <span style="color:#e6db74">http://http_backend</span>;
+        <span style="color:#f92672">proxy_http_version</span> <span style="color:#ae81ff">1</span><span style="color:#e6db74">.1</span>;
+        <span style="color:#f92672">proxy_set_header</span> <span style="color:#e6db74">Connection</span> <span style="color:#e6db74">&#34;&#34;</span>;
+    }
+}
+</code></pre></div><p>注意要覆盖掉Client发送来是已经有的请求：Connection，避免被污染。</p>
+<h3 id="keepalive">keepalive</h3>
+<p>上面设置了NGINX转发时候的长连接还是不会生效，因为这里还需要在upstream中添加一个keepalive的设置。大概形式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nginx" data-lang="nginx"><span style="color:#66d9ef">upstream</span> <span style="color:#e6db74">http_backend</span> {
+    <span style="color:#f92672">server</span> 127.0.0.1:<span style="color:#ae81ff">8080</span>;
+
+    <span style="color:#f92672">keepalive</span> <span style="color:#ae81ff">16</span>;
+}
+</code></pre></div><p>这个指令的官方含义是：</p>
+<blockquote>
+<p>The connections parameter sets the maximum number of idle keepalive connections to upstream servers that are preserved in the cache of each worker process. When this number is exceeded, the least recently used connections are closed.</p>
+</blockquote>
+<p>设置每个Worker进程到这组Upstream服务器之间的最大长连接数，当达到最大值的时候，最近最少使用的连接将会被关闭。<br>
+因此这个选项得加上，还得是一个不小的值，大概应该在你系统最大并发的1/5左右。</p>
+<h2 id="0x04-总结">0x04 总结</h2>
+<ol>
+<li>首先一定要分清楚NGINX在反向代理时候，既是服务端，又是客户端，不同的场景，影响不一样。</li>
+<li>TIME_WAIT对于客户端的出去的连接数是会有影响的。</li>
+<li>NGINX这个keepalive理解起来有些绕，多看看相关的文章和官方文档吧。</li>
+</ol>
+
+
+			
+
+			
+				<div class="tags-list">
+					<span class="dark-red">标签</span><span class="decorative-marker">//</span>
+					
+	                <a class="post-tag post-tag-nginx" href="https://vul-hunters.gitee.io/hunter-blogs//tags/nginx">NGINX</a>,
+	                
+	                <a class="post-tag post-tag-socket" href="https://vul-hunters.gitee.io/hunter-blogs//tags/socket">socket</a>,
+	                
+				</div>
+			
+
+			
+				<div class="paging">
+					<span class="paging-label">更多</span>
+					
+					<div class="paging-newer">
+						<span class="dark-red">下一篇</span><span class="decorative-marker">//</span>
+						<a class="paging-link" href="/hunter-blogs/posts/wxpay-xxe/">微信支付SDK XXE漏洞简单分析</a>
+		            </div>
+		            
+
+					
+					<div class="paging-older">
+						<span class="dark-red">上一篇</span><span class="decorative-marker">//</span>
+			            <a class="paging-link" href="/hunter-blogs/posts/sni/">WAF和SNI的前世今生</a>
+		            </div>
+		            
+	            </div>
+            
+          </section>
+          
+					
+						<div id="SOHUCS" sid="6fc1bfe55d494235f978bf4474b34a00" ></div>
+						<script type="text/javascript">
+						(function(){
+						var appid = 'cyt2WbpnE';
+						var conf = 'prod_1483c999ca226afb821c066b009731f0';
+						var width = window.innerWidth || document.documentElement.clientWidth;
+						if (width < 960) {
+							window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+          
+
+      <script>
+    var _mtac = {"senseQuery":1};
+    (function() {
+        var mta = document.createElement("script");
+        mta.src = "//pingjs.qq.com/h5/stats.js?v2.0.4";
+        mta.setAttribute("name", "MTAH5");
+        mta.setAttribute("sid", "500423548");
+        mta.setAttribute("cid", "500423556");
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(mta, s);
+    })();
+</script>
+<div class="footer">
+	<hr class="thin" />
+	<div class="pure-menu pure-menu-horizontal pure-menu-open">
+		<ul class="footer-menu">
+		
+		</ul>
+	</div>
+
+    <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
+    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+</div>
+
+    </div>
+  </div>
+	
+
+	
+  
+</body>
+</html>

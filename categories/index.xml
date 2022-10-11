@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on SecTrain安全博客</title>
+    <link>https://vul-hunters.gitee.io/hunter-blogs/categories/</link>
+    <description>Recent content in Categories on SecTrain安全博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>安全</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8/</link>
+      <pubDate>Sun, 12 Aug 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>WAF</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/categories/waf/</link>
+      <pubDate>Mon, 09 Jul 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/categories/waf/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>漏洞</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/categories/%E6%BC%8F%E6%B4%9E/</link>
+      <pubDate>Wed, 04 Jul 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/categories/%E6%BC%8F%E6%B4%9E/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编程</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/categories/%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Thu, 14 Jun 2018 11:42:14 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/categories/%E7%BC%96%E7%A8%8B/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Web安全</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/categories/web%E5%AE%89%E5%85%A8/</link>
+      <pubDate>Sun, 07 May 2017 22:15:36 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/categories/web%E5%AE%89%E5%85%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>安全工具</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Thu, 20 Apr 2017 23:00:21 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>工具</title>
+      <link>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Sun, 02 Apr 2017 09:28:03 +0800</pubDate>
+      
+      <guid>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%B7%A5%E5%85%B7/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
