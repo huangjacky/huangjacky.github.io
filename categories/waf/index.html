@@ -66,20 +66,6 @@
   
 
   
-  <script>
-  jQuery(function(){
-		(async() => {
-			const fingerprint = await fpCollect.generateFingerprint();
-			const xhr = new XMLHttpRequest();
-
-			xhr.open('POST', 'https://check.huangjacky.vip/bot/check');
-			xhr.setRequestHeader('Content-Type', 'application/json');
-			
-			fingerprint.url = window.location.href;
-			xhr.send(JSON.stringify(fingerprint));
-		})();
-	});
-  </script>
 </head>
 
 <body>
@@ -185,6 +171,20 @@ sysctl -a 如果我们对相关选项做了修改，那么一定记住要执行�
 
     <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
     <script src="https://blog.sectrain.cn/js/beian.js"></script>
+    <script >
+    document.addEventListener('DOMContentLoaded', function() {
+(async() => {
+			const fingerprint = await fpCollect.generateFingerprint();
+			const xhr = new XMLHttpRequest();
+
+			xhr.open('POST', 'https://check.huangjacky.vip/bot/check');
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			
+			fingerprint.url = window.location.href;
+			xhr.send(JSON.stringify(fingerprint));
+		})();
+});
+    </script>
 </div>
 
     </div>
