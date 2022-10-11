@@ -50,9 +50,9 @@
 
     
   
-  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  <link rel="stylesheet" href="/css/tomorrow-night-bright.min.css">
   
-  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script src="/js/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 
@@ -182,7 +182,7 @@
 			
 
             <h2 id="0x00-背景介绍">0x00 背景介绍</h2>
-<p>最早的爬虫，只需要能够从服务端获取到HTML代码，进行分析即可，随着Web2.0的普及，越来越多的网站都必须JavaScript解析之后才能正常显示。因此这也对爬虫提出了新的要求，当前前人们已经在爬虫中集成Webkit等框架来满足这样的需求。<br>
+<p>最早的爬虫，只需要能够从服务端获取到HTML代码，进行分析即可，随着Web2.0的普及，越来越多的网站都必须JavaScript解析之后才能正常显示。因此这也对爬虫提出了新的要求，当前前人们已经在爬虫中集成Webkit等框架来满足这样的需求。
 本文将从实际漏洞扫描器项目中，爬虫遇到的一个问题作为切入点，简单的介绍一下爬虫过程中一些JavaScript上Mock或者Hook的技巧。</p>
 <h2 id="0x01-需求">0x01 需求</h2>
 <p>这里需求主要有两个：</p>
@@ -197,11 +197,11 @@ window.<span style="color:#a6e22e">alert</span> <span style="color:#f92672">=</s
     <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;receive: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">message</span>);
     <span style="color:#a6e22e">old_alert</span>(<span style="color:#a6e22e">message</span>);
 }
-</code></pre></div><p>上面的例子是对alert函数增加一个日志打印的功能。<br>
+</code></pre></div><p>上面的例子是对alert函数增加一个日志打印的功能。
 Hook很简单，现在唯一的问题就是要在函数执行之前就进行替换，很多函数是在网页加载中（head部分）或者网页加载完成后立即就执行了，没有空隙给我们替换函数。</p>
 <h2 id="0x03-注入实战">0x03 注入实战</h2>
 <h3 id="phantomjs">PhantomJS</h3>
-<p>它是基于QT和Webkit的无头(Headless)浏览框架，因为其不依赖Xvfb，资源占用比较小，有段时间非常受大家欢迎。其Project的Owner已经宣布不维护了，现在版本定格在2.1.1。PhantomJS良好的接口，使其能够非常方便的支持JS代码注入。<br>
+<p>它是基于QT和Webkit的无头(Headless)浏览框架，因为其不依赖Xvfb，资源占用比较小，有段时间非常受大家欢迎。其Project的Owner已经宣布不维护了，现在版本定格在2.1.1。PhantomJS良好的接口，使其能够非常方便的支持JS代码注入。
 假如某个网页(<a href="http://fake.hack.com/location.html">http://fake.hack.com/location.html</a>) 会获取地理位置，只有指定位置的用户才会进行下一步处理。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">webPage</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;webpage&#39;</span>);
 <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">page</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">webPage</span>.<span style="color:#a6e22e">create</span>();
@@ -233,7 +233,7 @@ Hook很简单，现在唯一的问题就是要在函数执行之前就进行替�
 };
 </code></pre></div><p>从上面的例子可以看到我们Hook了getCurrentPosition函数，它只会返回指定的经纬度。当然这一切都依赖于PhantomJS提供了<strong>injectJs</strong>这个方法以及<strong>onInitialized</strong>这个事件。</p>
 <h3 id="selenium">Selenium</h3>
-<p>PhantomJS始终是小众的选择，Selenium才是主流，尤其是Chrome推出了Headless模式之后，大大提高了Selenium的效率。<br>
+<p>PhantomJS始终是小众的选择，Selenium才是主流，尤其是Chrome推出了Headless模式之后，大大提高了Selenium的效率。
 由于时间原因，本文只研究了ChromeWebDriver的情况。首先看一段代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> selenium <span style="color:#f92672">import</span> webdriver
 <span style="color:#f92672">from</span> selenium.webdriver.chrome.options <span style="color:#f92672">import</span> Options
@@ -270,16 +270,16 @@ URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http:/
 &lt;/<span style="color:#f92672">script</span>&gt;
 &lt;/<span style="color:#f92672">body</span>&gt;
 &lt;/<span style="color:#f92672">html</span>&gt;
-</code></pre></div><p>而运行结果并不符合预期：<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/Selenium.alert.error.png" alt=""><br>
-截图失败，因为有alert弹出框。<br>
+</code></pre></div><p>而运行结果并不符合预期：
+<img src="/img/Selenium.alert.error.png" alt="">
+截图失败，因为有alert弹出框。
 通过查看WebDriver的API，我们发现一个函数<strong>execute_script</strong>, 因此我们修改代码如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">driver<span style="color:#f92672">.</span>execute_script(<span style="color:#e6db74">&#39;window.alert=null;&#39;</span>)
 driver<span style="color:#f92672">.</span>get(URL)
 driver<span style="color:#f92672">.</span>get_screenshot_as_file(<span style="color:#e6db74">&#34;test.png&#34;</span>)
-</code></pre></div><p>结果肯定是不成功的，不然就不会有这篇文章了。<br>
+</code></pre></div><p>结果肯定是不成功的，不然就不会有这篇文章了。
 大概是因为driver.get之后才会有window对象，之前执行的js代码都无效。</p>
-<p>Google了大半天，无果。看来从WebDriver上面入手是不行了，我们将目光回到Chrome浏览器自身来，它提供Chrome Devtools Protocol来方便我们这些开发者进行定制，通过<a href="https://chromedevtools.github.io/devtools-protocol/tot/Page">官方文档</a> 的查看，我发现了<strong>Page.addScriptToEvaluateOnNewDocument</strong>这个Method是可以满足我们需求的。<strong>Chrome Devtools Protocol</strong>的一些细节，请读者自行Google或者等我下一篇文章吧。<br>
+<p>Google了大半天，无果。看来从WebDriver上面入手是不行了，我们将目光回到Chrome浏览器自身来，它提供Chrome Devtools Protocol来方便我们这些开发者进行定制，通过<a href="https://chromedevtools.github.io/devtools-protocol/tot/Page">官方文档</a> 的查看，我发现了<strong>Page.addScriptToEvaluateOnNewDocument</strong>这个Method是可以满足我们需求的。<strong>Chrome Devtools Protocol</strong>的一些细节，请读者自行Google或者等我下一篇文章吧。
 新的代码如下：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">resource <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/session/</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/chromium/send_command_and_get_result&#34;</span> <span style="color:#f92672">%</span> driver<span style="color:#f92672">.</span>session_id
 url <span style="color:#f92672">=</span> driver<span style="color:#f92672">.</span>command_executor<span style="color:#f92672">.</span>_url <span style="color:#f92672">+</span> resource
@@ -293,7 +293,7 @@ response <span style="color:#f92672">=</span> driver<span style="color:#f92672">
 print(response<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;value&#39;</span>))
 driver<span style="color:#f92672">.</span>get(URL)
 driver<span style="color:#f92672">.</span>get_screenshot_as_file(<span style="color:#e6db74">&#34;test.png&#34;</span>)
-</code></pre></div><p>代码运行成功，截图OK啦。<br>
+</code></pre></div><p>代码运行成功，截图OK啦。
 这里需要注意几点：</p>
 <ol>
 <li>url的获取以及session，这些WebDriver里面都有方法</li>

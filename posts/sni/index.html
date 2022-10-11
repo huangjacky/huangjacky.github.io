@@ -50,9 +50,9 @@
 
     
   
-  <link rel="stylesheet" href="/hunter-blogs/css/tomorrow-night-bright.min.css">
+  <link rel="stylesheet" href="/css/tomorrow-night-bright.min.css">
   
-  <script src="/hunter-blogs/js/highlight.min.js"></script>
+  <script src="/js/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 
@@ -184,37 +184,37 @@
 			
 
             <h2 id="0x00-背景">0x00 背景</h2>
-<p>近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持<strong>SNI</strong>造成的。<br>
+<p>近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持<strong>SNI</strong>造成的。
 SNI具体的内容在第三节中将会详细介绍，请稍等。</p>
 <h2 id="0x01-定位">0x01 定位</h2>
-<p>为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 <br>
-这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/genymotion-general.png" alt="模拟器情况"><br>
-TIPS：这个模拟器是基于X86架构，跑起来非常快，但是我们目标APP是ARM架构的，直接还不能运行，我们需要安装额外的ARM-Translate的，这个就不在本文中介绍了，后面我会专门有文章来介绍，或者有需要的朋友可以直接联系我。<br>
-我们就在宿主机上面用Wireshark抓包即可，抓包过程也非常简单，就是分别使用浏览器打开目标网址和用APP登录，我直接给出抓包截图，我们对比看一下吧。<br>
-首先是浏览器的抓包：<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/teleows.browser.png" alt="浏览器抓包"><br>
-后面这个是APP的包<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/teleows.app.png" alt="APP抓包"><br>
+<p>为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。
+这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：
+<img src="/img/genymotion-general.png" alt="模拟器情况">
+TIPS：这个模拟器是基于X86架构，跑起来非常快，但是我们目标APP是ARM架构的，直接还不能运行，我们需要安装额外的ARM-Translate的，这个就不在本文中介绍了，后面我会专门有文章来介绍，或者有需要的朋友可以直接联系我。
+我们就在宿主机上面用Wireshark抓包即可，抓包过程也非常简单，就是分别使用浏览器打开目标网址和用APP登录，我直接给出抓包截图，我们对比看一下吧。
+首先是浏览器的抓包：
+<img src="/img/teleows.browser.png" alt="浏览器抓包">
+后面这个是APP的包
+<img src="/img/teleows.app.png" alt="APP抓包">
 两者区别在于SSL握手时候Client的扩展字段有没有SNI字段。</p>
 <h2 id="0x01-sni介绍">0x01 SNI介绍</h2>
-<p>SNI是Server Name Indication的缩写，是为了解决一个服务器使用多个域名和证书的SSL/TLS扩展。它允许客户端在发起SSL握手请求时（客户端发出ClientHello消息中）提交请求的HostName信息，使得服务器能够切换到正确的域并返回相应的证书。<br>
+<p>SNI是Server Name Indication的缩写，是为了解决一个服务器使用多个域名和证书的SSL/TLS扩展。它允许客户端在发起SSL握手请求时（客户端发出ClientHello消息中）提交请求的HostName信息，使得服务器能够切换到正确的域并返回相应的证书。
 在SNI出现之前，HostName信息只存在于HTTP请求中，但SSL/TLS层无法获知这一信息。通过将HostName的信息加入到SNI扩展中，SSL/TLS允许服务器使用一个IP为不同的域名提供不同的证书，从而能够与使用同一个IP的多个“虚拟主机”更方便地建立安全连接。</p>
 <h3 id="ssl握手">SSL握手</h3>
-<p>HTTPS其实是将HTTP的请求使用TLS加密后使用TCP协议传输给目的方，几者之间的关系如下：<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/HTTPS.jpg" alt="HTTPS"><br>
-TLS加密需要需要在TCP连接建立之后，双方进行SSL握手，协商随机数和证书。大概的过程是这样的：<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/ssl-hello.png" alt="SSL握手"><br>
+<p>HTTPS其实是将HTTP的请求使用TLS加密后使用TCP协议传输给目的方，几者之间的关系如下：
+<img src="/img/HTTPS.jpg" alt="HTTPS">
+TLS加密需要需要在TCP连接建立之后，双方进行SSL握手，协商随机数和证书。大概的过程是这样的：
+<img src="/img/ssl-hello.png" alt="SSL握手">
 这里和我们这次文章比较相关的部分就是客户端发送Hello后，服务端返回证书，客户端校验证书有效性。</p>
 <h3 id="nginx反向代理">NGINX反向代理</h3>
-<p>在现在互联网时代，IP地址越来越紧张，因此我们经常会将多个域名或者网站使用同一台服务器，同一个IP。NGINX通常就是这样的网关。当一个HTTP请求到达时候，NGINX会通过HTTP请求中的Host头来决定转发目的服务器。<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/nginx-http-upstream.png" alt="NGINX转发"><br>
-NGINX要能够正常的转发，那么它必须能够解析HTTP协议，从上面图中，我们可以看到HTTPS请求中HTTP内容被TLS加密，NGINX在使用前必须进行解密，而解密需要双方协商证书。好的，问题就来了，如果是多个HTTPS网站共享一个IP和端口，SSL握手时候，服务端如何正确选择域名证书传输给客户端呢？<br>
-为了解决这个问题在RFC 6066中对TLS的扩展进行了定义，其中就提到了在握手阶段一个<strong>server_name</strong>的扩展，它的内容就是域名的名字。服务端在接收到含有SNI的Client Hello后，根据其内容，去选择该域名的证书返回给客户端。<br>
+<p>在现在互联网时代，IP地址越来越紧张，因此我们经常会将多个域名或者网站使用同一台服务器，同一个IP。NGINX通常就是这样的网关。当一个HTTP请求到达时候，NGINX会通过HTTP请求中的Host头来决定转发目的服务器。
+<img src="/img/nginx-http-upstream.png" alt="NGINX转发">
+NGINX要能够正常的转发，那么它必须能够解析HTTP协议，从上面图中，我们可以看到HTTPS请求中HTTP内容被TLS加密，NGINX在使用前必须进行解密，而解密需要双方协商证书。好的，问题就来了，如果是多个HTTPS网站共享一个IP和端口，SSL握手时候，服务端如何正确选择域名证书传输给客户端呢？
+为了解决这个问题在RFC 6066中对TLS的扩展进行了定义，其中就提到了在握手阶段一个<strong>server_name</strong>的扩展，它的内容就是域名的名字。服务端在接收到含有SNI的Client Hello后，根据其内容，去选择该域名的证书返回给客户端。
 因此从上面的解释看出来，这个问题并不是只有WAF才会存在，而是绑定了同一个IP+端口的多个HTTPS网站都会遇到这样的问题。</p>
 <h2 id="0x02-app分析">0x02 APP分析</h2>
-<p>在上面定位中，我们同一个系统，浏览器携带了SNI，但是客户的APP没有，因此我们决定对客户的APP再进行一轮分析。这里需要使用到JEB工具对客户的APK进行逆向分析。根据activity去查找登录方法所使用HTTP包即可。我们最后定位到<strong>MobileHttpClientManager</strong>类，实现的代码大致如下：<br>
-<img src="http://vul-hunters.oschina.io/hunter-blogs/img/app-code.png" alt="代码"><br>
+<p>在上面定位中，我们同一个系统，浏览器携带了SNI，但是客户的APP没有，因此我们决定对客户的APP再进行一轮分析。这里需要使用到JEB工具对客户的APK进行逆向分析。根据activity去查找登录方法所使用HTTP包即可。我们最后定位到<strong>MobileHttpClientManager</strong>类，实现的代码大致如下：
+<img src="/img/app-code.png" alt="代码">
 从代码里面看到，使用的SDK默认的<strong>DefaultHttpClient</strong>，从相关文章我们知道HttPClient默认是不使用SNI的。</p>
 <h2 id="0x02-解决方案">0x02 解决方案</h2>
 <h3 id="android">Android</h3>
@@ -236,10 +236,10 @@ U   RLConnection urlConnection <span style="color:#f92672">=</span> url<span sty
     e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
 <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
 <span style="color:#f92672">}</span>
-</code></pre></div><p>自 Android 2.3 开始，HttpsURLConnection 就支持 SNI。如果您需要支持 Android 2.2（及更旧的版本），一种解决办法是在一个唯一端口上设置备用虚拟主机，以便了解要返回哪个服务器证书。<br>
+</code></pre></div><p>自 Android 2.3 开始，HttpsURLConnection 就支持 SNI。如果您需要支持 Android 2.2（及更旧的版本），一种解决办法是在一个唯一端口上设置备用虚拟主机，以便了解要返回哪个服务器证书。
 比较极端的替代方法是不使用服务器默认情况下返回的验证程序，而是将 HostnameVerifier 替换为不使用您的虚拟机主机名的验证程序</p>
 <h4 id="apache-httpclient">Apache HttpClient</h4>
-<p>虽然HttpClient的4.3.2版本在Oracle JRE 1.7+已经支持SNI了，但是Android可不是使用的Oracle的JRE啦，这个涉及到版权等问题。<br>
+<p>虽然HttpClient的4.3.2版本在Oracle JRE 1.7+已经支持SNI了，但是Android可不是使用的Oracle的JRE啦，这个涉及到版权等问题。
 我们最好是使用时，手动设置一下HostName。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// Android specific code to enable SNI
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>Build<span style="color:#f92672">.</span><span style="color:#a6e22e">VERSION</span><span style="color:#f92672">.</span><span style="color:#a6e22e">SDK_INT</span> <span style="color:#f92672">&gt;=</span> Build<span style="color:#f92672">.</span><span style="color:#a6e22e">VERSION_CODES</span><span style="color:#f92672">.</span><span style="color:#a6e22e">JELLY_BEAN_MR1</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
@@ -255,8 +255,8 @@ U   RLConnection urlConnection <span style="color:#f92672">=</span> url<span sty
         <span style="color:#f92672">}</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
-</code></pre></div><p>从代码也看到了，这个需要安卓4.2.2以后的版本才是支持的。<br>
-为了更好的演示效果，我自己创建了一个Android的demo，分别三个按钮：<strong>NO SNI</strong>, <strong>SNI</strong>, <strong>请求单域名单IP的情况</strong>。<br>
+</code></pre></div><p>从代码也看到了，这个需要安卓4.2.2以后的版本才是支持的。
+为了更好的演示效果，我自己创建了一个Android的demo，分别三个按钮：<strong>NO SNI</strong>, <strong>SNI</strong>, <strong>请求单域名单IP的情况</strong>。
 代码地址： <a href="https://github.com/huangjacky/android_sni">https://github.com/huangjacky/android_sni</a></p>
 <h3 id="ios">iOS</h3>
 <p>因为CFNetwork是支持SNI的，因此我们只需要判断协议然后决定是用上层的网络请求转发还是用底层的cfnetwork来转发。</p>
@@ -277,9 +277,9 @@ U   RLConnection urlConnection <span style="color:#f92672">=</span> url<span sty
 </code></pre></div><h3 id="浏览器">浏览器</h3>
 <p>目前不管是PC还是移动端，主流的现代浏览器都是支持SNI的。</p>
 <h2 id="0x03-参考链接">0x03 参考链接</h2>
-<p>[1] <a href="https://zh.wikipedia.org/zh-hans/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%8D%E7%A7%B0%E6%8C%87%E7%A4%BA">SNI中文维基百科</a><br>
-[2] <a href="https://www.jianshu.com/p/7158568e4867">SSL握手介绍</a><br>
-[3] <a href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL/TLS协议介绍</a><br>
+<p>[1] <a href="https://zh.wikipedia.org/zh-hans/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%8D%E7%A7%B0%E6%8C%87%E7%A4%BA">SNI中文维基百科</a>
+[2] <a href="https://www.jianshu.com/p/7158568e4867">SSL握手介绍</a>
+[3] <a href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL/TLS协议介绍</a>
 [4] <a href="https://www.jianshu.com/p/cd4c1bf1fd5f">iOS的HTTP DNS方案</a></p>
 
 
