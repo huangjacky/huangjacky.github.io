@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>安全 on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8/</link>
+    <link>https://vul-hunters.gitee.io/categories/%E5%AE%89%E5%85%A8/</link>
     <description>Recent content in 安全 on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/categories/%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>关于爬虫本地JS Hook的研究</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/</link>
+      <link>https://vul-hunters.gitee.io/posts/js_mocks/</link>
       <pubDate>Sun, 12 Aug 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/js_mocks/</guid>
       <description>0x00 背景介绍 最早的爬虫，只需要能够从服务端获取到HTML代码，进行分析即可，随着Web2.0的普及，越来越多的网站都必须JavaScript解析之后才能正常显示。因此这也对爬虫提出了新的要求，当前前人们已经在爬虫中集成Webkit等框架来满足这样的需求。
 本文将从实际漏洞扫描器项目中，爬虫遇到的一个问题作为切入点，简单的介绍一下爬虫过程中一些JavaScript上Mock或者Hook的技巧。
 0x01 需求 这里需求主要有两个：
@@ -29,10 +29,10 @@ window.navigator.geolocation = { getCurrentPosition: function (success, failure)
     
     <item>
       <title>WAF和SNI的前世今生</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</link>
+      <link>https://vul-hunters.gitee.io/posts/sni/</link>
       <pubDate>Thu, 12 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sni/</guid>
       <description>0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。
 SNI具体的内容在第三节中将会详细介绍，请稍等。
 0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：
@@ -58,10 +58,10 @@ HttpsURLConnection try { URL url = new URL(&amp;#34;https://www.huaweicloud.com&
     
     <item>
       <title>图片隐写术介绍</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</link>
+      <link>https://vul-hunters.gitee.io/posts/stegano-image/</link>
       <pubDate>Tue, 28 Mar 2017 16:07:45 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/stegano-image/</guid>
       <description>隐写术是将文本或者文件隐藏到图片文件中,从而实现信息的屏蔽.
 本文主要介绍关于Python的steganography包以及相关的用法,以及编程中使用说明
 安装 pip install steganography 用法 命令行 steganography包安装之后,命令行中会存在一个steganography的可执行脚本.
@@ -72,10 +72,10 @@ HttpsURLConnection try { URL url = new URL(&amp;#34;https://www.huaweicloud.com&
     
     <item>
       <title>SQL注入</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sql_inject/</link>
+      <link>https://vul-hunters.gitee.io/posts/sql_inject/</link>
       <pubDate>Mon, 27 Mar 2017 11:39:39 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sql_inject/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sql_inject/</guid>
       <description>SQL注入 手工党 boolean型盲注 &#39; -- &#39; or &#39;1&#39;=&#39;1 id=2 and substring(username,1,1)=&#39;y&#39; and &#39;1&#39;=&#39;1 id=2 and ascii(substring(username,1,1))=65 and &#39;1&#39;=&#39;1 id=2 and length(usernam)=5 and &#39;1&#39;=&#39;1 时间盲注 id=2 and if(version() like &#39;5%&#39;,sleep(100),&#39;false&#39;))-- union联合查询 #union联合查询时，查询列数要一致 union select 1,1,1-- union select version(),1,1-- 工具党 sqlmap sqlmap支持五种不同的注入模式  基于Boolean型的盲注 基于时间的盲注 联合查询注入 基于报错注入 堆查询注入  </description>
     </item>
     

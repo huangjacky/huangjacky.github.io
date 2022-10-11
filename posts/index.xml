@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/hunter-blogs/posts/</link>
+    <link>https://vul-hunters.gitee.io/posts/</link>
     <description>Recent content in Posts on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Aug 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>关于爬虫本地JS Hook的研究</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/</link>
+      <link>https://vul-hunters.gitee.io/posts/js_mocks/</link>
       <pubDate>Sun, 12 Aug 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/js_mocks/</guid>
       <description>0x00 背景介绍 最早的爬虫，只需要能够从服务端获取到HTML代码，进行分析即可，随着Web2.0的普及，越来越多的网站都必须JavaScript解析之后才能正常显示。因此这也对爬虫提出了新的要求，当前前人们已经在爬虫中集成Webkit等框架来满足这样的需求。
 本文将从实际漏洞扫描器项目中，爬虫遇到的一个问题作为切入点，简单的介绍一下爬虫过程中一些JavaScript上Mock或者Hook的技巧。
 0x01 需求 这里需求主要有两个：
@@ -29,10 +29,10 @@ window.navigator.geolocation = { getCurrentPosition: function (success, failure)
     
     <item>
       <title>WAF和SNI的前世今生</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</link>
+      <link>https://vul-hunters.gitee.io/posts/sni/</link>
       <pubDate>Thu, 12 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sni/</guid>
       <description>0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。
 SNI具体的内容在第三节中将会详细介绍，请稍等。
 0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：
@@ -58,10 +58,10 @@ HttpsURLConnection try { URL url = new URL(&amp;#34;https://www.huaweicloud.com&
     
     <item>
       <title>NGINX WAF出现TIME_WAIT问题</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/</link>
+      <link>https://vul-hunters.gitee.io/posts/waf-nginx-time-wait/</link>
       <pubDate>Mon, 09 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/waf-nginx-time-wait/</guid>
       <description>0x00 问题描述 近日笔者参与的一款WAF产品，在大流量并发的况下，出现了部分请求500。这里的状态码有两种情况：WAF自身问题产生的内部服务器错误和后端上游服务器产生了内部错误透传过来的。当然这个还是比较好定位，只需要查看一下nginx的error_log即可，由于笔者这面log都是用ELK采集的，因此只需要在Kibana上面查看一下。这里我们看到了如下的错误：
 2018/07/10 16:15:28 [xxx] xxxx#0: *xxxxx bind(xxx.xxx.xxx.xxx) failed (98:Address already in use) while connecting to upstream xxxxxxxxxxxxx 当然如果你用上面的一些内容作为关键字去搜索，不管是Google还是百度，搜索出来多半都是在启动时候listen时候bind failed的，和我们情况完全不一致，说明我们这个问题并不是一个常见的问题，也预示着着并不会那么容易解决。
 0x01 初步排查 解释这个问题前，我们得说一下Socket的四元组：（源IP，源端口，目的IP，目的端口）。当这个四个元素都已经有Socket占用了，那么新创建的Socket就会失败，这个时候NGINX就会报上面这个错误。
@@ -77,10 +77,10 @@ sysctl -a 如果我们对相关选项做了修改，那么一定记住要执行�
     
     <item>
       <title>微信支付SDK XXE漏洞简单分析</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/wxpay-xxe/</link>
+      <link>https://vul-hunters.gitee.io/posts/wxpay-xxe/</link>
       <pubDate>Wed, 04 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/wxpay-xxe/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/wxpay-xxe/</guid>
       <description>微信支付商户端Java SDK XXE漏洞说明 0x00 漏洞影响 影响面 微信支付过程中，商家的服务器需要和微信的服务器进行通讯，需要等待微信服务器通知商家交易完成，比如流水等信息，商家提供的这样接口我们称之为微信回调接口。微信官方为了简化开发门槛，提供了JAVA和PHP的SDK。很不幸，JAVA SDK在近日曝出有重大安全问题。 因此使用了该SDK的服务器，都可能被黑客攻击，造成远程命令执行，敏感信息窃取等，此漏洞属于高危级别，请尽快修复。
 修复方案 下载并使用最新的JAVA SDK。https://pay.weixin.qq.com/wiki/doc/api/download/WxPayAPI_JAVA_v3.zip
 0x01 华为云配套服务 华为云Web应用防火墙 华为云WAF是客户网站和访问者之间一道安全检测卫士，它能够将恶意攻击有效的拦截在客户网站之外。华为云WAF默认支持XXE漏洞攻击的防御拦截。如果有客户来不及修复代码，升级到最新版本，请及时开启WAF防护。
@@ -91,10 +91,10 @@ sysctl -a 如果我们对相关选项做了修改，那么一定记住要执行�
     
     <item>
       <title>Lua - 编程中几种空值的判断</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</link>
+      <link>https://vul-hunters.gitee.io/posts/lua-null/</link>
       <pubDate>Thu, 14 Jun 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/lua-null/</guid>
       <description>0x00 背景 最近在写一段nginx+redis的代码，主要基于openresty，其中使用到了lua-resty-redis库。我平时写代码都比较小心，针对外部输入的值一般都会进行异常判断，大概的代码如下：
 local redis = require &amp;#34;redis&amp;#34; local cjson = require &amp;#34;cjson&amp;#34; --[[省略部分代码]] local ok, err = redis:get(&amp;#34;key&amp;#34;) if not ok then ngx.log(ngx.ERR, &amp;#39;[ERROR]:&amp;#39;, err) return end local data = cjson.decode(ok) 在decode这里出现了错误提示，但是ok并没有为空或者nil，不然代码是走不到这里来。
 发现问题后，我们就在前面打印一下ok数据的类型吧，大概的代码如下：
@@ -105,10 +105,10 @@ local function _read_reply(self, sock) local line, err = sock:receive() if not l
     
     <item>
       <title>Nginx错误码502和504的区别</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/</link>
+      <link>https://vul-hunters.gitee.io/posts/nginx-502-504-diff/</link>
       <pubDate>Mon, 29 May 2017 12:00:00 +0000</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/nginx-502-504-diff/</guid>
       <description>0x00 前言 某日某B：我们系统出现了504,你赶紧去问问PHP的人有什么错误日志？
 某A：我已经问过，PHP的人说没有日志。
 某B：PHP那面的人说的话你不要相信，赶紧再去查一遍。
@@ -125,10 +125,10 @@ static void ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u
     
     <item>
       <title>【漏洞公告】某平台一个有意思的CSRF</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/vul-csrf-src-1/</link>
+      <link>https://vul-hunters.gitee.io/posts/vul-csrf-src-1/</link>
       <pubDate>Sun, 07 May 2017 22:15:36 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/vul-csrf-src-1/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/vul-csrf-src-1/</guid>
       <description>0x00 背景 某日在给某集团平台提交报告的时候，出于习惯就想试试这个平台的安全性怎么样。
 总的来说，平台前面架设了WAF，一些常规的测试Payload都会被拦截，因此不适合强攻。其实随着安全越来越受重视，很多开发同学的安全意识也越来越高，常见的XSS和SQL注入的错误一般都会再犯。但是对于跨站请求伪造CSRF一般都没有太在意。主要原因是这类漏洞的危害不会像注入那样明显，但是威胁等级并不比它们低。
 0x01 案例 前面唠叨了这么多，接下来我们就说说这个具体的例子：
@@ -153,10 +153,10 @@ static void ngx_http_upstream_next(ngx_http_request_t *r, ngx_http_upstream_t *u
     
     <item>
       <title>安全工具 - SQLmap的用法</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-sqlmap/</link>
+      <link>https://vul-hunters.gitee.io/posts/sec-tools-sqlmap/</link>
       <pubDate>Thu, 20 Apr 2017 23:00:21 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-sqlmap/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sec-tools-sqlmap/</guid>
       <description>0x00 序言 前一篇文章介绍了nmap的用法, 这次再介绍一个神器, 那就是SQLmap, 它作为SQL注入界自动化检测工具,能够实现高难度漏洞检测, 脱裤等工作,大大减少安全人员的时间.
 0x01 用法 拿到一个工具之前,我们可以用过帮助文档查看它一般的用法. 运行以下命令, 可以查看到详细的帮助:
 sqlmap -hh 目标选定 指定URL sqlmap -u &amp;#34;http://svip.qq.com/abc?d=1&amp;#34; 对指定的URL进行SQL注入检测
@@ -172,10 +172,10 @@ sqlmap -hh 目标选定 指定URL sqlmap -u &amp;#34;http://svip.qq.com/abc?d=1&
     
     <item>
       <title>安全工具 - nmap用法</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-nmap/</link>
+      <link>https://vul-hunters.gitee.io/posts/sec-tools-nmap/</link>
       <pubDate>Mon, 17 Apr 2017 10:44:28 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-nmap/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sec-tools-nmap/</guid>
       <description>0x00 序言 工欲善其事, 必先利其器. 当然这系列的文章都是偏入门级的, 主要是方便我自己熟悉相关的工具, 以及日后使用过程中, 自己有个地方作为参考. nmap作为安全圈的神器, 在黑客帝国里面也有露面, 因此你可以想象到它的用途了吧
 0x01 用法 扫描目标 nmap接受的输入可以有单IP,域名,网段和IP列表文件.
 # 扫描单个ip nmap 127.0.0.1 # 扫描一个ip端 nmap 192.168.2.1-25 # 扫描一个子网段 nmap 192.168.2.0/24 # 扫描一个域名 nmap www.test.com # 扫描文件列表中IP nmap -iL ips.txt # 排除指定ip, 不扫描192.168.3.1 nmap 192.168.3.0/24 --exclude 192.168.3.1 端口选项 默认nmap会扫描1000个端口, 但是可以用过-p参数来设置.
@@ -185,19 +185,19 @@ sqlmap -hh 目标选定 指定URL sqlmap -u &amp;#34;http://svip.qq.com/abc?d=1&
     
     <item>
       <title>开源中国Pages自动发布小介绍</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/oschina-pages-auto-publish/</link>
+      <link>https://vul-hunters.gitee.io/posts/oschina-pages-auto-publish/</link>
       <pubDate>Sun, 02 Apr 2017 09:28:03 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/oschina-pages-auto-publish/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/oschina-pages-auto-publish/</guid>
       <description>简单的说明一下Pages自动发布的一个思路,本例子中的接口主要是tornado实现,同时你还需要一台自己的服务器</description>
     </item>
     
     <item>
       <title>图片隐写术介绍</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</link>
+      <link>https://vul-hunters.gitee.io/posts/stegano-image/</link>
       <pubDate>Tue, 28 Mar 2017 16:07:45 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/stegano-image/</guid>
       <description>隐写术是将文本或者文件隐藏到图片文件中,从而实现信息的屏蔽.
 本文主要介绍关于Python的steganography包以及相关的用法,以及编程中使用说明
 安装 pip install steganography 用法 命令行 steganography包安装之后,命令行中会存在一个steganography的可执行脚本.
@@ -208,19 +208,19 @@ sqlmap -hh 目标选定 指定URL sqlmap -u &amp;#34;http://svip.qq.com/abc?d=1&
     
     <item>
       <title>SQL注入</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sql_inject/</link>
+      <link>https://vul-hunters.gitee.io/posts/sql_inject/</link>
       <pubDate>Mon, 27 Mar 2017 11:39:39 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sql_inject/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sql_inject/</guid>
       <description>SQL注入 手工党 boolean型盲注 &#39; -- &#39; or &#39;1&#39;=&#39;1 id=2 and substring(username,1,1)=&#39;y&#39; and &#39;1&#39;=&#39;1 id=2 and ascii(substring(username,1,1))=65 and &#39;1&#39;=&#39;1 id=2 and length(usernam)=5 and &#39;1&#39;=&#39;1 时间盲注 id=2 and if(version() like &#39;5%&#39;,sleep(100),&#39;false&#39;))-- union联合查询 #union联合查询时，查询列数要一致 union select 1,1,1-- union select version(),1,1-- 工具党 sqlmap sqlmap支持五种不同的注入模式  基于Boolean型的盲注 基于时间的盲注 联合查询注入 基于报错注入 堆查询注入  </description>
     </item>
     
     <item>
       <title>phantomjs - 支持地理位置API</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/phantomjs-geoloaction-api/</link>
+      <link>https://vul-hunters.gitee.io/posts/phantomjs-geoloaction-api/</link>
       <pubDate>Sun, 26 Mar 2017 21:20:23 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/phantomjs-geoloaction-api/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/phantomjs-geoloaction-api/</guid>
       <description>目前phantomjs并不支持GeolocationAPI,但是我们可以手动编写一个js文件, 用自己的代码实现常见的Geolocation API.
 var webPage = require(&amp;#39;webpage&amp;#39;); var page = webPage.create(); //TODO other codes //初始化之前插入一些常用js utils page.onInitialized = function(){ //模拟地理定位.  page.injectJs(&amp;#34;fake-location.js&amp;#34;); }; fake-location.js的代码也比较简单:
 /** * @author huangjacky * @desc 模拟实现浏览器的获取地理位置的api */ window.navigator.geolocation = { getCurrentPosition: function (success, failure) { success({ coords: { //模拟华中科技大学产学研基地  latitude: 22.52902, longitude: 113.94376 }, timestamp: Date.now() }); }, watchPosition: function(success, failure){ success({ coords: { //模拟华中科技大学产学研基地  latitude: 22.52902, longitude: 113.94376 }, timestamp: Date.now() }); } }; </description>
@@ -228,10 +228,10 @@ var webPage = require(&amp;#39;webpage&amp;#39;); var page = webPage.create(); /
     
     <item>
       <title>SQL中显示所有相同的记录</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/show_all_same_sql/</link>
+      <link>https://vul-hunters.gitee.io/posts/show_all_same_sql/</link>
       <pubDate>Sun, 26 Mar 2017 14:33:16 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/show_all_same_sql/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/show_all_same_sql/</guid>
       <description>select * from t_cgi WHERE (cHost,cUri) in ( select cHost,cUri from t_cgi GROUP BY cHost,cUri HAVING COUNT(cHash)&amp;gt; 1 ) ORDER BY CONCAT(cHost,cUri) 因为需要统计,所以必须要用GROUP BY, 然后用HAVING COUNT进行判断数据记录数, 这里有一个问题,就是因为是两个字段,所以在获取时候的WHERE IN需要用括号括起来. 附录:表结构
 CREATE TABLE t_cgi( cHash CHAR(32) UNIQUE, cHost VARCHAR(32) NOT NULL , cUri VARCHAR(64) NOT NULL DEFAULT &amp;#39;/&amp;#39;, cRaw TEXT , cTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (cHash) ) </description>
     </item>

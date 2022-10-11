@@ -2,136 +2,136 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/</loc>
+    <loc>https://vul-hunters.gitee.io/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/webkit/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/webkit/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/js_mocks/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/js_mocks/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/%E5%AE%89%E5%85%A8/</loc>
     <lastmod>2018-08-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/android/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/android/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/https/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/https/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/nginx/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/nginx/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/sni/</loc>
     <lastmod>2018-07-12T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/waf-nginx-time-wait/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/waf-nginx-time-wait/</loc>
     <lastmod>2018-07-09T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/socket/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/socket/</loc>
     <lastmod>2018-07-09T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/waf/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/waf/</loc>
     <lastmod>2018-07-09T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/wechat/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/wechat/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/xxe/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/xxe/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/wxpay-xxe/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/wxpay-xxe/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/%E6%BC%8F%E6%B4%9E/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/%E6%BC%8F%E6%B4%9E/</loc>
     <lastmod>2018-07-04T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/lua/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/lua/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/lua-null/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/null/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/null/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/%E7%BC%96%E7%A8%8B/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/%E7%BC%96%E7%A8%8B/</loc>
     <lastmod>2018-06-14T11:42:14+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/nginx-502-504-diff/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/nginx-502-504-diff/</loc>
     <lastmod>2017-05-29T12:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/csrf/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/csrf/</loc>
     <lastmod>2017-05-07T22:15:36+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/web%E5%AE%89%E5%85%A8/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/web%E5%AE%89%E5%85%A8/</loc>
     <lastmod>2017-05-07T22:15:36+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/vul-csrf-src-1/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/vul-csrf-src-1/</loc>
     <lastmod>2017-05-07T22:15:36+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/sqlmap/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/sqlmap/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/%E5%AE%89%E5%85%A8/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/%E5%AE%89%E5%85%A8/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/%E5%AE%89%E5%85%A8%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-sqlmap/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/sec-tools-sqlmap/</loc>
     <lastmod>2017-04-20T23:00:21+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/nmap/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/nmap/</loc>
     <lastmod>2017-04-17T10:44:28+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-nmap/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/sec-tools-nmap/</loc>
     <lastmod>2017-04-17T10:44:28+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/python/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/python/</loc>
     <lastmod>2017-04-02T09:28:03+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/categories/%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://vul-hunters.gitee.io/categories/%E5%B7%A5%E5%85%B7/</loc>
     <lastmod>2017-04-02T09:28:03+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/oschina-pages-auto-publish/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/oschina-pages-auto-publish/</loc>
     <lastmod>2017-04-02T09:28:03+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/stegano-image/</loc>
     <lastmod>2017-03-28T16:07:45+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/%E9%9A%90%E5%86%99/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/%E9%9A%90%E5%86%99/</loc>
     <lastmod>2017-03-28T16:07:45+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/sql_inject/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/sql_inject/</loc>
     <lastmod>2017-03-27T11:39:39+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/sql_inject/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/sql_inject/</loc>
     <lastmod>2017-03-27T11:39:39+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/phantomjs/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/phantomjs/</loc>
     <lastmod>2017-03-26T21:20:23+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/phantomjs-geoloaction-api/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/phantomjs-geoloaction-api/</loc>
     <lastmod>2017-03-26T21:20:23+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/tags/mysql/</loc>
+    <loc>https://vul-hunters.gitee.io/tags/mysql/</loc>
     <lastmod>2017-03-26T14:33:16+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/posts/show_all_same_sql/</loc>
+    <loc>https://vul-hunters.gitee.io/posts/show_all_same_sql/</loc>
     <lastmod>2017-03-26T14:33:16+08:00</lastmod>
   </url><url>
-    <loc>https://vul-hunters.gitee.io/hunter-blogs/about/</loc>
+    <loc>https://vul-hunters.gitee.io/about/</loc>
     <lastmod>2017-03-26T11:54:45+08:00</lastmod>
   </url>
 </urlset>

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>null on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/null/</link>
+    <link>https://vul-hunters.gitee.io/tags/null/</link>
     <description>Recent content in null on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 14 Jun 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/null/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 14 Jun 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/tags/null/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lua - 编程中几种空值的判断</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</link>
+      <link>https://vul-hunters.gitee.io/posts/lua-null/</link>
       <pubDate>Thu, 14 Jun 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/lua-null/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/lua-null/</guid>
       <description>0x00 背景 最近在写一段nginx+redis的代码，主要基于openresty，其中使用到了lua-resty-redis库。我平时写代码都比较小心，针对外部输入的值一般都会进行异常判断，大概的代码如下：
 local redis = require &amp;#34;redis&amp;#34; local cjson = require &amp;#34;cjson&amp;#34; --[[省略部分代码]] local ok, err = redis:get(&amp;#34;key&amp;#34;) if not ok then ngx.log(ngx.ERR, &amp;#39;[ERROR]:&amp;#39;, err) return end local data = cjson.decode(ok) 在decode这里出现了错误提示，但是ok并没有为空或者nil，不然代码是走不到这里来。
 发现问题后，我们就在前面打印一下ok数据的类型吧，大概的代码如下：

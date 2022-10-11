@@ -20,7 +20,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
-<meta property="og:url" content="https://vul-hunters.gitee.io/hunter-blogs/tags/null/" />
+<meta property="og:url" content="https://vul-hunters.gitee.io/tags/null/" />
 
 
   
@@ -32,7 +32,7 @@
   
   
 
-  <link rel="stylesheet" href="https://vul-hunters.gitee.io/hunter-blogs//css/redlounge.css">
+  <link rel="stylesheet" href="https://vul-hunters.gitee.io//css/redlounge.css">
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
   <link href='//fonts.proxy.ustclug.org/css?family=Raleway:400,200,100,700,300,500,600,800' rel='stylesheet' type='text/css'>
   <link href='//fonts.proxy.ustclug.org/css?family=Libre+Baskerville:400,700,400italic' rel='stylesheet' type='text/css'>
@@ -42,7 +42,7 @@
   <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png">
 
   
-  <link href="https://vul-hunters.gitee.io/hunter-blogs/tags/null/index.xml" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
+  <link href="https://vul-hunters.gitee.io/tags/null/index.xml" rel="alternate" type="application/rss+xml" title="SecTrain安全博客" />
 
     
   
@@ -54,8 +54,8 @@
 
   
   <script src="//ajax.proxy.ustclug.org/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io/hunter-blogs//css/lightbox.css">
-  <script src="https://vul-hunters.gitee.io/hunter-blogs//js/lightbox.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io//css/lightbox.css">
+  <script src="https://vul-hunters.gitee.io//js/lightbox.min.js"></script>
   
 
   
@@ -72,7 +72,7 @@
     
 
 	
-	  <img src="/hunter-blogs/img/anonymous.png" class="sidebarphoto">
+	  <img src="/img/anonymous.png" class="sidebarphoto">
 	
 
     <h1 class="brand-title">个人技术分享</h1>
@@ -80,9 +80,9 @@
 
     <nav class="nav">
       <ul class="nav-list">
-        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/hunter-blogs/">首页</a></li>
+        <li class="nav-item"><span class="nav-item-separator">//</span><a href="https://vul-hunters.gitee.io/">首页</a></li>
         
-          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/hunter-blogs/posts">技术博客</a></li>
+          <li class="nav-item"><span class="nav-item-separator">//</span><a href="/posts">技术博客</a></li>
         
       </ul>
     </nav>
@@ -103,7 +103,7 @@
             <header class="post-header">
             
             <h1 class="post-title">
-              <a href="/hunter-blogs/posts/lua-null/">Lua - 编程中几种空值的判断</a>
+              <a href="/posts/lua-null/">Lua - 编程中几种空值的判断</a>
             </h1>
             </header>
             <p class="post-meta">
@@ -122,7 +122,7 @@
       					<div class="post-categories">
 				        
       					
-					        <a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io/hunter-blogs//categories/%E7%BC%96%E7%A8%8B">编程</a>
+					        <a class="post-category post-category-%E7%BC%96%E7%A8%8B" href="https://vul-hunters.gitee.io//categories/%E7%BC%96%E7%A8%8B">编程</a>
       					
       					</div>
       				
@@ -137,7 +137,7 @@ ngx.log(ngx.ERR, &#39;ok type: &#39;, type(ok)) if not ok then end 这个时候�
 local function _read_reply(self, sock) local line, err = sock:receive() if not line then if err == &#34;timeout&#34; and not rawget(self, &#34;_subscribed&#34;) then sock:close() end return nil, err end local prefix = byte(line) if prefix == 36 then -- char &#39;$&#39; -- print(&#34;bulk reply&#34;) local size = tonumber(sub(line, 2)) if size &lt; 0 then return null end local data, err = sock:receive(size) if not data then if err == &#34;timeout&#34; then sock:close() end return nil, err end local dummy, err = sock:receive(2) -- ignore CRLF if not dummy then return nil, err end return data elseif prefix == 43 then -- char &#39;+&#39; -- print(&#34;status reply&#34;) return sub(line, 2) elseif prefix == 42 then -- char &#39;*&#39; local n = tonumber(sub(line, 2)) -- print(&#34;multi-bulk reply: &#34;, n) if n &lt; 0 then return null end local vals = new_tab(n, 0) local nvals = 0 for i = 1, n do local res, err = _read_reply(self, sock) if res then nvals = nvals + 1 vals[nvals] = res elseif res == nil then return nil, err else -- be a valid redis error value nvals = nvals + 1 vals[nvals] = {false, err} end end return vals elseif prefix == 58 then -- char &#39;:&#39; -- print(&#34;integer reply&#34;) return tonumber(sub(line, 2)) elseif prefix == 45 then -- char &#39;-&#39; -- print(&#34;error reply: &#34;, n) return false, sub(line, 2) else -- when `line` is an empty string, `prefix` will be equal to nil.
               </article>
 			  <div class="read-more-link">
-				<a href="/hunter-blogs/posts/lua-null/"><span class="read-more-slashes">//</span>Read More...</a>
+				<a href="/posts/lua-null/"><span class="read-more-slashes">//</span>Read More...</a>
 			  </div>
             
           </section>
@@ -165,7 +165,7 @@ local function _read_reply(self, sock) local line, err = sock:receive() if not l
 	</div>
 
     <p><a id="beian" target="_blank" href="https://beian.miit.gov.cn/">粤ICP备15077600号</a> </p>
-    <script src="https://vul-hunters.gitee.io/hunter-blogs/js/beian.js"></script>
+    <script src="https://vul-hunters.gitee.io/js/beian.js"></script>
 </div>
 
     </div>

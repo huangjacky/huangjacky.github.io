@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>nmap on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/nmap/</link>
+    <link>https://vul-hunters.gitee.io/tags/nmap/</link>
     <description>Recent content in nmap on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 17 Apr 2017 10:44:28 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/nmap/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 17 Apr 2017 10:44:28 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/tags/nmap/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>安全工具 - nmap用法</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-nmap/</link>
+      <link>https://vul-hunters.gitee.io/posts/sec-tools-nmap/</link>
       <pubDate>Mon, 17 Apr 2017 10:44:28 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sec-tools-nmap/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sec-tools-nmap/</guid>
       <description>0x00 序言 工欲善其事, 必先利其器. 当然这系列的文章都是偏入门级的, 主要是方便我自己熟悉相关的工具, 以及日后使用过程中, 自己有个地方作为参考. nmap作为安全圈的神器, 在黑客帝国里面也有露面, 因此你可以想象到它的用途了吧
 0x01 用法 扫描目标 nmap接受的输入可以有单IP,域名,网段和IP列表文件.
 # 扫描单个ip nmap 127.0.0.1 # 扫描一个ip端 nmap 192.168.2.1-25 # 扫描一个子网段 nmap 192.168.2.0/24 # 扫描一个域名 nmap www.test.com # 扫描文件列表中IP nmap -iL ips.txt # 排除指定ip, 不扫描192.168.3.1 nmap 192.168.3.0/24 --exclude 192.168.3.1 端口选项 默认nmap会扫描1000个端口, 但是可以用过-p参数来设置.

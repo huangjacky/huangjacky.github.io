@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>HTTPS on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/https/</link>
+    <link>https://vul-hunters.gitee.io/tags/https/</link>
     <description>Recent content in HTTPS on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/https/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 12 Jul 2018 11:42:14 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/tags/https/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>WAF和SNI的前世今生</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</link>
+      <link>https://vul-hunters.gitee.io/posts/sni/</link>
       <pubDate>Thu, 12 Jul 2018 11:42:14 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/sni/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/sni/</guid>
       <description>0x00 背景 近日笔者收到一个WAF旗舰版客户反馈的问题，他们的APP在部分安卓机上无法正常使用，取消WAF后又正常。首先客户的站点是HTTPS的，然后出问题的终端是部分系统版本比较低的安卓手机，这里可以初步判断是因为这部分终端不支持SNI造成的。
 SNI具体的内容在第三节中将会详细介绍，请稍等。
 0x01 定位 为了验证我们的推断，我在自己模拟器上面安装了客户的APP，针对手机浏览器和APP分别进行抓包，查看SNI的情况。 这里我们模拟器使用的Genymotion，系统采用的安卓5.1.0，大概的截图如下：

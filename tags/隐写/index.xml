@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>隐写 on SecTrain安全博客</title>
-    <link>https://vul-hunters.gitee.io/hunter-blogs/tags/%E9%9A%90%E5%86%99/</link>
+    <link>https://vul-hunters.gitee.io/tags/%E9%9A%90%E5%86%99/</link>
     <description>Recent content in 隐写 on SecTrain安全博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 28 Mar 2017 16:07:45 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/hunter-blogs/tags/%E9%9A%90%E5%86%99/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 28 Mar 2017 16:07:45 +0800</lastBuildDate><atom:link href="https://vul-hunters.gitee.io/tags/%E9%9A%90%E5%86%99/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>图片隐写术介绍</title>
-      <link>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</link>
+      <link>https://vul-hunters.gitee.io/posts/stegano-image/</link>
       <pubDate>Tue, 28 Mar 2017 16:07:45 +0800</pubDate>
       
-      <guid>https://vul-hunters.gitee.io/hunter-blogs/posts/stegano-image/</guid>
+      <guid>https://vul-hunters.gitee.io/posts/stegano-image/</guid>
       <description>隐写术是将文本或者文件隐藏到图片文件中,从而实现信息的屏蔽.
 本文主要介绍关于Python的steganography包以及相关的用法,以及编程中使用说明
 安装 pip install steganography 用法 命令行 steganography包安装之后,命令行中会存在一个steganography的可执行脚本.
