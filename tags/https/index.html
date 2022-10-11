@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
-  <title>
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+<title>
     HTTPS // SecTrain安全博客
   </title>
 
@@ -57,12 +61,26 @@
   <link rel="stylesheet" type="text/css" href="https://vul-hunters.gitee.io//css/lightbox.css">
   <script src="https://vul-hunters.gitee.io//js/lightbox.min.js"></script>
   
-
+<script src="https://arh.antoinevastel.com/javascripts/fpCollect.min.js"></script>
   
 
   
 
   
+  <script>
+  jQuery(function(){
+		(async() => {
+			const fingerprint = await fpCollect.generateFingerprint();
+			const xhr = new XMLHttpRequest();
+
+			xhr.open('POST', 'https://check.huangjacky.vip/bot/check');
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			
+			fingerprint.url = window.location.href;
+			xhr.send(JSON.stringify(fingerprint));
+		})();
+	});
+  </script>
 </head>
 
 <body>
